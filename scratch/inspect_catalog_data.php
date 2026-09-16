@@ -47,5 +47,6 @@ foreach ($prods as $p) {
         } else {
             echo '   attr: ' . $aname . ' => ' . json_encode($aval) . "\n";
         }
+        echo '   permalink: ' . get_permalink($p->get_id()) . "\n";
     }
 }

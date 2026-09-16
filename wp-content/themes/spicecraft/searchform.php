@@ -31,6 +31,7 @@ $unique_id = wp_unique_id( 'sc-search-form-' );
 			required
 			style="width: 100%; padding: var(--sc-space-3) var(--sc-space-12) var(--sc-space-3) var(--sc-space-4); border: 2px solid var(--sc-color-border, #d1d5db); border-radius: var(--sc-radius-full, 9999px); font-size: 1rem; outline: none; transition: border-color 0.2s;"
 		/>
+		<input type="hidden" name="post_type" value="product" />
 		<button 
 			type="submit" 
 			class="sc-search-submit" 

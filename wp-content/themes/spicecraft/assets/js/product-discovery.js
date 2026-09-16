@@ -30,16 +30,19 @@ document.addEventListener('DOMContentLoaded', function () {
 	function getFavourites() {
 		try {
 			const data = localStorage.getItem(FAVOURITES_KEY);
-			return data ? JSON.parse(data).map(function (id) { return parseInt(id, 10); }).filter(Boolean) : [];
+			if (!data) return [];
+			const parsed = JSON.parse(data);
+			return Array.isArray(parsed) ? parsed.map(function (id) { return parseInt(id, 10); }).filter(Boolean) : [];
 		} catch (e) {
-			console.warn('SpiceCraft: localStorage inaccessible', e);
+			console.warn('SpiceCraft: localStorage inaccessible or corrupt', e);
 			return [];
 		}
 	}
 
 	function saveFavourites(ids) {
 		try {
-			const uniqueIds = Array.from(new Set(ids.map(function (id) { return parseInt(id, 10); }).filter(Boolean)));
+			const validIds = Array.isArray(ids) ? ids : [];
+			const uniqueIds = Array.from(new Set(validIds.map(function (id) { return parseInt(id, 10); }).filter(Boolean)));
 			localStorage.setItem(FAVOURITES_KEY, JSON.stringify(uniqueIds));
 			updateFavouritesHeaderCount(uniqueIds.length);
 			return uniqueIds;
@@ -216,7 +219,9 @@ document.addEventListener('DOMContentLoaded', function () {
 	function getRecentlyViewed() {
 		try {
 			const data = localStorage.getItem(RECENTLY_VIEWED_KEY);
-			return data ? JSON.parse(data).map(function (id) { return parseInt(id, 10); }).filter(Boolean) : [];
+			if (!data) return [];
+			const parsed = JSON.parse(data);
+			return Array.isArray(parsed) ? parsed.map(function (id) { return parseInt(id, 10); }).filter(Boolean) : [];
 		} catch (e) {
 			return [];
 		}

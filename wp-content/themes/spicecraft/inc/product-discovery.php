@@ -89,6 +89,23 @@ function spicecraft_product_search_where( $search, $query ) {
 add_filter( 'posts_search', 'spicecraft_product_search_where', 20, 2 );
 
 /**
+ * Route searches originating from the shop catalog URL to post_type=product.
+ *
+ * @param WP_Query $query The current WP_Query instance.
+ */
+function spicecraft_route_shop_search_to_product( $query ) {
+	if ( ! is_admin() && $query->is_main_query() && $query->is_search() ) {
+		if ( isset( $_GET['s'] ) && ! empty( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], '/shop' ) !== false && empty( $query->get( 'post_type' ) ) ) {
+			$query->set( 'post_type', 'product' );
+		}
+	}
+}
+add_action( 'pre_get_posts', 'spicecraft_route_shop_search_to_product', 5 );
+
+// Keep visitors on the search results archive even if exactly one product matches.
+add_filter( 'woocommerce_redirect_single_search_result', '__return_false' );
+
+/**
  * ============================================================================
  * 2. DYNAMIC CATALOG QUERY FILTERS (URL STATE DRIVEN)
  * ============================================================================
@@ -290,7 +307,7 @@ function spicecraft_get_active_filters() {
 	$current_url = remove_query_arg( 'paged' );
 
 	// 1. Category Filter
-	if ( ! empty( $_GET['product_cat'] ) && ! is_product_category() ) {
+	if ( ! empty( $_GET['product_cat'] ) ) {
 		$cat_slug = sanitize_title( wp_unslash( $_GET['product_cat'] ) );
 		$term     = get_term_by( 'slug', $cat_slug, 'product_cat' );
 		$label    = $term ? $term->name : $cat_slug;
@@ -300,6 +317,20 @@ function spicecraft_get_active_filters() {
 			'value'      => $cat_slug,
 			'remove_url' => remove_query_arg( 'product_cat', $current_url ),
 		);
+	} elseif ( is_product_category() ) {
+		$term = get_queried_object();
+		if ( $term && ! is_wp_error( $term ) && ! empty( $term->name ) ) {
+			$shop_url = wc_get_page_permalink( 'shop' );
+			$params   = $_GET;
+			unset( $params['paged'] );
+			$remove_url = ! empty( $params ) ? add_query_arg( $params, $shop_url ) : $shop_url;
+			$active[]   = array(
+				'key'        => 'product_cat',
+				'label'      => sprintf( __( 'Category: %s', 'spicecraft' ), $term->name ),
+				'value'      => $term->slug,
+				'remove_url' => $remove_url,
+			);
+		}
 	}
 
 	// 2. Pack Size Filter
@@ -325,7 +356,7 @@ function spicecraft_get_active_filters() {
 	}
 
 	// 4. Tag Filter
-	if ( ! empty( $_GET['tag'] ) && ! is_product_tag() ) {
+	if ( ! empty( $_GET['tag'] ) ) {
 		$tag_slug = sanitize_title( wp_unslash( $_GET['tag'] ) );
 		$term     = get_term_by( 'slug', $tag_slug, 'product_tag' );
 		$label    = $term ? $term->name : $tag_slug;
@@ -335,6 +366,20 @@ function spicecraft_get_active_filters() {
 			'value'      => $tag_slug,
 			'remove_url' => remove_query_arg( 'tag', $current_url ),
 		);
+	} elseif ( is_product_tag() ) {
+		$term = get_queried_object();
+		if ( $term && ! is_wp_error( $term ) && ! empty( $term->name ) ) {
+			$shop_url = wc_get_page_permalink( 'shop' );
+			$params   = $_GET;
+			unset( $params['paged'] );
+			$remove_url = ! empty( $params ) ? add_query_arg( $params, $shop_url ) : $shop_url;
+			$active[]   = array(
+				'key'        => 'tag',
+				'label'      => sprintf( __( 'Tag: %s', 'spicecraft' ), $term->name ),
+				'value'      => $term->slug,
+				'remove_url' => $remove_url,
+			);
+		}
 	}
 
 	// 5. Search Filter

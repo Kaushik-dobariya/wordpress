@@ -210,22 +210,22 @@ $mailto_url = 'mailto:' . sanitize_email( $contact_email ) . '?subject=' . rawur
 			</div>
 
 			<!-- Manufacturer Enquiry Box -->
-			<div class="sc-enquiry-box" id="sc-enquiry-box">
-				<div class="sc-enquiry-box__header">
-					<span class="sc-enquiry-box__badge"><?php esc_html_e( 'Direct Manufacturer Enquiry', 'spicecraft' ); ?></span>
-					<h2 class="sc-enquiry-box__title"><?php esc_html_e( 'Interested in this product?', 'spicecraft' ); ?></h2>
-					<p class="sc-enquiry-box__desc">
-						<?php esc_html_e( 'Contact our spice specialists directly for institutional bulk supply, distributor inquiries, custom packaging, or export pricing.', 'spicecraft' ); ?>
-					</p>
-				</div>
+			<?php if ( ! empty( $whatsapp_url ) || ! empty( $contact_email ) ) : ?>
+				<div class="sc-enquiry-box" id="sc-enquiry-box">
+					<div class="sc-enquiry-box__header">
+						<span class="sc-enquiry-box__badge"><?php esc_html_e( 'Direct Manufacturer Enquiry', 'spicecraft' ); ?></span>
+						<h2 class="sc-enquiry-box__title"><?php esc_html_e( 'Interested in this product?', 'spicecraft' ); ?></h2>
+						<p class="sc-enquiry-box__desc">
+							<?php esc_html_e( 'Contact our spice specialists directly for institutional bulk supply, distributor inquiries, custom packaging, or export pricing.', 'spicecraft' ); ?>
+						</p>
+					</div>
 
-				<!-- Inline Pack Size Validation Alert -->
-				<div class="sc-pack-validation-notice" id="sc-pack-validation-notice" role="alert" style="display: none;">
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-					<span><?php esc_html_e( 'Please select a pack size above before submitting an enquiry.', 'spicecraft' ); ?></span>
-				</div>
+					<!-- Inline Pack Size Validation Alert -->
+					<div class="sc-pack-validation-notice" id="sc-pack-validation-notice" role="alert" style="display: none;">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+						<span><?php esc_html_e( 'Please select a pack size above before submitting an enquiry.', 'spicecraft' ); ?></span>
+					</div>
 
-				<?php if ( ! empty( $whatsapp_url ) || ! empty( $contact_email ) ) : ?>
 					<div class="sc-enquiry-box__actions">
 						<!-- Primary CTA: WhatsApp Enquiry (Dynamic pack-size aware) -->
 						<?php if ( ! empty( $whatsapp_url ) ) : ?>
@@ -254,17 +254,17 @@ $mailto_url = 'mailto:' . sanitize_email( $contact_email ) . '?subject=' . rawur
 							</a>
 						<?php endif; ?>
 					</div>
-				<?php endif; ?>
 
-				<div class="sc-enquiry-box__notice">
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<circle cx="12" cy="12" r="10"></circle>
-						<line x1="12" y1="16" x2="12" y2="12"></line>
-						<line x1="12" y1="8" x2="12.01" y2="8"></line>
-					</svg>
-					<span><?php esc_html_e( 'Bulk / Distribution Inquiries Welcome · Fast Response within 24 Hours', 'spicecraft' ); ?></span>
-				</div>
-			</div><!-- .sc-enquiry-box -->
+					<div class="sc-enquiry-box__notice">
+						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<circle cx="12" cy="12" r="10"></circle>
+							<line x1="12" y1="16" x2="12" y2="12"></line>
+							<line x1="12" y1="8" x2="12.01" y2="8"></line>
+						</svg>
+						<span><?php esc_html_e( 'Bulk / Distribution Inquiries Welcome · Fast Response within 24 Hours', 'spicecraft' ); ?></span>
+					</div>
+				</div><!-- .sc-enquiry-box -->
+			<?php endif; ?>
 
 			<!-- Product Engagement Actions: Favourite & Share -->
 			<div class="sc-single-product__actions-row" aria-label="<?php esc_attr_e( 'Product Actions', 'spicecraft' ); ?>">
@@ -534,6 +534,10 @@ $mailto_url = 'mailto:' . sanitize_email( $contact_email ) . '?subject=' . rawur
 	<!-- ====================================================================
 	     3. RELATED PRODUCTS SECTION (Uses the EXACT SAME unified card!)
 	     ==================================================================== -->
+	<?php
+	$related_ids = wc_get_related_products( $product_id, 4 );
+	if ( ! empty( $related_ids ) ) :
+	?>
 	<section class="sc-related-products" aria-labelledby="related-products-heading">
 		<div class="sc-related-products__header">
 			<span class="sc-related-products__eyebrow"><?php esc_html_e( 'Discover More', 'spicecraft' ); ?></span>
@@ -560,6 +564,7 @@ $mailto_url = 'mailto:' . sanitize_email( $contact_email ) . '?subject=' . rawur
 		);
 		?>
 	</section>
+	<?php endif; ?>
 
 	<!-- ====================================================================
 	     4. RECENTLY VIEWED PRODUCTS SECTION (Client-side localStorage driven)

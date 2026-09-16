@@ -283,9 +283,11 @@
     display: none;
     align-items: center;
     gap: 6px;
-    font-size: 0.85rem !important;
-    padding: 6px 14px !important;
+    font-size: 0.88rem !important;
+    min-height: 44px !important;
+    padding: 10px 18px !important;
     border-radius: var(--sc-radius-md) !important;
+    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -318,6 +320,46 @@
 .sc-catalog-controls__ordering select:focus,
 .woocommerce-ordering select:focus {
     border-color: var(--sc-color-primary);
+}
+
+/* ==========================================================================
+   HOTFIX (Phase 2 Step 4A): Disable WooCommerce legacy clearfix pseudo-elements
+   In WooCommerce core (woocommerce-layout.css and woocommerce.css),
+   .woocommerce ul.products::before and ::after use `content: " "; display: table;`.
+   Because .woocommerce ul.products uses CSS Grid (display: grid !important), these
+   pseudo-elements become direct grid items! The ::before pseudo-element consumes
+   grid cell (Row 1, Col 1), pushing the first product into Col 2 and creating a
+   phantom blank slot at the start of every product grid.
+   Disabling these pseudo-elements completely removes the phantom grid item across all
+   product listing contexts (Shop, Category, Search/Filter, Homepage Featured,
+   Related Products, Recently Viewed, Favourites).
+   ========================================================================== */
+.woocommerce ul.products::before,
+.woocommerce ul.products::after,
+.woocommerce-page ul.products::before,
+.woocommerce-page ul.products::after,
+.woocommerce .products ul::before,
+.woocommerce .products ul::after,
+.woocommerce-page .products ul::before,
+.woocommerce-page .products ul::after,
+ul.products::before,
+ul.products::after,
+.sc-products-grid::before,
+.sc-products-grid::after {
+    content: none !important;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Ensure product grid items behave purely as CSS Grid cells without legacy floats or widths */
+.woocommerce ul.products li.product,
+.woocommerce-page ul.products li.product,
+ul.products li.product {
+    float: none !important;
+    width: auto !important;
+    margin: 0 !important;
+    clear: none !important;
 }
 
 /* ==========================================================================
@@ -490,6 +532,18 @@
     cursor: pointer;
     box-shadow: var(--sc-shadow-sm);
     transition: transform var(--sc-transition-fast), color var(--sc-transition-fast), background-color var(--sc-transition-fast);
+}
+
+.sc-product-card__favourite::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 44px;
+    min-height: 44px;
+    width: 100%;
+    height: 100%;
 }
 
 .sc-product-card__favourite:hover {

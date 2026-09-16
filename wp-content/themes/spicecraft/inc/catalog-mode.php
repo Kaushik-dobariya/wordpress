@@ -208,10 +208,18 @@ add_filter( 'woocommerce_get_price_html', 'spicecraft_catalog_price_html', 99, 2
  */
 
 /**
- * Intercept manual visitor access to /cart and /checkout.
- * Redirects visitors safely to the product catalog archive or home page.
+ * Intercept manual visitor access to /cart, /checkout, or ?add-to-cart= query strings.
+ * Redirects visitors safely to the product catalog archive or clean URL.
  */
 function spicecraft_redirect_cart_and_checkout() {
+	// 1. Defense against direct query parameter purchase attempts (?add-to-cart=123)
+	if ( isset( $_REQUEST['add-to-cart'] ) ) {
+		$clean_url = remove_query_arg( array( 'add-to-cart', 'quantity' ) );
+		wp_safe_redirect( $clean_url, 302 );
+		exit;
+	}
+
+	// 2. Intercept direct visits to cart or checkout pages
 	if ( is_cart() || is_checkout() ) {
 		$shop_page_url = wc_get_page_permalink( 'shop' );
 		$target_url    = ( $shop_page_url && ! is_wp_error( $shop_page_url ) ) ? $shop_page_url : home_url( '/' );

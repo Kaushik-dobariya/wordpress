@@ -111,10 +111,11 @@ if ( ! empty( $highlight_text ) && false !== stripos( $heading, $highlight_text 
 					<div class="sc-hero-media-frame">
 						<?php
 						$img_attr = array(
-							'class'   => 'sc-hero-media',
-							'alt'     => $image_alt,
-							'loading' => 'eager',
-							'sizes'   => '(max-width: 991px) 100vw, 50vw',
+							'class'         => 'sc-hero-media',
+							'alt'           => $image_alt,
+							'loading'       => 'eager',
+							'fetchpriority' => 'high',
+							'sizes'         => '(max-width: 991px) 100vw, 50vw',
 						);
 						echo function_exists( 'spicecraft_get_media_image' )
 							? spicecraft_get_media_image( $desktop_img_id, 'large', $img_attr, $mobile_img_id )

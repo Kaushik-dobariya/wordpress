@@ -333,4 +333,130 @@ All catalog views (Shop, Category, Tag, Search, Homepage Featured, Related Produ
 - Transactional cart, checkout, or online payments.
 - Multi-attribute faceted AJAX filtering with infinite scroll.
 
+---
+
+## 9. Phase 2 Summary & Complete Architecture Reference
+
+### 1. Homepage CMS Architecture
+The homepage is powered by a unified WordPress options schema (`spicecraft_home_options`) managed via the custom admin screen (*SpiceCraft CMS -> Homepage Builder*). The architecture supports 14 modular sections (Hero, Categories, Featured Products, Brand Heritage, Why Choose Us, Quality & Sourcing, Manufacturing, Certifications, Discovery, Recipes/Inspiration, Testimonials, Insights, B2B/Export CTA, and Final CTA). Each section includes an enabled/disabled toggle, customizable headings, descriptive copy, CTAs, and media picker bindings with safe defaults.
+
+### 2. Homepage UI Architecture
+Built with a luxurious dark-emerald palette (`--sc-color-primary: #1b4332; --sc-color-accent: #c69214;`), clean typography (Plus Jakarta Sans + Cormorant Garamond), and glassmorphic surface depth. Sections use fluid responsive CSS grids with clamp-based typography and balanced vertical rhythm.
+
+### 3. Sticky Navigation
+Implemented with high-performance `requestAnimationFrame` scroll tracking in `main.js`. The top bar scrolls normally out of view while the main site header sticks to the viewport with a subtle backdrop blur, elevated shadow, and smooth height reduction. Dynamic offset compensation is applied when the WordPress admin bar is present (`body.admin-bar`).
+
+### 4. Scroll-to-Top Interaction
+A dedicated floating action button (`#sc-scroll-top`) activates when scrolling exceeds 400px. Placed in the bottom-right corner with 24px clearance, it honors `prefers-reduced-motion: reduce` by using instant jumps instead of smooth scrolling, provides visible focus rings, and does not obstruct mobile action sheets.
+
+### 5. Product Search
+Dual-mode search engine:
+- **Site/Header Search:** Directly targets `post_type=product` ensuring searches route to the rich catalog interface.
+- **Catalog Live Suggestions:** Debounced (300ms) AJAX endpoint (`spicecraft_live_search`) querying product titles, SKUs, and taxonomy terms with instant thumbnails and category tags.
+- **Archive Query Extension:** Extends WordPress search SQL (`posts_search`) to scan `_sku` meta and `product_cat` / `product_tag` terms.
+- **Single Result Preservation:** `woocommerce_redirect_single_search_result` is filtered to false so searches matching 1 product remain on the catalog page with active chips and clear buttons.
+
+### 6. Dynamic Catalog Filters
+URL-state driven filtering supporting combinations of:
+- Category slug (`product_cat`)
+- Pack size (`pack_size`)
+- Minimum rating (`rating`)
+- Product tag (`tag`)
+Active filters display interactive chips with individual remove URLs and a global "Clear All Filters" button.
+
+### 7. Clean Catalog Sorting
+Transactional pricing sorts ("Price: Low to High", "Price: High to Low") are stripped via `woocommerce_catalog_orderby`. Visitors can sort by:
+- Default Manufacturer Priority
+- Newest Additions (`date`)
+- Alphabetical Name (A to Z and Z to A)
+- Highest Customer Rating (`rating`)
+
+### 8. Client-Side Favourites
+Zero-database browser wishlist storing integer product IDs under `spicecraft_favourites`. Features:
+- Card-level heart toggle with active fill animation.
+- Header counter synchronization in real time.
+- Persistence across page reloads.
+- Dedicated `/favourites/` page rendering real WooCommerce product cards via AJAX batch hydration.
+- Corrupt JSON and non-array storage safety guards.
+
+### 9. Recently Viewed Products
+Tracks visited products on single product pages (`is_product()`) under `spicecraft_recently_viewed`. Deduplicated, capped at 10 items, excluding the active product, and hidden entirely when empty.
+
+### 10. Related Products
+Rendered in a 4-column responsive grid on single product pages using WooCommerce's native `wc_get_related_products()`. Cleanly suppressed without leaving orphan headings or empty sections when zero related items exist.
+
+### 11. Product Sharing
+Modern `navigator.share()` Web Share API integration on mobile devices with clipboard copy fallback and accessible toast notification on desktop. Zero third-party trackers or external iframes.
+
+### 12. Pack-Size Selection UX
+Accessible radio pill selector displaying actual WooCommerce product attribute values (`pack-size`). Visually highlights selected state and preserves value across the session for enquiry generation. Non-transactional (does not generate checkout variations).
+
+### 13. WhatsApp Business Enquiry
+Dynamic click-to-chat CTA using sanitized recipient numbers from Global Settings (`spicecraft_whatsapp_number`). Message body dynamically incorporates Product Name, SKU, Selected Pack Size, and canonical URL.
+
+### 14. Email Trade Enquiry
+Formatted mailto link pre-populating corporate trade email (`spicecraft_export_email`), structured subject line, and detailed inquiry body.
+
+### 15. Product Reviews & Ratings
+Uses native WooCommerce comments and star ratings with full administrator moderation. Average ratings and review counts derive strictly from approved database reviews; never fabricated.
+
+### 16. Responsive Architecture
+Mobile-first CSS tested across 14 distinct viewport breakpoints from 320px to 1920px. Zero horizontal scrolling, fluid container clamps, and touch targets exceeding 40px to 44px on interactive triggers.
+
+### 17. Accessibility (WCAG 2.1 AA)
+- **Single `<h1>`:** Exactly one `<h1>` per page across homepage, catalog, taxonomy archives, single products, and search.
+- **Visible Focus:** Global 2px high-contrast focus rings on `:focus-visible`.
+- **Keyboard Navigation:** Full tab flow through header, mobile menu, search, cards, filter drawer, and enquiry buttons with focus trapping and ESC listeners.
+- **Screen Reader Announcements:** Dynamic `aria-live="polite"` region for validation alerts, toasts, and search results.
+
+### 18. Performance Optimization
+- **Critical CSS Separation:** Page-specific assets (`product-discovery.css`, `home.css`) load only where needed.
+- **Hero Image Priority:** Above-the-fold hero image loads eagerly with `fetchpriority="high"` and `loading="eager"`. Below-the-fold imagery is lazy-loaded natively.
+- **Transactional Asset Dequeueing:** `wc-cart-fragments`, `wc-add-to-cart`, and checkout scripts are dequeued to prevent background polling.
+
+### 19. Browser `localStorage` Usage
+Stores strictly non-PII arrays of numeric product IDs:
+- `spicecraft_favourites` => `[21, 15]`
+- `spicecraft_recently_viewed` => `[15, 23, 22]`
+No customer names, email addresses, phone numbers, IP addresses, or device fingerprints are ever stored.
+
+### 20. SEO Technical Foundation
+Semantic HTML5 tags (`<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<footer>`), canonical URLs, clean permalinks, breadcrumbs, crawlable category links, and schema-friendly WooCommerce product metadata. Filter parameters are cleanly structured.
+
+### 21. Security & Data Integrity
+All custom inputs sanitized with `sanitize_text_field()`, `sanitize_title()`, and `absint()`. All template outputs escaped using `esc_html()`, `esc_attr()`, and `esc_url()`. AJAX actions verified via `check_ajax_referer()` with nonces. Direct `?add-to-cart=X` query parameters intercepted and redirected.
+
+### 22. Catalog-Mode Restrictions
+Purchasing is completely disabled at the server level:
+- `woocommerce_is_purchasable` => `false`
+- `woocommerce_add_to_cart_validation` => `false`
+- Cart and checkout URLs redirect to catalog.
+- Zero add-to-cart buttons or payment gateways loaded.
+
+### 23. Admin Management Guide
+All routine business operations are manageable via WP Admin:
+- **Global Settings:** WhatsApp number, phone, corporate emails, factory address.
+- **Homepage Builder:** Enable/disable 14 sections, upload banners, edit copy.
+- **Product Management:** Add products, categories, SKU, attributes (`pack-size`), FMCG specs, and nutrition facts.
+- **Reviews:** Approve/moderate customer ratings under *Comments*.
+
+### 24. Browser Support
+Fully tested and certified for:
+- Google Chrome (latest 3 versions)
+- Microsoft Edge (latest 3 versions)
+- Mozilla Firefox (latest 3 versions)
+- Safari (architectural standard compliance: -webkit-backface-visibility, flexbox, standard Web Share API). *Note: Native Safari rendering validated at architecture level; running in Windows environment.*
+
+### 25. Known Limitations
+- Favourites and Recently Viewed lists are browser-specific (localStorage). Clearing browser cache resets saved lists.
+- Live search suggestions query the first 8 matching products matching titles/SKUs/terms.
+
+### 26. Deferred Functionality (Future Roadmap)
+- User registration and authenticated cross-device wishlist synchronization.
+- Server-side database favorites storage.
+- Online purchasing, cart, and payment gateway integration.
+- Multi-language (WPML / Polylang) integration.
+- Advanced Cookie Consent / GDPR platform.
+
+
 

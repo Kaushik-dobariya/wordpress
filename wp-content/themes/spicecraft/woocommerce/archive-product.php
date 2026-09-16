@@ -28,7 +28,7 @@ get_header( 'shop' );
 do_action( 'woocommerce_before_main_content' );
 
 $shop_link       = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
-$search_query    = get_search_query();
+$search_query    = ! empty( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : get_search_query();
 $active_filters  = function_exists( 'spicecraft_get_active_filters' ) ? spicecraft_get_active_filters() : array();
 $available_packs = function_exists( 'spicecraft_get_catalog_available_pack_sizes' ) ? spicecraft_get_catalog_available_pack_sizes() : array();
 $current_pack    = isset( $_GET['pack_size'] ) ? sanitize_text_field( wp_unslash( $_GET['pack_size'] ) ) : '';
@@ -49,7 +49,7 @@ $current_orderby = isset( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( 
 			
 			<h1 class="sc-catalog-hero__title">
 				<?php
-				if ( is_search() ) {
+				if ( is_search() || ! empty( $search_query ) ) {
 					/* translators: %s: search query */
 					printf( esc_html__( 'Search Results for: &ldquo;%s&rdquo;', 'spicecraft' ), esc_html( $search_query ) );
 				} else {

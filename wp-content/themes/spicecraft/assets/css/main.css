@@ -811,3 +811,21 @@ body.sc-menu-open {
     }
 }
 
+/* ==========================================================================
+   GLOBAL HOTFIX (Phase 2 Step 4A): Product Grid Clearfix Suppression
+   ========================================================================== */
+.woocommerce ul.products::before,
+.woocommerce ul.products::after,
+.woocommerce-page ul.products::before,
+.woocommerce-page ul.products::after,
+ul.products::before,
+ul.products::after,
+.sc-products-grid::before,
+.sc-products-grid::after {
+    content: none !important;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+
