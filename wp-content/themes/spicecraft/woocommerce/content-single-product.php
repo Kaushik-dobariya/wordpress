@@ -219,6 +219,12 @@ $mailto_url = 'mailto:' . sanitize_email( $contact_email ) . '?subject=' . rawur
 					</p>
 				</div>
 
+				<!-- Inline Pack Size Validation Alert -->
+				<div class="sc-pack-validation-notice" id="sc-pack-validation-notice" role="alert" style="display: none;">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+					<span><?php esc_html_e( 'Please select a pack size above before submitting an enquiry.', 'spicecraft' ); ?></span>
+				</div>
+
 				<?php if ( ! empty( $whatsapp_url ) || ! empty( $contact_email ) ) : ?>
 					<div class="sc-enquiry-box__actions">
 						<!-- Primary CTA: WhatsApp Enquiry (Dynamic pack-size aware) -->
@@ -259,6 +265,37 @@ $mailto_url = 'mailto:' . sanitize_email( $contact_email ) . '?subject=' . rawur
 					<span><?php esc_html_e( 'Bulk / Distribution Inquiries Welcome · Fast Response within 24 Hours', 'spicecraft' ); ?></span>
 				</div>
 			</div><!-- .sc-enquiry-box -->
+
+			<!-- Product Engagement Actions: Favourite & Share -->
+			<div class="sc-single-product__actions-row" aria-label="<?php esc_attr_e( 'Product Actions', 'spicecraft' ); ?>">
+				<button type="button" 
+					class="sc-single-product__fav-btn sc-btn sc-btn--outline" 
+					data-product-id="<?php echo esc_attr( $product_id ); ?>" 
+					aria-pressed="false" 
+					aria-label="<?php echo esc_attr( sprintf( __( 'Add %s to favourites', 'spicecraft' ), $product_name ) ); ?>">
+					<svg class="sc-heart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+					</svg>
+					<span class="sc-fav-text"><?php esc_html_e( 'Save to Favourites', 'spicecraft' ); ?></span>
+				</button>
+
+				<button type="button" 
+					class="sc-single-product__share-btn sc-btn sc-btn--outline" 
+					id="sc-share-product-btn" 
+					aria-label="<?php esc_attr_e( 'Share this product', 'spicecraft' ); ?>" 
+					data-title="<?php echo esc_attr( $product_name ); ?>" 
+					data-url="<?php echo esc_url( get_permalink( $product_id ) ); ?>">
+					<svg class="sc-share-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<circle cx="18" cy="5" r="3"></circle>
+						<circle cx="6" cy="12" r="3"></circle>
+						<circle cx="18" cy="19" r="3"></circle>
+						<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+						<line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+					</svg>
+					<span><?php esc_html_e( 'Share Product', 'spicecraft' ); ?></span>
+				</button>
+				<span class="sc-share-toast" id="sc-share-toast" role="status" aria-live="polite" style="display: none;"></span>
+			</div>
 
 			<!-- Product Highlights System (Only rendered when configured by admin) -->
 			<?php if ( ! empty( $highlights ) ) : ?>
@@ -522,6 +559,25 @@ $mailto_url = 'mailto:' . sanitize_email( $contact_email ) . '?subject=' . rawur
 			)
 		);
 		?>
+	</section>
+
+	<!-- ====================================================================
+	     4. RECENTLY VIEWED PRODUCTS SECTION (Client-side localStorage driven)
+	     ==================================================================== -->
+	<section class="sc-recently-viewed" id="sc-recently-viewed" style="display: none;" aria-labelledby="recently-viewed-heading">
+		<div class="sc-related-products__header">
+			<span class="sc-related-products__eyebrow"><?php esc_html_e( 'Your History', 'spicecraft' ); ?></span>
+			<h2 id="recently-viewed-heading" class="sc-related-products__title">
+				<?php esc_html_e( 'Recently Viewed Spices', 'spicecraft' ); ?>
+			</h2>
+			<p class="sc-related-products__sub">
+				<?php esc_html_e( 'Products you have recently explored from our artisanal spice catalog.', 'spicecraft' ); ?>
+			</p>
+		</div>
+
+		<div class="woocommerce columns-4">
+			<ul class="products columns-4 sc-products-grid" id="sc-recently-viewed-grid"></ul>
+		</div>
 	</section>
 
 </div><!-- #product-<?php the_ID(); ?> -->

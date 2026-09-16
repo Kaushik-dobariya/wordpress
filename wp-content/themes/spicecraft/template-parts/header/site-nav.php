@@ -14,55 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$phone        = function_exists( 'spicecraft_get_setting' ) ? spicecraft_get_setting( 'phone_primary', '' ) : spicecraft_get_theme_option( 'spicecraft_phone_number', '' );
-$clean_phone  = ! empty( $phone ) ? spicecraft_clean_phone_number( $phone ) : '';
-$export_email = function_exists( 'spicecraft_get_setting' ) ? spicecraft_get_setting( 'email_export', spicecraft_get_setting( 'email_sales', '' ) ) : spicecraft_get_theme_option( 'spicecraft_export_email', '' );
-$whatsapp_num = function_exists( 'spicecraft_get_setting' ) ? spicecraft_get_setting( 'whatsapp_number', '' ) : spicecraft_get_theme_option( 'spicecraft_whatsapp_number', '' );
-$whatsapp_url = ! empty( $whatsapp_num ) ? spicecraft_get_whatsapp_enquiry_url() : '';
-
 // Dynamic Header CTA
 $cta_text     = function_exists( 'spicecraft_get_setting' ) ? spicecraft_get_setting( 'header_cta_text', '' ) : '';
 $cta_text     = ! empty( $cta_text ) ? $cta_text : __( 'Trade Enquiry', 'spicecraft' );
 $cta_url      = function_exists( 'spicecraft_get_setting' ) ? spicecraft_get_setting( 'header_cta_url', '' ) : '';
 $cta_url      = ! empty( $cta_url ) ? $cta_url : home_url( '/#contact' );
 ?>
-
-<!-- Top Announcement & Contact Bar -->
-<?php if ( ! empty( $phone ) || ! empty( $export_email ) || ! empty( $whatsapp_url ) ) : ?>
-<div class="sc-topbar">
-	<div class="sc-container sc-topbar__inner">
-		<div class="sc-topbar__contact">
-			<?php if ( ! empty( $phone ) ) : ?>
-				<a href="tel:<?php echo esc_attr( $clean_phone ); ?>" class="sc-topbar__link">
-					<svg class="sc-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-					</svg>
-					<span><?php echo esc_html( $phone ); ?></span>
-				</a>
-			<?php endif; ?>
-
-			<?php if ( ! empty( $export_email ) ) : ?>
-				<a href="mailto:<?php echo esc_attr( sanitize_email( $export_email ) ); ?>" class="sc-topbar__link">
-					<svg class="sc-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-						<polyline points="22,6 12,13 2,6"/>
-					</svg>
-					<span><?php echo esc_html( $export_email ); ?></span>
-				</a>
-			<?php endif; ?>
-		</div>
-
-		<?php if ( ! empty( $whatsapp_url ) ) : ?>
-			<div class="sc-topbar__actions">
-				<a href="<?php echo esc_url( $whatsapp_url ); ?>" target="_blank" rel="noopener noreferrer" class="sc-topbar__link">
-					<span style="color: var(--sc-color-whatsapp); font-weight: 700;">●</span>
-					<span><?php esc_html_e( 'Quick WhatsApp Trade Chat', 'spicecraft' ); ?></span>
-				</a>
-			</div>
-		<?php endif; ?>
-	</div>
-</div>
-<?php endif; ?>
 
 <!-- Main Header Row -->
 <div class="sc-header-main">
@@ -134,8 +91,9 @@ $cta_url      = ! empty( $cta_url ) ? $cta_url : home_url( '/#contact' );
 				</svg>
 			</button>
 
-			<!-- Favourites Trigger with Counter Badge Placeholder -->
-			<a href="#favourites" class="sc-header-action sc-header-favourite" aria-label="<?php esc_attr_e( 'Favourite Products', 'spicecraft' ); ?>" title="<?php esc_attr_e( 'Favourite Products', 'spicecraft' ); ?>">
+			<!-- Favourites Trigger with Counter Badge -->
+			<?php $fav_url = function_exists( 'spicecraft_get_favourites_url' ) ? spicecraft_get_favourites_url() : home_url( '/favourites/' ); ?>
+			<a href="<?php echo esc_url( $fav_url ); ?>" class="sc-header-action sc-header-favourite" aria-label="<?php esc_attr_e( 'Saved Favourite Products', 'spicecraft' ); ?>" title="<?php esc_attr_e( 'Saved Favourite Products', 'spicecraft' ); ?>">
 				<svg class="sc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 					<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
 				</svg>

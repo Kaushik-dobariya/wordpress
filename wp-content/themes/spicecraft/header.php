@@ -25,6 +25,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'spicecraft' ); ?></a>
 
+<?php get_template_part( 'template-parts/header/top-bar' ); ?>
+
 <header id="masthead" class="site-header">
 	<?php get_template_part( 'template-parts/header/site-nav' ); ?>
 </header>

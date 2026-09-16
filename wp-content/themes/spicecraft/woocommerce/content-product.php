@@ -49,6 +49,7 @@ $average      = $product->get_average_rating();
 			class="sc-product-card__favourite" 
 			aria-label="<?php echo esc_attr( sprintf( __( 'Add %s to favourites', 'spicecraft' ), $title ) ); ?>" 
 			data-product-id="<?php echo esc_attr( $product_id ); ?>"
+			aria-pressed="false"
 			title="<?php esc_attr_e( 'Save to Favourites', 'spicecraft' ); ?>">
 			<svg class="sc-heart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 				<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>

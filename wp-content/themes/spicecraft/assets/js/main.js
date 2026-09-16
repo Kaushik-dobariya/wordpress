@@ -115,20 +115,83 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // =========================================================================
-    // 4. Header Scroll State (Sticky Elevation)
+    // 4. Header Scroll State & Scroll-to-Top Floating Action
     // =========================================================================
     const header = document.querySelector('.site-header');
-    if (header) {
-        const handleScroll = function () {
-            if (window.scrollY > 20) {
-                header.classList.add('is-scrolled');
-            } else {
-                header.classList.remove('is-scrolled');
-            }
-        };
+    const scrollTopBtn = document.getElementById('sc-scroll-top');
+    const HEADER_SCROLL_THRESHOLD = 50; // px
+    const SCROLL_TOP_THRESHOLD = 350;   // px
+    let ticking = false;
 
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll();
+    function updateScrollState() {
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+
+        // 4a. Header sticky scrolled state
+        if (header) {
+            if (scrollY > HEADER_SCROLL_THRESHOLD) {
+                if (!header.classList.contains('is-scrolled')) {
+                    header.classList.add('is-scrolled');
+                }
+            } else {
+                if (header.classList.contains('is-scrolled')) {
+                    header.classList.remove('is-scrolled');
+                }
+            }
+        }
+
+        // 4b. WordPress Admin Bar mobile offset compensation (<= 600px where admin bar is absolute)
+        if (document.body.classList.contains('admin-bar') && window.innerWidth <= 600) {
+            if (scrollY > 46) {
+                document.body.classList.add('is-scrolled-past-adminbar');
+            } else {
+                document.body.classList.remove('is-scrolled-past-adminbar');
+            }
+        }
+
+        // 4c. Scroll-to-top floating button visibility
+        if (scrollTopBtn) {
+            if (scrollY > SCROLL_TOP_THRESHOLD) {
+                if (!scrollTopBtn.classList.contains('is-visible')) {
+                    scrollTopBtn.classList.add('is-visible');
+                }
+            } else {
+                if (scrollTopBtn.classList.contains('is-visible')) {
+                    scrollTopBtn.classList.remove('is-visible');
+                }
+            }
+        }
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', function () {
+        if (!ticking) {
+            window.requestAnimationFrame(updateScrollState);
+            ticking = true;
+        }
+    }, { passive: true });
+
+    // Initial check on load
+    updateScrollState();
+
+    // 4d. Scroll-to-top click and keyboard activation
+    if (scrollTopBtn) {
+        scrollTopBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            window.scrollTo({
+                top: 0,
+                behavior: prefersReducedMotion ? 'auto' : 'smooth'
+            });
+
+            // Set focus back to skip link or body top for keyboard users
+            const skipLink = document.querySelector('.skip-link');
+            if (skipLink) {
+                skipLink.focus();
+            } else {
+                document.body.focus();
+            }
+        });
     }
 
     // =========================================================================

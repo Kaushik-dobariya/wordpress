@@ -229,3 +229,108 @@ Available across both plugin and theme with safe fallbacks:
 - Dedicated Recipe CPT and career management systems.
 - Catalog faceted search and AJAX filtering.
 
+---
+
+## 8. Phase 2 — Step 3: Advanced Product Discovery, Favourites, Recently Viewed & Enquiry UX
+
+### Architecture & Overview
+Phase 2 Step 3 transforms the WooCommerce product catalog into an interactive, high-performance product discovery experience for FMCG/spice buyers without introducing any e-commerce checkout or transactional overhead. All discovery pathways culminate in targeted WhatsApp Business and trade email inquiries.
+
+### A. Search Behavior
+- **Multi-Field Matching:** WordPress `posts_search` filter is customized in `inc/product-discovery.php` to query:
+  - Product Title (`post_title`)
+  - Product SKU (`_sku` via `postmeta`)
+  - Product Categories (`product_cat`)
+  - Product Tags (`product_tag`)
+  - Product Description & Excerpt (`post_content`, `post_excerpt`)
+- **Clear Search Button:** Dynamic `×` clear button appears when search field has content, resetting query and focusing back to input.
+- **Debounced Live Search:** Lightweight REST/AJAX endpoint (`spicecraft_live_search`) debounced to 300ms. Triggers on queries >= 2 characters, displaying up to 6 instant suggestions with product thumbnail, category, and direct link.
+- **Contextual Search Results & Empty States:** Results display exact match count (`Search results for "..." (X products)`). Zero-result searches show an accessible, helpful empty state offering keyword suggestions, clear search button, and "Browse All Spices" link.
+
+### B. Catalog Filtering Architecture (URL-Query Driven)
+- **URL-Based State:** All filters utilize standard URL query parameters for bookmarkability, shareable links, browser back/forward navigation, and SEO crawlability without JavaScript dependency:
+  - `product_cat`: Category slug (e.g. `ground-spices`, `whole-spices`, `blended-masalas`)
+  - `pack_size`: Pack size value (e.g. `100g`, `250g`, `500g`, `1kg`) matching both WooCommerce attributes and FMCG custom pack size meta
+  - `rating`: Minimum star rating threshold (`4` for 4★ & above, `3` for 3★ & above)
+  - `tag`: Product tag slug
+- **Active Filter Chips:** Selected filters render as removable chips (`[ Ground Spices × ]`, `[ 500g × ]`). Removing a chip updates the query string while preserving all other active criteria. "Clear All" button resets all active filters with one click.
+- **Mobile Filter Drawer:** Off-canvas drawer (`#sc-filter-drawer`) with backdrop overlay. Features keyboard trap, `Escape` key close, body scroll locking, and explicit "Clear All" / "Show Results" actions.
+
+### C. Catalog Sorting
+Catalog sorting options are refined for a B2B/manufacturer catalog. Irrelevant price sorting options (`price`, `price-desc`) have been removed:
+- `menu_order`: Default / Featured
+- `date`: Newest Additions
+- `title`: Name A–Z
+- `title-desc`: Name Z–A
+- `rating`: Highest Customer Rated
+
+### D. Favourites System (No Registration Required)
+- **Storage Rule:** Uses browser `localStorage` under the key:
+  ```javascript
+  spicecraft_favourites = [12, 25, 44]
+  ```
+- **Instant Reactive UI:** Clicking the heart button (♡ / ♥) on any product card or single product page toggles state instantly with zero page reload. Sets `aria-pressed="true|false"` and dynamic accessible labels.
+- **Header Badge Sync:** The header favourite icon updates its badge counter in real time across the entire site. Zero state shows empty badge cleanly.
+- **Dedicated Favourites Page (`/favourites/`):**
+  - Powered by template `page-favourites.php` and shortcode `[spicecraft_favourites]`.
+  - Automatically fetches favorited products via AJAX endpoint `spicecraft_get_product_cards`.
+  - Employs the identical reusable `woocommerce/content-product.php` card component.
+  - Invalid, deleted, or draft products are purged from `localStorage` gracefully without breaking the layout.
+  - Accessible empty state invites visitors to explore products.
+
+### E. Recently Viewed Products
+- **Tracking Rule:** Automatically tracks single product page visits in `localStorage` under the key:
+  ```javascript
+  spicecraft_recently_viewed = [44, 25, 12]
+  ```
+- **Constraints:**
+  - Tracks exclusively on `is_product()` single pages; never on catalog, category, or search pages.
+  - Deduplication prevents repeating product IDs; newest view unshifted to front.
+  - Capped to a maximum of 10 products.
+  - Excludes the currently viewed product from its own Recently Viewed list.
+- **Dynamic Render:** Renders asynchronously in single product summary via AJAX, rendering up to 4 items in responsive grid (4 desktop, 2 tablet, 1-2 mobile). Completely hides if history is empty.
+
+### F. Product Detail Engagement & Social Sharing
+- **Native Share Action:** Uses the `navigator.share()` Web Share API on supported devices (mobile/modern browsers).
+- **Clipboard Fallback:** Gracefully copies product URL to clipboard on desktop/unsupported browsers, triggering an accessible, non-intrusive toast notification ("Product link copied to clipboard!").
+- **Zero Privacy Tracking:** No third-party social tracker widgets, tracking pixels, or iframe embeds.
+
+### G. Pack Size & Enquiry Integration
+- **Interactive Pack Selection:** Choosing a pack size (e.g. `200g`, `500g`) highlights the chip and updates inquiry URLs in real time.
+- **WhatsApp Enquiry:** Generates an encoded link with recipient phone from Global Settings (`spicecraft_whatsapp_number`), passing Product Name, SKU, Selected Pack Size, and Canonical URL.
+- **Email Enquiry:** Formats mailto link with pre-filled subject and structured body with Product Name, SKU, Pack Size, and Product URL.
+- **Inline Validation:** Clicking WhatsApp or Email without selecting a required pack size reveals an inline, accessible notification ("Please select a pack size before inquiring") without disruptive `alert()` dialogs.
+
+### H. Product Reviews & Ratings
+- **Native Moderation:** Uses native WooCommerce product review system and WordPress comment moderation.
+- **Genuine Averages:** Displays star ratings and review counts calculated directly from approved WooCommerce comment meta.
+- **Zero Reviews State:** Renders "Be the first to review this product" inviting engagement without negative 0.0 scores.
+
+### I. Single Consolidated Product Card
+All catalog views (Shop, Category, Tag, Search, Homepage Featured, Related Products, Recently Viewed, and Favourites) use **one consolidated template**: `woocommerce/content-product.php`. Eliminates design drift and ensures uniform favourite button functionality, image aspect ratios, badges, and view details CTAs.
+
+### J. Privacy & Performance
+- **Zero PII Collection:** `spicecraft_favourites` and `spicecraft_recently_viewed` contain purely integer IDs stored locally in the visitor's browser.
+- **Lightweight Footprint:** Zero external libraries, jQuery plugins, or heavy bundles. All logic is pure vanilla JavaScript (`product-discovery.js`, 15KB unminified) and modern scoped CSS (`product-discovery.css`, 10KB unminified).
+
+### K. Files Created & Modified in Step 3
+- **New Files:**
+  - `inc/product-discovery.php` — Query hooks, search filters, sorting overrides, AJAX handlers, shortcodes
+  - `page-favourites.php` — WordPress template for `/favourites/`
+  - `assets/css/product-discovery.css` — Filter bar, active chips, off-canvas drawer, toasts, heart animations
+  - `assets/js/product-discovery.js` — Live search, localStorage favourites/recently viewed, mobile drawer, pack validation
+- **Modified Files:**
+  - `functions.php` — Loaded `inc/product-discovery.php`
+  - `inc/enqueue.php` — Enqueued discovery styles and scripts, localized `spicecraftConfig`
+  - `woocommerce/archive-product.php` — Integrated filter bar, search clear, active chips, mobile drawer, results count
+  - `woocommerce/content-single-product.php` — Added actions row (favourite/share), pack validation notice, recently viewed container
+  - `woocommerce/content-product.php` — Added `aria-pressed="false"` attribute to card favourite button
+  - `template-parts/header/site-nav.php` — Linked header favourite button to `/favourites/`
+
+### L. Deferred Functionality
+- User accounts / login-based cross-device wishlist synchronization.
+- Server-side database wishlist storage.
+- Transactional cart, checkout, or online payments.
+- Multi-attribute faceted AJAX filtering with infinite scroll.
+
+

@@ -42,9 +42,6 @@ if ( empty( $heading ) && empty( $description ) && empty( $points ) ) {
 							? spicecraft_get_media_image( $main_img, 'large', array( 'class' => 'sc-quality-img', 'loading' => 'lazy' ) )
 							: wp_get_attachment_image( $main_img, 'large', false, array( 'class' => 'sc-quality-img', 'loading' => 'lazy' ) );
 						?>
-						<div class="sc-quality-badge-overlay">
-							<span class="sc-quality-badge-text"><?php esc_html_e( 'Direct Plantation Harvest', 'spicecraft' ); ?></span>
-						</div>
 					</div>
 				<?php endif; ?>
 

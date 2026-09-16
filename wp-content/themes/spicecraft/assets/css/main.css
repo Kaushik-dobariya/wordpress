@@ -202,16 +202,38 @@ img {
    SITE HEADER & NAVIGATION
    ========================================================================== */
 .site-header {
-    background-color: var(--sc-color-bg-surface);
+    background-color: var(--sc-color-bg-surface, #ffffff);
     border-bottom: 1px solid var(--sc-color-border-subtle);
     position: sticky;
     top: 0;
     z-index: 1000;
-    transition: box-shadow var(--sc-transition-base);
+    transition: background-color 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
+/* WordPress Admin Bar Positioning Compensation */
+body.admin-bar .site-header {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    body.admin-bar .site-header {
+        top: 46px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    body.admin-bar.is-scrolled-past-adminbar .site-header {
+        top: 0;
+    }
+}
+
+/* Scrolled Visual State */
 .site-header.is-scrolled {
-    box-shadow: var(--sc-shadow-md);
+    background-color: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-bottom-color: rgba(0, 0, 0, 0.06);
 }
 
 .sc-topbar {
@@ -247,6 +269,11 @@ img {
 
 .sc-header-main {
     padding: var(--sc-space-4) 0;
+    transition: padding 0.25s ease;
+}
+
+.site-header.is-scrolled .sc-header-main {
+    padding: calc(var(--sc-space-3, 12px) - 2px) 0;
 }
 
 .sc-header-main__inner {
@@ -261,6 +288,16 @@ img {
     align-items: center;
 }
 
+.site-branding .custom-logo {
+    max-height: 48px;
+    width: auto;
+    transition: max-height 0.25s ease;
+}
+
+.site-header.is-scrolled .site-branding .custom-logo {
+    max-height: 40px;
+}
+
 .site-title {
     font-family: var(--sc-font-serif);
     font-size: 1.85rem;
@@ -268,6 +305,11 @@ img {
     margin: 0;
     color: var(--sc-color-primary-dark);
     letter-spacing: 0.02em;
+    transition: font-size 0.25s ease;
+}
+
+.site-header.is-scrolled .site-title {
+    font-size: 1.65rem;
 }
 
 .site-title a {
@@ -699,5 +741,73 @@ body.sc-menu-open {
 
 .sc-breadcrumb a:hover {
     color: var(--sc-color-primary, #2b7a78);
+}
+
+/* ==========================================================================
+   FLOATING SCROLL-TO-TOP BUTTON
+   ========================================================================== */
+.sc-scroll-top {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--sc-radius-full, 9999px);
+    background-color: var(--sc-color-primary-dark, #122820);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 990;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px);
+    transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.2s ease, box-shadow 0.2s ease, visibility 0.25s;
+    padding: 0;
+}
+
+.sc-scroll-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.sc-scroll-top:hover {
+    background-color: var(--sc-color-primary, #1e4536);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+    transform: translateY(-2px);
+    color: #ffffff;
+}
+
+.sc-scroll-top:active {
+    transform: translateY(0);
+}
+
+.sc-scroll-top:focus-visible {
+    outline: 2px solid var(--sc-color-accent, #c27803);
+    outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+    .sc-scroll-top {
+        right: 18px;
+        bottom: 18px;
+        width: 44px;
+        height: 44px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .site-header,
+    .sc-header-main,
+    .site-branding .custom-logo,
+    .site-branding .site-title,
+    .sc-scroll-top {
+        transition: none !important;
+    }
 }
 

@@ -75,10 +75,6 @@ if ( empty( $heading ) && empty( $description ) && empty( $stats ) ) {
 							? spicecraft_get_media_image( $main_img, 'large', array( 'class' => 'sc-mfg-stage-img', 'loading' => 'lazy' ) )
 							: wp_get_attachment_image( $main_img, 'large', false, array( 'class' => 'sc-mfg-stage-img', 'loading' => 'lazy' ) );
 						?>
-						<div class="sc-mfg-stage-badge">
-							<span class="sc-mfg-badge-dot" aria-hidden="true"></span>
-							<span><?php esc_html_e( 'Cryogenic Pulverization Plant', 'spicecraft' ); ?></span>
-						</div>
 					</div>
 				<?php endif; ?>
 			</div>

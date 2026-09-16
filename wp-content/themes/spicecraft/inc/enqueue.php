@@ -104,6 +104,15 @@ function spicecraft_scripts() {
 		);
 	}
 
+	// 5c. Product Discovery Stylesheet (Catalog filtering, chips, favourites, search, engagement)
+	$disc_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/product-discovery.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/product-discovery.css' ) : SPICECRAFT_VERSION;
+	wp_enqueue_style(
+		'spicecraft-product-discovery',
+		SPICECRAFT_URI . '/assets/css/product-discovery.css',
+		array( 'spicecraft-responsive' ),
+		$disc_css_ver
+	);
+
 	// 6. Main Interactive JavaScript (Mobile Menu, Submenus, Search, Accessibility)
 	wp_enqueue_script(
 		'spicecraft-main',
@@ -113,19 +122,35 @@ function spicecraft_scripts() {
 		true
 	);
 
-	// 6. Localize script for secure AJAX, nonces, and global client settings
+	// 6b. Product Discovery JavaScript (Favourites, Recently Viewed, Filter Drawer, Live Search, Share)
+	$disc_js_ver = file_exists( SPICECRAFT_DIR . '/assets/js/product-discovery.js' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/js/product-discovery.js' ) : SPICECRAFT_VERSION;
+	wp_enqueue_script(
+		'spicecraft-product-discovery',
+		SPICECRAFT_URI . '/assets/js/product-discovery.js',
+		array( 'spicecraft-main' ),
+		$disc_js_ver,
+		true
+	);
+
+	// Localize script for secure AJAX, nonces, and global client settings
 	wp_localize_script(
 		'spicecraft-main',
 		'spicecraftConfig',
 		array(
-			'ajaxUrl'    => esc_url( admin_url( 'admin-ajax.php' ) ),
-			'nonce'      => wp_create_nonce( 'spicecraft_frontend_nonce' ),
-			'siteName'   => get_bloginfo( 'name' ),
-			'isWcActive' => class_exists( 'WooCommerce' ),
-			'i18n'       => array(
-				'menuOpen'      => esc_html__( 'Open Navigation Menu', 'spicecraft' ),
-				'menuClose'     => esc_html__( 'Close Navigation Menu', 'spicecraft' ),
-				'copiedSuccess' => esc_html__( 'Link copied to clipboard!', 'spicecraft' ),
+			'ajaxUrl'        => esc_url( admin_url( 'admin-ajax.php' ) ),
+			'nonce'          => wp_create_nonce( 'spicecraft_frontend_nonce' ),
+			'siteName'       => get_bloginfo( 'name' ),
+			'isWcActive'     => class_exists( 'WooCommerce' ),
+			'favouritesUrl'  => function_exists( 'spicecraft_get_favourites_url' ) ? esc_url( spicecraft_get_favourites_url() ) : home_url( '/favourites/' ),
+			'shopUrl'        => function_exists( 'wc_get_page_permalink' ) ? esc_url( wc_get_page_permalink( 'shop' ) ) : home_url( '/shop/' ),
+			'i18n'           => array(
+				'menuOpen'         => esc_html__( 'Open Navigation Menu', 'spicecraft' ),
+				'menuClose'        => esc_html__( 'Close Navigation Menu', 'spicecraft' ),
+				'copiedSuccess'    => esc_html__( 'Product link copied to clipboard!', 'spicecraft' ),
+				'favouriteAdded'   => esc_html__( 'Added to favourites', 'spicecraft' ),
+				'favouriteRemoved' => esc_html__( 'Removed from favourites', 'spicecraft' ),
+				'selectPackSize'   => esc_html__( 'Please select a pack size above before submitting an enquiry.', 'spicecraft' ),
+				'noLiveResults'    => esc_html__( 'No products found', 'spicecraft' ),
 			),
 		)
 	);

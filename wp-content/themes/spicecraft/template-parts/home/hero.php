@@ -103,21 +103,6 @@ if ( ! empty( $highlight_text ) && false !== stripos( $heading, $highlight_text 
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>
-
-			<div class="sc-hero-trust-bar">
-				<div class="sc-hero-trust-item">
-					<svg class="sc-trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
-					<span><?php esc_html_e( 'Single Origin Lot Tested', 'spicecraft' ); ?></span>
-				</div>
-				<div class="sc-hero-trust-item">
-					<svg class="sc-trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
-					<span><?php esc_html_e( 'Cryogenic Cold Milled', 'spicecraft' ); ?></span>
-				</div>
-				<div class="sc-hero-trust-item">
-					<svg class="sc-trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
-					<span><?php esc_html_e( 'Export Certified Facility', 'spicecraft' ); ?></span>
-				</div>
-			</div>
 		</div>
 
 		<?php if ( $desktop_img_id ) : ?>
@@ -135,11 +120,6 @@ if ( ! empty( $highlight_text ) && false !== stripos( $heading, $highlight_text 
 							? spicecraft_get_media_image( $desktop_img_id, 'large', $img_attr, $mobile_img_id )
 							: wp_get_attachment_image( $desktop_img_id, 'large', false, $img_attr );
 						?>
-					</div>
-					<!-- Subtle floating accent card -->
-					<div class="sc-hero-floating-badge" aria-hidden="true">
-						<span class="sc-floating-label"><?php esc_html_e( 'Artisanal Purity', 'spicecraft' ); ?></span>
-						<span class="sc-floating-sub"><?php esc_html_e( 'Zero Artificial Colors or Fillers', 'spicecraft' ); ?></span>
 					</div>
 				</div>
 			</div>

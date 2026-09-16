@@ -29,3 +29,4 @@ require_once SPICECRAFT_DIR . '/inc/helpers.php';
 require_once SPICECRAFT_DIR . '/inc/customizer.php';
 require_once SPICECRAFT_DIR . '/inc/catalog-mode.php';
 require_once SPICECRAFT_DIR . '/inc/woocommerce.php';
+require_once SPICECRAFT_DIR . '/inc/product-discovery.php';
