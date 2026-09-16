@@ -27,51 +27,76 @@ function spicecraft_is_woocommerce_active() {
  * @return mixed
  */
 function spicecraft_get_theme_option( $key, $default = '' ) {
+	if ( function_exists( 'spicecraft_get_setting' ) ) {
+		$val = spicecraft_get_setting( $key, null );
+		if ( null !== $val && '' !== $val ) {
+			return $val;
+		}
+	}
 	$value = get_theme_mod( $key, $default );
 	return ! empty( $value ) ? $value : $default;
 }
 
-/**
- * Normalize and sanitize a phone number for tel: links and WhatsApp API calls.
- * Removes non-numeric characters except leading plus sign.
- *
- * @param string $phone Raw phone string.
- * @return string Clean international phone string.
- */
-function spicecraft_clean_phone_number( $phone ) {
-	return preg_replace( '/[^0-9+]/', '', (string) $phone );
-}
-
-/**
- * Generate a dynamic, formatted WhatsApp click-to-chat URL.
- * Adheres to catalog enquiry lead generation requirements.
- *
- * @param string $product_name Optional product name.
- * @param string $pack_size    Optional pack size.
- * @return string Valid WhatsApp URL or '#' if unconfigured.
- */
-function spicecraft_get_whatsapp_enquiry_url( $product_name = '', $pack_size = '' ) {
-	$raw_whatsapp = spicecraft_get_theme_option( 'spicecraft_whatsapp_number', '+91 98765 43210' );
-	if ( empty( $raw_whatsapp ) ) {
-		return '#';
+if ( ! function_exists( 'spicecraft_clean_phone_number' ) ) :
+	/**
+	 * Normalize and sanitize a phone number for tel: links and WhatsApp API calls.
+	 * Removes non-numeric characters except leading plus sign.
+	 *
+	 * @param string $phone Raw phone string.
+	 * @return string Clean international phone string.
+	 */
+	function spicecraft_clean_phone_number( $phone ) {
+		return preg_replace( '/[^0-9+]/', '', (string) $phone );
 	}
+endif;
 
-	$clean_number = ltrim( spicecraft_clean_phone_number( $raw_whatsapp ), '+' );
+if ( ! function_exists( 'spicecraft_get_whatsapp_enquiry_url' ) ) :
+	/**
+	 * Generate a dynamic, formatted WhatsApp click-to-chat URL.
+	 * Adheres to catalog enquiry lead generation requirements.
+	 *
+	 * @param string $product_name Optional product name.
+	 * @param string $pack_size    Optional pack size.
+	 * @param string $sku          Optional product SKU.
+	 * @param string $product_url  Optional product permalink.
+	 * @return string Valid WhatsApp URL or empty string if unconfigured.
+	 */
+	function spicecraft_get_whatsapp_enquiry_url( $product_name = '', $pack_size = '', $sku = '', $product_url = '' ) {
+		$raw_whatsapp = spicecraft_get_theme_option( 'whatsapp_number', spicecraft_get_theme_option( 'spicecraft_whatsapp_number', '' ) );
+		if ( empty( $raw_whatsapp ) ) {
+			return '';
+		}
 
-	if ( ! empty( $product_name ) ) {
-		$size_label = ! empty( $pack_size ) ? ' - ' . $pack_size : '';
-		$message = sprintf(
-			/* translators: 1: Product name, 2: Pack size */
-			__( 'Hello, I am interested in %1$s%2$s. Please share more information regarding business/bulk supply.', 'spicecraft' ),
-			$product_name,
-			$size_label
-		);
-	} else {
-		$message = __( 'Hello, I am interested in your spice products. Please share your catalog and trade enquiry details.', 'spicecraft' );
+		$clean_number = ltrim( spicecraft_clean_phone_number( $raw_whatsapp ), '+' );
+		if ( empty( $clean_number ) ) {
+			return '';
+		}
+
+		if ( ! empty( $product_name ) ) {
+			$lines   = array();
+			$lines[] = sprintf( __( 'Hello, I am interested in %s.', 'spicecraft' ), $product_name );
+			$lines[] = '';
+			$lines[] = sprintf( __( 'Product: %s', 'spicecraft' ), $product_name );
+			if ( ! empty( $sku ) ) {
+				$lines[] = sprintf( __( 'SKU: %s', 'spicecraft' ), $sku );
+			}
+			if ( ! empty( $pack_size ) ) {
+				$lines[] = sprintf( __( 'Pack Size: %s', 'spicecraft' ), $pack_size );
+			}
+			if ( ! empty( $product_url ) ) {
+				$lines[] = sprintf( __( 'Product Link: %s', 'spicecraft' ), $product_url );
+			}
+			$lines[] = '';
+			$lines[] = __( 'Please share more information regarding business/bulk supply.', 'spicecraft' );
+			$message = implode( "\r\n", $lines );
+		} else {
+			$default_msg = spicecraft_get_theme_option( 'whatsapp_default_message', '' );
+			$message     = ! empty( $default_msg ) ? $default_msg : __( 'Hello, I am interested in your spice products. Please share your catalog and trade enquiry details.', 'spicecraft' );
+		}
+
+		return 'https://wa.me/' . rawurlencode( $clean_number ) . '?text=' . rawurlencode( $message );
 	}
-
-	return 'https://wa.me/' . rawurlencode( $clean_number ) . '?text=' . rawurlencode( $message );
-}
+endif;
 
 /**
  * Prints HTML with meta information for the current post-date/time.
@@ -151,56 +176,105 @@ function spicecraft_entry_footer() {
  * @return string
  */
 function spicecraft_get_product_badge( $product_id ) {
-	$badge = get_post_meta( $product_id, '_spicecraft_badge', true );
-	if ( ! empty( $badge ) ) {
-		return sanitize_text_field( $badge );
+	$badge_data = spicecraft_get_product_badge_data( $product_id );
+	return $badge_data['label'];
+}
+
+/**
+ * Retrieve full product badge information including display style.
+ *
+ * @param int $product_id Product ID.
+ * @return array Associative array with 'label' and 'style'.
+ */
+function spicecraft_get_product_badge_data( $product_id ) {
+	if ( function_exists( 'spicecraft_get_product_badge_meta' ) ) {
+		$badge_meta = spicecraft_get_product_badge_meta( $product_id );
+		if ( ! empty( $badge_meta['label'] ) ) {
+			return $badge_meta;
+		}
+	}
+
+	$label = get_post_meta( $product_id, '_sc_badge_label', true );
+	$style = get_post_meta( $product_id, '_sc_badge_style', true );
+	if ( ! empty( $label ) ) {
+		return array(
+			'label' => sanitize_text_field( $label ),
+			'style' => ! empty( $style ) ? sanitize_text_field( $style ) : 'primary',
+		);
+	}
+
+	$legacy_badge = get_post_meta( $product_id, '_spicecraft_badge', true );
+	if ( ! empty( $legacy_badge ) ) {
+		return array(
+			'label' => sanitize_text_field( $legacy_badge ),
+			'style' => 'primary',
+		);
 	}
 
 	// Check tags as fallback
 	$tags = wp_get_post_terms( $product_id, 'product_tag', array( 'fields' => 'names' ) );
 	if ( ! empty( $tags ) && ! is_wp_error( $tags ) ) {
-		return sanitize_text_field( $tags[0] );
+		return array(
+			'label' => sanitize_text_field( $tags[0] ),
+			'style' => 'secondary',
+		);
 	}
 
-	return '';
+	return array(
+		'label' => '',
+		'style' => 'primary',
+	);
 }
 
 /**
- * Retrieve available pack sizes dynamically from product attributes.
- * Supports both custom 'Pack Size' attributes and global taxonomies.
+ * Retrieve available pack sizes dynamically from product attributes & FMCG metadata.
+ * Supports both custom 'Pack Size' WooCommerce attributes and '_sc_pack_sizes' meta.
  *
  * @param WC_Product $product WooCommerce Product object.
- * @return array Array of pack size label strings.
+ * @return array Array of clean pack size label strings.
  */
 function spicecraft_get_product_pack_sizes( $product ) {
 	if ( ! $product instanceof WC_Product ) {
 		return array();
 	}
 
-	$attributes = $product->get_attributes();
-	if ( empty( $attributes ) ) {
-		return array();
-	}
+	$pack_sizes = array();
 
-	// Search for attributes with 'pack', 'size', or 'weight' in their names
-	foreach ( $attributes as $attr_name => $attr_obj ) {
-		$lower_name = strtolower( $attr_name );
-		if ( false !== strpos( $lower_name, 'pack' ) || false !== strpos( $lower_name, 'size' ) || false !== strpos( $lower_name, 'weight' ) ) {
-			if ( is_a( $attr_obj, 'WC_Product_Attribute' ) ) {
-				$options = $attr_obj->get_options();
-				if ( is_array( $options ) && ! empty( $options ) ) {
-					// Check if taxonomy based or custom text options
-					if ( $attr_obj->is_taxonomy() ) {
-						$terms = wc_get_product_terms( $product->get_id(), $attr_obj->get_name(), array( 'fields' => 'names' ) );
-						return array_map( 'sanitize_text_field', $terms );
+	// 1. Check WooCommerce Product Attributes
+	$attributes = $product->get_attributes();
+	if ( ! empty( $attributes ) ) {
+		foreach ( $attributes as $attr_name => $attr_obj ) {
+			$lower_name = strtolower( $attr_name );
+			if ( false !== strpos( $lower_name, 'pack' ) || false !== strpos( $lower_name, 'size' ) || false !== strpos( $lower_name, 'weight' ) ) {
+				if ( is_a( $attr_obj, 'WC_Product_Attribute' ) ) {
+					$options = $attr_obj->get_options();
+					if ( is_array( $options ) && ! empty( $options ) ) {
+						if ( $attr_obj->is_taxonomy() ) {
+							$terms = wc_get_product_terms( $product->get_id(), $attr_obj->get_name(), array( 'fields' => 'names' ) );
+							if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+								$pack_sizes = array_merge( $pack_sizes, array_map( 'sanitize_text_field', $terms ) );
+							}
+						} else {
+							$pack_sizes = array_merge( $pack_sizes, array_map( 'sanitize_text_field', $options ) );
+						}
 					}
-					return array_map( 'sanitize_text_field', $options );
 				}
 			}
 		}
 	}
 
-	return array();
+	// 2. Check Custom FMCG Pack Sizes Meta Field (_sc_pack_sizes)
+	$meta_packs = get_post_meta( $product->get_id(), '_sc_pack_sizes', true );
+	if ( ! empty( $meta_packs ) ) {
+		$parsed = array_map( 'trim', explode( ',', $meta_packs ) );
+		foreach ( $parsed as $p ) {
+			if ( '' !== $p && ! in_array( $p, $pack_sizes, true ) ) {
+				$pack_sizes[] = sanitize_text_field( $p );
+			}
+		}
+	}
+
+	return array_values( array_unique( $pack_sizes ) );
 }
 
 /**
@@ -225,6 +299,7 @@ function spicecraft_get_product_primary_category( $product_id ) {
 
 /**
  * Retrieve structured product specifications dynamically from attributes & metadata.
+ * Merges native WooCommerce attributes with custom FMCG spice specifications.
  *
  * @param WC_Product $product WooCommerce Product object.
  * @return array Associative array of [ 'Label' => 'Value' ].
@@ -234,34 +309,66 @@ function spicecraft_get_product_specs( $product ) {
 		return array();
 	}
 
-	$specs = array();
+	$product_id = $product->get_id();
+	$specs      = array();
 
-	// Check SKU
+	// SKU
 	$sku = $product->get_sku();
 	if ( ! empty( $sku ) ) {
 		$specs[ __( 'Product SKU', 'spicecraft' ) ] = $sku;
 	}
 
-	// Check Primary Category
-	$primary_cat = spicecraft_get_product_primary_category( $product->get_id() );
+	// Primary Category
+	$primary_cat = spicecraft_get_product_primary_category( $product_id );
 	if ( ! empty( $primary_cat ) ) {
 		$specs[ __( 'Category', 'spicecraft' ) ] = $primary_cat;
 	}
 
-	// Attributes (Origin, Grade, Shelf Life, Form, Processing, Packaging, etc.)
+	// Product Form / Type (Whole, Powder, Blended, Flakes, etc.)
+	$form = get_post_meta( $product_id, '_sc_form', true );
+	if ( ! empty( $form ) ) {
+		$specs[ __( 'Product Form', 'spicecraft' ) ] = sanitize_text_field( $form );
+	}
+
+	// Shelf Life
+	$shelf_life = function_exists( 'spicecraft_get_product_shelf_life' ) ? spicecraft_get_product_shelf_life( $product_id ) : get_post_meta( $product_id, '_sc_shelf_life', true );
+	if ( empty( $shelf_life ) ) {
+		$shelf_life = get_post_meta( $product_id, '_spicecraft_shelf_life', true );
+	}
+	if ( ! empty( $shelf_life ) ) {
+		$specs[ __( 'Shelf Life', 'spicecraft' ) ] = sanitize_text_field( $shelf_life );
+	}
+
+	// Origin & Region
+	if ( function_exists( 'spicecraft_get_product_origin' ) ) {
+		$origin_info = spicecraft_get_product_origin( $product_id );
+		if ( ! empty( $origin_info['country'] ) ) {
+			$specs[ __( 'Country of Origin', 'spicecraft' ) ] = $origin_info['country'];
+		}
+		if ( ! empty( $origin_info['region'] ) ) {
+			$specs[ __( 'Sourcing Region', 'spicecraft' ) ] = $origin_info['region'];
+		}
+	} else {
+		$country = get_post_meta( $product_id, '_sc_country_of_origin', true );
+		if ( ! empty( $country ) ) {
+			$specs[ __( 'Country of Origin', 'spicecraft' ) ] = sanitize_text_field( $country );
+		}
+	}
+
+	// WooCommerce Native Attributes (excluding pack size / weight)
 	$attributes = $product->get_attributes();
 	if ( ! empty( $attributes ) ) {
 		foreach ( $attributes as $attr_name => $attr_obj ) {
 			$lower = strtolower( $attr_name );
-			// Skip pack size as it has its own prominent selector
+			// Skip pack size as it has its own dedicated interactive selector
 			if ( false !== strpos( $lower, 'pack' ) || false !== strpos( $lower, 'size' ) || false !== strpos( $lower, 'weight' ) ) {
 				continue;
 			}
 			if ( is_a( $attr_obj, 'WC_Product_Attribute' ) ) {
 				$label = wc_attribute_label( $attr_obj->get_name() );
 				if ( $attr_obj->is_taxonomy() ) {
-					$terms = wc_get_product_terms( $product->get_id(), $attr_obj->get_name(), array( 'fields' => 'names' ) );
-					if ( ! empty( $terms ) ) {
+					$terms = wc_get_product_terms( $product_id, $attr_obj->get_name(), array( 'fields' => 'names' ) );
+					if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 						$specs[ $label ] = implode( ', ', $terms );
 					}
 				} else {
@@ -274,26 +381,18 @@ function spicecraft_get_product_specs( $product ) {
 		}
 	}
 
-	// Dynamic custom meta specifications if entered
-	$origin = get_post_meta( $product->get_id(), '_spicecraft_origin', true );
-	if ( ! empty( $origin ) && ! isset( $specs[ __( 'Origin', 'spicecraft' ) ] ) ) {
-		$specs[ __( 'Origin', 'spicecraft' ) ] = sanitize_text_field( $origin );
-	}
-
-	$shelf_life = get_post_meta( $product->get_id(), '_spicecraft_shelf_life', true );
-	if ( ! empty( $shelf_life ) && ! isset( $specs[ __( 'Shelf Life', 'spicecraft' ) ] ) ) {
-		$specs[ __( 'Shelf Life', 'spicecraft' ) ] = sanitize_text_field( $shelf_life );
-	}
-
-	$processing = get_post_meta( $product->get_id(), '_spicecraft_processing', true );
-	if ( ! empty( $processing ) && ! isset( $specs[ __( 'Processing Method', 'spicecraft' ) ] ) ) {
-		$specs[ __( 'Processing Method', 'spicecraft' ) ] = sanitize_text_field( $processing );
-	}
-
-	$packaging = get_post_meta( $product->get_id(), '_spicecraft_packaging', true );
-	if ( ! empty( $packaging ) && ! isset( $specs[ __( 'Packaging Options', 'spicecraft' ) ] ) ) {
-		$specs[ __( 'Packaging Options', 'spicecraft' ) ] = sanitize_text_field( $packaging );
+	// Custom Repeatable Specifications Table from SpiceCraft Core
+	if ( function_exists( 'spicecraft_get_product_custom_specs' ) ) {
+		$custom_specs = spicecraft_get_product_custom_specs( $product_id );
+		if ( ! empty( $custom_specs ) && is_array( $custom_specs ) ) {
+			foreach ( $custom_specs as $row ) {
+				if ( ! empty( $row['label'] ) && ! empty( $row['value'] ) ) {
+					$specs[ sanitize_text_field( $row['label'] ) ] = sanitize_text_field( $row['value'] );
+				}
+			}
+		}
 	}
 
 	return $specs;
 }
+

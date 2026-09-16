@@ -14,13 +14,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$phone        = spicecraft_get_theme_option( 'spicecraft_phone_number', '+91 (0) 79 1234 5678' );
-$clean_phone  = spicecraft_clean_phone_number( $phone );
-$export_email = spicecraft_get_theme_option( 'spicecraft_export_email', 'exports@spicecraft.local' );
-$whatsapp_url = spicecraft_get_whatsapp_enquiry_url();
+$phone        = function_exists( 'spicecraft_get_setting' ) ? spicecraft_get_setting( 'phone_primary', '' ) : spicecraft_get_theme_option( 'spicecraft_phone_number', '' );
+$clean_phone  = ! empty( $phone ) ? spicecraft_clean_phone_number( $phone ) : '';
+$export_email = function_exists( 'spicecraft_get_setting' ) ? spicecraft_get_setting( 'email_export', spicecraft_get_setting( 'email_sales', '' ) ) : spicecraft_get_theme_option( 'spicecraft_export_email', '' );
+$whatsapp_num = function_exists( 'spicecraft_get_setting' ) ? spicecraft_get_setting( 'whatsapp_number', '' ) : spicecraft_get_theme_option( 'spicecraft_whatsapp_number', '' );
+$whatsapp_url = ! empty( $whatsapp_num ) ? spicecraft_get_whatsapp_enquiry_url() : '';
+
+// Dynamic Header CTA
+$cta_text     = function_exists( 'spicecraft_get_setting' ) ? spicecraft_get_setting( 'header_cta_text', '' ) : '';
+$cta_text     = ! empty( $cta_text ) ? $cta_text : __( 'Trade Enquiry', 'spicecraft' );
+$cta_url      = function_exists( 'spicecraft_get_setting' ) ? spicecraft_get_setting( 'header_cta_url', '' ) : '';
+$cta_url      = ! empty( $cta_url ) ? $cta_url : home_url( '/#contact' );
 ?>
 
 <!-- Top Announcement & Contact Bar -->
+<?php if ( ! empty( $phone ) || ! empty( $export_email ) || ! empty( $whatsapp_url ) ) : ?>
 <div class="sc-topbar">
 	<div class="sc-container sc-topbar__inner">
 		<div class="sc-topbar__contact">
@@ -44,14 +52,17 @@ $whatsapp_url = spicecraft_get_whatsapp_enquiry_url();
 			<?php endif; ?>
 		</div>
 
-		<div class="sc-topbar__actions">
-			<a href="<?php echo esc_url( $whatsapp_url ); ?>" target="_blank" rel="noopener noreferrer" class="sc-topbar__link">
-				<span style="color: var(--sc-color-whatsapp); font-weight: 700;">●</span>
-				<span><?php esc_html_e( 'Quick WhatsApp Trade Chat', 'spicecraft' ); ?></span>
-			</a>
-		</div>
+		<?php if ( ! empty( $whatsapp_url ) ) : ?>
+			<div class="sc-topbar__actions">
+				<a href="<?php echo esc_url( $whatsapp_url ); ?>" target="_blank" rel="noopener noreferrer" class="sc-topbar__link">
+					<span style="color: var(--sc-color-whatsapp); font-weight: 700;">●</span>
+					<span><?php esc_html_e( 'Quick WhatsApp Trade Chat', 'spicecraft' ); ?></span>
+				</a>
+			</div>
+		<?php endif; ?>
 	</div>
 </div>
+<?php endif; ?>
 
 <!-- Main Header Row -->
 <div class="sc-header-main">
@@ -128,8 +139,8 @@ $whatsapp_url = spicecraft_get_whatsapp_enquiry_url();
 			</a>
 
 			<!-- Desktop Contact / Trade Enquiry CTA -->
-			<a href="<?php echo esc_url( home_url( '/#contact' ) ); ?>" class="sc-btn sc-btn--primary sc-header-cta">
-				<?php esc_html_e( 'Trade Enquiry', 'spicecraft' ); ?>
+			<a href="<?php echo esc_url( $cta_url ); ?>" class="sc-btn sc-btn--primary sc-header-cta">
+				<?php echo esc_html( $cta_text ); ?>
 			</a>
 
 			<!-- Mobile Menu Toggle Button -->
@@ -175,8 +186,8 @@ $whatsapp_url = spicecraft_get_whatsapp_enquiry_url();
 		);
 		?>
 		<div style="padding: var(--sc-space-4); border-top: 1px solid var(--sc-color-border-subtle); margin-top: var(--sc-space-4);">
-			<a href="<?php echo esc_url( home_url( '/#contact' ) ); ?>" class="sc-btn sc-btn--primary sc-btn--full">
-				<?php esc_html_e( 'Submit Trade Enquiry', 'spicecraft' ); ?>
+			<a href="<?php echo esc_url( $cta_url ); ?>" class="sc-btn sc-btn--primary sc-btn--full">
+				<?php echo esc_html( $cta_text ); ?>
 			</a>
 		</div>
 	</div>

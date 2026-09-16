@@ -25,10 +25,15 @@ get_header();
 			<?php get_search_form(); ?>
 		</div>
 
-		<div>
-			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="sc-btn sc-btn--primary">
+		<div style="display: flex; gap: var(--sc-space-4); justify-content: center; flex-wrap: wrap;">
+			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="sc-btn sc-btn--secondary">
 				&larr; <?php esc_html_e( 'Return to Homepage', 'spicecraft' ); ?>
 			</a>
+			<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+				<a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="sc-btn sc-btn--primary">
+					<?php esc_html_e( 'Browse Spices Catalog', 'spicecraft' ); ?> &rarr;
+				</a>
+			<?php endif; ?>
 		</div>
 	</section>
 </div>

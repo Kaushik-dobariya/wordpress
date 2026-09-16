@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const config = window.spicecraftConfig || {};
 
     // =========================================================================
-    // 1. Mobile Menu Toggle & Keyboard Trap
+    // 1. Mobile Menu Toggle & Keyboard Trap & Submenu Expansion
     // =========================================================================
     const menuToggle = document.querySelector('.sc-menu-toggle');
     const mobileDrawer = document.querySelector('.sc-mobile-drawer');
@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
             menuToggle.setAttribute('aria-expanded', !isExpanded);
             mobileDrawer.classList.toggle('is-active');
+            document.body.classList.toggle('sc-menu-open');
 
             const label = !isExpanded 
                 ? (config.i18n && config.i18n.menuClose ? config.i18n.menuClose : 'Close Navigation Menu')
@@ -38,8 +39,23 @@ document.addEventListener('DOMContentLoaded', function () {
             if (e.key === 'Escape' && mobileDrawer.classList.contains('is-active')) {
                 menuToggle.setAttribute('aria-expanded', 'false');
                 mobileDrawer.classList.remove('is-active');
+                document.body.classList.remove('sc-menu-open');
                 menuToggle.focus();
             }
+        });
+
+        // Mobile submenu tap to expand
+        const mobileParentItems = mobileDrawer.querySelectorAll('.menu-item-has-children > a');
+        mobileParentItems.forEach(function (parentLink) {
+            parentLink.addEventListener('click', function (e) {
+                const parentLi = parentLink.parentElement;
+                const subMenu = parentLi.querySelector('.sub-menu');
+                if (subMenu) {
+                    e.preventDefault();
+                    parentLi.classList.toggle('is-open');
+                    subMenu.style.display = parentLi.classList.contains('is-open') ? 'block' : 'none';
+                }
+            });
         });
     }
 
@@ -148,8 +164,25 @@ document.addEventListener('DOMContentLoaded', function () {
                     const currentHref = whatsappBtn.getAttribute('href');
                     if (currentHref && currentHref.includes('wa.me')) {
                         const url = new URL(currentHref);
-                        const message = 'Hello, I am interested in ' + productName + ' - ' + selectedSize + '. Please share more information regarding business/bulk supply.';
-                        url.searchParams.set('text', message);
+                        const sku = singleProduct.getAttribute('data-product-sku') || '';
+                        const lines = [];
+                        lines.push('Hello, I am interested in ' + productName + '.');
+                        lines.push('');
+                        lines.push('Product:');
+                        lines.push(productName);
+                        if (sku) {
+                            lines.push('');
+                            lines.push('SKU:');
+                            lines.push(sku);
+                        }
+                        if (selectedSize) {
+                            lines.push('');
+                            lines.push('Pack Size:');
+                            lines.push(selectedSize);
+                        }
+                        lines.push('');
+                        lines.push('Please share more information.');
+                        url.searchParams.set('text', lines.join('\n'));
                         whatsappBtn.setAttribute('href', url.toString());
                     }
                 }

@@ -1,0 +1,115 @@
+/**
+ * SpiceCraft Core - Admin Meta Stylesheet
+ */
+.sc-metabox-wrapper {
+    background: #ffffff;
+    margin: -6px -12px -12px -12px;
+}
+
+/* Tabs */
+.sc-metabox-tabs {
+    display: flex;
+    background: #f0f0f1;
+    border-bottom: 1px solid #c3c4c7;
+    overflow-x: auto;
+}
+
+.sc-metabox-tab-btn {
+    background: transparent;
+    border: none;
+    border-right: 1px solid #c3c4c7;
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #50575e;
+    cursor: pointer;
+    transition: all 150ms ease;
+    outline: none;
+}
+
+.sc-metabox-tab-btn:hover {
+    background: #f6f7f7;
+    color: #1d2327;
+}
+
+.sc-metabox-tab-btn.is-active {
+    background: #ffffff;
+    color: #9e2a2b;
+    border-bottom: 2px solid #9e2a2b;
+    margin-bottom: -1px;
+}
+
+/* Panels */
+.sc-metabox-panel {
+    padding: 18px 20px;
+}
+
+.sc-form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.sc-col {
+    flex: 1;
+}
+
+.sc-col-full {
+    width: 100%;
+}
+
+.sc-form-row label {
+    display: block;
+    margin-bottom: 6px;
+    color: #1d2327;
+}
+
+/* Repeatable List & Tables */
+.sc-repeatable-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.sc-repeatable-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sc-drag-handle {
+    cursor: grab;
+    color: #8c8f94;
+}
+
+.sc-remove-row-btn {
+    color: #d63638 !important;
+    border-color: #d63638 !important;
+    font-weight: bold !important;
+    width: 30px;
+    text-align: center;
+}
+
+.sc-remove-row-btn:hover {
+    background: #d63638 !important;
+    color: #ffffff !important;
+}
+
+.sc-repeatable-table th {
+    font-weight: 600;
+    background: #f6f7f7;
+}
+
+.sc-repeatable-table td {
+    vertical-align: middle;
+}
+
+/* Global Settings Page Wrap */
+.spicecraft-settings-wrap {
+    max-width: 1000px;
+}
+
+.spicecraft-settings-wrap .form-table th {
+    width: 250px;
+}

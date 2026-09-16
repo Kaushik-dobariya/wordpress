@@ -27,7 +27,9 @@ if ( empty( $product ) || ! $product->is_visible() ) {
 $product_id   = $product->get_id();
 $permalink    = esc_url( get_permalink( $product_id ) );
 $title        = get_the_title();
-$badge        = spicecraft_get_product_badge( $product_id );
+$badge_data   = spicecraft_get_product_badge_data( $product_id );
+$badge        = $badge_data['label'];
+$badge_style  = ! empty( $badge_data['style'] ) ? $badge_data['style'] : 'primary';
 $pack_sizes   = spicecraft_get_product_pack_sizes( $product );
 $primary_cat  = spicecraft_get_product_primary_category( $product_id );
 $rating_count = $product->get_rating_count();
@@ -38,7 +40,7 @@ $average      = $product->get_average_rating();
 	<!-- 1. Media Surface Container -->
 	<div class="sc-product-card__media">
 		<?php if ( ! empty( $badge ) ) : ?>
-			<span class="sc-product-card__badge sc-badge sc-badge--<?php echo esc_attr( sanitize_title( $badge ) ); ?>">
+			<span class="sc-product-card__badge sc-badge sc-badge--<?php echo esc_attr( $badge_style ); ?>">
 				<?php echo esc_html( $badge ); ?>
 			</span>
 		<?php endif; ?>
