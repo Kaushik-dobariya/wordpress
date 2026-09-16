@@ -1,0 +1,166 @@
+/**
+ * SpiceCraft - Responsive Foundation Stylesheet
+ *
+ * Mobile-first responsive rules tested across 320px, 375px, 768px, 1024px, and 1440px+.
+ * Strictly prevents horizontal overflow and ensures fluid component adaptations.
+ *
+ * @package SpiceCraft
+ * @since 1.0.0
+ */
+
+/* ==========================================================================
+   OVERFLOW GUARDS & ROOT SAFETY
+   ========================================================================== */
+html,
+body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+/* ==========================================================================
+   VIEWPORT BREAKPOINTS (MOBILE-FIRST SCALE)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Small Handsets (320px – 374px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 374px) {
+    :root {
+        --sc-header-height: 70px;
+    }
+
+    .sc-container {
+        padding-left: var(--sc-space-3);
+        padding-right: var(--sc-space-3);
+    }
+
+    .sc-topbar__inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--sc-space-2);
+    }
+
+    .sc-topbar__contact {
+        flex-direction: column;
+        gap: var(--sc-space-1);
+    }
+
+    .sc-header-main__inner {
+        gap: var(--sc-space-2);
+    }
+
+    .site-title {
+        font-size: 1.45rem;
+    }
+
+    .sc-btn {
+        padding: 0.65rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    .sc-header-actions {
+        gap: 0.25rem;
+    }
+
+    .sc-header-action {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Standard Mobile Handsets (375px – 767px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 375px) and (max-width: 767px) {
+    .sc-topbar__inner {
+        justify-content: space-between;
+    }
+
+    .sc-header-actions {
+        gap: var(--sc-space-2);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Tablet Form Factors (768px – 1023px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+    .sc-topbar__inner {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .sc-header-main {
+        padding: var(--sc-space-4) 0;
+    }
+
+    .sc-footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--sc-space-8);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Laptops & Standard Desktops (1024px – 1439px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+    .sc-menu-toggle {
+        display: none !important;
+    }
+
+    .main-navigation {
+        display: block !important;
+    }
+
+    .sc-mobile-drawer {
+        display: none !important;
+    }
+
+    .sc-header-cta {
+        display: inline-flex !important;
+    }
+
+    .sc-footer-grid {
+        grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Large Desktops & High-Res Displays (1440px+)
+   -------------------------------------------------------------------------- */
+@media (min-width: 1440px) {
+    .sc-container {
+        max-width: var(--sc-container-max);
+    }
+
+    .sc-container--wide {
+        max-width: var(--sc-container-wide);
+    }
+}
+
+/* ==========================================================================
+   ACCESSIBLE SEARCH BAR & DRAWER RESPONSIVENESS
+   ========================================================================== */
+.sc-search-drawer {
+    display: none;
+    background-color: var(--sc-color-bg-surface);
+    border-bottom: 1px solid var(--sc-color-border);
+    padding: var(--sc-space-4) 0;
+    box-shadow: var(--sc-shadow-md);
+}
+
+.sc-search-drawer.is-active {
+    display: block;
+    animation: scSlideDown 200ms ease-out forwards;
+}
+
+@keyframes scSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

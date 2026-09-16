@@ -1,0 +1,172 @@
+/*
+Theme Name: SpiceCraft - Premium Spices & Food Catalog
+Theme URI: https://spicecraft.local
+Author: SpiceCraft Architecture Team
+Author URI: https://spicecraft.local
+Description: Premium FMCG Spices & Food Manufacturer CMS & Catalog WordPress Theme. Built for high performance, accessibility, and catalog-mode product discovery without transactional e-commerce overhead.
+Version: 1.0.0
+Requires at least: 6.4
+Tested up to: 7.1
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: spicecraft
+Tags: food-and-drink, custom-header, custom-logo, custom-menu, featured-images, flexible-header, full-width-template, translation-ready, accessibility-ready
+*/
+
+/**
+ * ============================================================================
+ * SPICECRAFT CORE DESIGN SYSTEM TOKENS
+ * ============================================================================
+ * Curated palette reflecting rich Indian spice heritage:
+ * Saffron, Turmeric, Clove, Cardamom, Terracotta & Warm Basmati Creams.
+ */
+:root {
+    /* Brand Color Palette */
+    --sc-color-primary: #9e2a2b;          /* Rich Terracotta / Kashmiri Chilli Red */
+    --sc-color-primary-dark: #6e1a24;     /* Deep Burgundy / Clove */
+    --sc-color-primary-light: #bd3a42;    /* Warm Red */
+    --sc-color-accent: #d97706;           /* Golden Saffron / Turmeric */
+    --sc-color-accent-light: #f59e0b;     /* Warm Mustard */
+    --sc-color-secondary: #285238;        /* Cardamom / Deep Forest Botanical */
+    --sc-color-secondary-light: #3d7051;  /* Fresh Herbal Green */
+    --sc-color-whatsapp: #25d366;         /* Official WhatsApp Green */
+
+    /* Neutral & Background Tones */
+    --sc-color-dark: #1f1d1d;             /* Peppercorn Charcoal */
+    --sc-color-dark-soft: #332f2e;        /* Muted Charcoal */
+    --sc-color-text-main: #2b2625;        /* Primary Body Text */
+    --sc-color-text-muted: #6b6360;       /* Secondary Muted Text */
+    --sc-color-bg-body: #faf7f2;          /* Basmati Warm White */
+    --sc-color-bg-surface: #ffffff;       /* Pure Card White */
+    --sc-color-bg-subtle: #f3ede2;        /* Light Spice Cream */
+    --sc-color-border: #e6ded1;           /* Warm Sand Border */
+    --sc-color-border-subtle: #f0eae0;
+
+    /* Typography */
+    --sc-font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --sc-font-serif: 'Cormorant Garamond', Georgia, Cambria, 'Times New Roman', Times, serif;
+
+    /* Spacing Scale */
+    --sc-space-1: 0.25rem;
+    --sc-space-2: 0.5rem;
+    --sc-space-3: 0.75rem;
+    --sc-space-4: 1rem;
+    --sc-space-5: 1.25rem;
+    --sc-space-6: 1.5rem;
+    --sc-space-8: 2rem;
+    --sc-space-10: 2.5rem;
+    --sc-space-12: 3rem;
+    --sc-space-16: 4rem;
+    --sc-space-20: 5rem;
+
+    /* Layout */
+    --sc-container-max: 1280px;
+    --sc-container-narrow: 840px;
+    --sc-container-wide: 1440px;
+    --sc-header-height: 80px;
+
+    /* Elevation & Shadows */
+    --sc-shadow-sm: 0 1px 3px rgba(43, 38, 37, 0.06), 0 1px 2px rgba(43, 38, 37, 0.04);
+    --sc-shadow-md: 0 4px 6px -1px rgba(43, 38, 37, 0.07), 0 2px 4px -1px rgba(43, 38, 37, 0.04);
+    --sc-shadow-lg: 0 10px 15px -3px rgba(43, 38, 37, 0.08), 0 4px 6px -2px rgba(43, 38, 37, 0.03);
+    --sc-shadow-xl: 0 20px 25px -5px rgba(43, 38, 37, 0.08), 0 10px 10px -5px rgba(43, 38, 37, 0.02);
+
+    /* Border Radius */
+    --sc-radius-sm: 4px;
+    --sc-radius-md: 8px;
+    --sc-radius-lg: 12px;
+    --sc-radius-xl: 16px;
+    --sc-radius-full: 9999px;
+
+    /* Transitions */
+    --sc-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --sc-transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --sc-transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/**
+ * ============================================================================
+ * ACCESSIBILITY & BASE RESETS
+ * ============================================================================
+ */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: var(--sc-font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--sc-color-text-main);
+    background-color: var(--sc-color-bg-body);
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Accessibility: Skip Link */
+.skip-link {
+    position: absolute;
+    top: -9999px;
+    left: 1rem;
+    z-index: 100000;
+    background: var(--sc-color-primary);
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--sc-radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: var(--sc-shadow-lg);
+    transition: top var(--sc-transition-fast);
+}
+
+.skip-link:focus {
+    top: 1rem;
+    outline: 3px solid var(--sc-color-accent);
+    outline-offset: 2px;
+}
+
+/* Screen Reader Text Helper */
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute !important;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+.screen-reader-text:focus {
+    background-color: var(--sc-color-bg-surface);
+    border-radius: var(--sc-radius-sm);
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
+    clip: auto !important;
+    clip-path: none;
+    color: var(--sc-color-text-main);
+    display: block;
+    font-size: 0.875rem;
+    font-weight: bold;
+    height: auto;
+    left: 5px;
+    line-height: normal;
+    padding: 15px 23px 14px;
+    text-decoration: none;
+    top: 5px;
+    width: auto;
+    z-index: 100000;
+}
