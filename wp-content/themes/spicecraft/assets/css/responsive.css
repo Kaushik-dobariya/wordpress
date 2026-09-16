@@ -68,12 +68,18 @@ body {
     }
 }
 
-/* --------------------------------------------------------------------------
-   Standard Mobile Handsets (375px – 767px)
-   -------------------------------------------------------------------------- */
-@media (min-width: 375px) and (max-width: 767px) {
+@media (max-width: 767px) {
     .sc-topbar__inner {
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--sc-space-1);
+    }
+
+    .sc-topbar__contact {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
     }
 
     .sc-header-actions {

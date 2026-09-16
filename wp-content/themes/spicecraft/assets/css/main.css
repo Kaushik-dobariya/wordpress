@@ -85,6 +85,11 @@ img {
     padding-bottom: var(--sc-space-12);
 }
 
+.home .site-main {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
 /* ==========================================================================
    BUTTON SYSTEM
    ========================================================================== */
@@ -137,6 +142,40 @@ img {
 .sc-btn--outline:hover {
     background-color: var(--sc-color-primary);
     color: #ffffff;
+}
+
+.sc-btn--outline-white {
+    background-color: transparent;
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+}
+
+.sc-btn--outline-white:hover {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: var(--sc-color-dark);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.sc-btn--dark {
+    background-color: var(--sc-color-dark);
+    color: #ffffff;
+}
+
+.sc-btn--dark:hover {
+    background-color: var(--sc-color-primary-dark);
+    color: #ffffff;
+}
+
+.sc-btn--light {
+    background-color: #ffffff;
+    color: var(--sc-color-primary-dark);
+    border-color: var(--sc-color-border);
+}
+
+.sc-btn--light:hover {
+    background-color: var(--sc-color-bg-subtle);
+    border-color: var(--sc-color-accent);
 }
 
 .sc-btn--whatsapp {

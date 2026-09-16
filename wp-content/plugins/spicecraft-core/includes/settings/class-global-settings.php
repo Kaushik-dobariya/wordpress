@@ -45,7 +45,8 @@ class SpiceCraft_Global_Settings {
 	 * Constructor
 	 */
 	private function __construct() {
-		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
+		add_action( 'admin_menu', array( $this, 'register_admin_menu' ), 10 );
+		add_action( 'admin_menu', array( $this, 'register_late_admin_menu' ), 25 );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 	}
 
@@ -83,8 +84,14 @@ class SpiceCraft_Global_Settings {
 			'spicecraft-settings',
 			array( $this, 'render_settings_page' )
 		);
+	}
 
-		// Submenu 3: Link to Certifications Taxonomy
+	/**
+	 * Register Late Submenus (Certifications) to maintain exact menu order:
+	 * Overview -> Global Settings -> Homepage -> Certifications
+	 */
+	public function register_late_admin_menu() {
+		// Submenu 4: Link to Certifications Taxonomy
 		add_submenu_page(
 			'spicecraft-overview',
 			__( 'Product Certifications', 'spicecraft-core' ),

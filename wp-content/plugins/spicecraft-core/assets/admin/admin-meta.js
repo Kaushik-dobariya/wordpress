@@ -1,5 +1,5 @@
 /**
- * SpiceCraft Core - Admin Meta Box Interactions
+ * SpiceCraft Core - Admin Meta Box & Homepage CMS Interactions
  */
 jQuery(document).ready(function ($) {
     'use strict';
@@ -97,5 +97,91 @@ jQuery(document).ready(function ($) {
         row.fadeOut(150, function () {
             row.remove();
         });
+    });
+
+    // 7. WordPress Media Library Frame for Homepage CMS
+    $(document).on('click', '.sc-media-select-btn', function (e) {
+        e.preventDefault();
+        var box = $(this).closest('.sc-media-uploader-box');
+        var input = box.find('.sc-media-id-input');
+        var img = box.find('.sc-media-preview-img');
+        var icon = box.find('.sc-media-placeholder-icon');
+        var removeBtn = box.find('.sc-media-remove-btn');
+
+        var frame = wp.media({
+            title: 'Select or Upload Image',
+            button: { text: 'Use This Image' },
+            multiple: false
+        });
+
+        frame.on('select', function () {
+            var attachment = frame.state().get('selection').first().toJSON();
+            input.val(attachment.id);
+            var url = (attachment.sizes && attachment.sizes.medium) ? attachment.sizes.medium.url : attachment.url;
+            img.attr('src', url).show();
+            icon.hide();
+            removeBtn.show();
+        });
+
+        frame.open();
+    });
+
+    $(document).on('click', '.sc-media-remove-btn', function (e) {
+        e.preventDefault();
+        var box = $(this).closest('.sc-media-uploader-box');
+        box.find('.sc-media-id-input').val('');
+        box.find('.sc-media-preview-img').attr('src', '').hide();
+        box.find('.sc-media-placeholder-icon').show();
+        $(this).hide();
+    });
+
+    // 8. Add Why Choose Us Item
+    $('#sc-add-wcu-item-btn').on('click', function (e) {
+        e.preventDefault();
+        var container = $('#sc-wcu-items-container');
+        var idx = container.children().length;
+        var row = $('<div class="sc-repeatable-row sc-card" style="padding: 12px; margin-bottom: 8px; background: #f9f9f9; border: 1px solid #ccd0d4; border-radius: 4px;">' +
+            '<div style="display: flex; gap: 10px; width: 100%; align-items: center; margin-bottom: 8px;">' +
+            '<input type="text" name="spicecraft_homepage_settings[why_choose_us][items][' + idx + '][icon]" value="" placeholder="Icon (e.g. leaf, shield, award)" style="width: 140px;" />' +
+            '<input type="text" name="spicecraft_homepage_settings[why_choose_us][items][' + idx + '][title]" value="" placeholder="Feature Title" class="regular-text" style="flex-grow: 1;" />' +
+            '<input type="number" name="spicecraft_homepage_settings[why_choose_us][items][' + idx + '][order]" value="10" placeholder="Order" style="width: 70px;" />' +
+            '<button type="button" class="button sc-remove-row-btn">&times;</button>' +
+            '</div>' +
+            '<div>' +
+            '<textarea name="spicecraft_homepage_settings[why_choose_us][items][' + idx + '][description]" placeholder="Short explanation of differentiator" rows="2" style="width: 100%;"></textarea>' +
+            '</div>' +
+            '</div>');
+        container.append(row);
+        row.find('input:first').focus();
+    });
+
+    // 9. Add Quality Point
+    $('#sc-add-qs-point-btn').on('click', function (e) {
+        e.preventDefault();
+        var container = $('#sc-qs-points-container');
+        var idx = container.children().length;
+        var row = $('<div class="sc-repeatable-row sc-card" style="padding: 10px; margin-bottom: 6px; background: #f9f9f9; border: 1px solid #ccd0d4; border-radius: 4px;">' +
+            '<div style="display: flex; gap: 8px; width: 100%; margin-bottom: 6px;">' +
+            '<input type="text" name="spicecraft_homepage_settings[quality_sourcing][points][' + idx + '][title]" value="" placeholder="Point Title (e.g. Origin Traceability)" class="regular-text" style="flex-grow: 1;" />' +
+            '<button type="button" class="button sc-remove-row-btn">&times;</button>' +
+            '</div>' +
+            '<textarea name="spicecraft_homepage_settings[quality_sourcing][points][' + idx + '][text]" placeholder="Short point details" rows="2" style="width: 100%;"></textarea>' +
+            '</div>');
+        container.append(row);
+        row.find('input:first').focus();
+    });
+
+    // 10. Add Manufacturing Metric Stat
+    $('#sc-add-mfg-stat-btn').on('click', function (e) {
+        e.preventDefault();
+        var container = $('#sc-mfg-stats-container');
+        var idx = container.children().length;
+        var row = $('<div class="sc-repeatable-row" style="display: flex; gap: 8px; margin-bottom: 6px;">' +
+            '<input type="text" name="spicecraft_homepage_settings[manufacturing][stats][' + idx + '][label]" value="" placeholder="Metric Label (e.g. Processing Lines)" class="regular-text" />' +
+            '<input type="text" name="spicecraft_homepage_settings[manufacturing][stats][' + idx + '][value]" value="" placeholder="Value (e.g. 4 Dedicated)" class="regular-text" />' +
+            '<button type="button" class="button sc-remove-row-btn">&times;</button>' +
+            '</div>');
+        container.append(row);
+        row.find('input:first').focus();
     });
 });

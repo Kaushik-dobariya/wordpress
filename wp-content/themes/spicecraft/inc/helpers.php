@@ -396,3 +396,101 @@ function spicecraft_get_product_specs( $product ) {
 	return $specs;
 }
 
+if ( ! function_exists( 'spicecraft_get_homepage_settings' ) ) :
+	/**
+	 * Safe fallback for spicecraft_get_homepage_settings.
+	 *
+	 * @return array
+	 */
+	function spicecraft_get_homepage_settings() {
+		return get_option( 'spicecraft_homepage_settings', array() );
+	}
+endif;
+
+if ( ! function_exists( 'spicecraft_get_homepage_section' ) ) :
+	/**
+	 * Safe fallback for spicecraft_get_homepage_section.
+	 *
+	 * @param string $section_key Section key.
+	 * @param array  $default     Default array.
+	 * @return array
+	 */
+	function spicecraft_get_homepage_section( $section_key, $default = array() ) {
+		$settings = spicecraft_get_homepage_settings();
+		return isset( $settings[ $section_key ] ) && is_array( $settings[ $section_key ] ) ? $settings[ $section_key ] : $default;
+	}
+endif;
+
+if ( ! function_exists( 'spicecraft_is_homepage_section_enabled' ) ) :
+	/**
+	 * Safe fallback for spicecraft_is_homepage_section_enabled.
+	 *
+	 * @param string $section_key Section key.
+	 * @return bool
+	 */
+	function spicecraft_is_homepage_section_enabled( $section_key ) {
+		$settings = spicecraft_get_homepage_settings();
+		if ( isset( $settings['sections_enabled'][ $section_key ] ) ) {
+			return (bool) $settings['sections_enabled'][ $section_key ];
+		}
+		return 'recipes' !== $section_key; // recipes defaults to false
+	}
+endif;
+
+if ( ! function_exists( 'spicecraft_get_homepage_active_sections' ) ) :
+	/**
+	 * Safe fallback for spicecraft_get_homepage_active_sections.
+	 *
+	 * @return array
+	 */
+	function spicecraft_get_homepage_active_sections() {
+		$default_order = array(
+			'hero'              => 10,
+			'categories'        => 20,
+			'featured_products' => 30,
+			'brand_story'       => 40,
+			'why_choose_us'     => 50,
+			'quality_sourcing'  => 60,
+			'manufacturing'     => 70,
+			'certifications'    => 80,
+			'product_discovery' => 90,
+			'recipes'           => 100,
+			'testimonials'      => 110,
+			'blog'              => 120,
+			'b2b_cta'           => 130,
+			'final_cta'         => 140,
+		);
+
+		$settings = spicecraft_get_homepage_settings();
+		$order    = isset( $settings['sections_order'] ) ? wp_parse_args( $settings['sections_order'], $default_order ) : $default_order;
+		asort( $order, SORT_NUMERIC );
+
+		$active = array();
+		foreach ( array_keys( $order ) as $key ) {
+			if ( spicecraft_is_homepage_section_enabled( $key ) ) {
+				$active[] = $key;
+			}
+		}
+		return $active;
+	}
+endif;
+
+if ( ! function_exists( 'spicecraft_get_media_image' ) ) :
+	/**
+	 * Safe fallback for spicecraft_get_media_image.
+	 *
+	 * @param int          $attachment_id Attachment ID.
+	 * @param string|array $size          Image size.
+	 * @param array        $attr          Image attributes.
+	 * @param int          $fallback_id   Fallback attachment ID.
+	 * @return string
+	 */
+	function spicecraft_get_media_image( $attachment_id, $size = 'full', $attr = array(), $fallback_id = 0 ) {
+		$id = absint( $attachment_id );
+		if ( ! $id && $fallback_id ) {
+			$id = absint( $fallback_id );
+		}
+		return $id ? wp_get_attachment_image( $id, $size, false, $attr ) : '';
+	}
+endif;
+

@@ -93,6 +93,17 @@ function spicecraft_scripts() {
 		);
 	}
 
+	// 5b. Homepage Dedicated Stylesheet (Phase 2 Step 2)
+	if ( is_front_page() ) {
+		$home_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/home.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/home.css' ) : SPICECRAFT_VERSION;
+		wp_enqueue_style(
+			'spicecraft-home',
+			SPICECRAFT_URI . '/assets/css/home.css',
+			array( 'spicecraft-responsive' ),
+			$home_css_ver
+		);
+	}
+
 	// 6. Main Interactive JavaScript (Mobile Menu, Submenus, Search, Accessibility)
 	wp_enqueue_script(
 		'spicecraft-main',

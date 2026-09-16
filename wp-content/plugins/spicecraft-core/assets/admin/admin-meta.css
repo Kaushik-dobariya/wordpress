@@ -107,9 +107,40 @@
 
 /* Global Settings Page Wrap */
 .spicecraft-settings-wrap {
-    max-width: 1000px;
+    max-width: 1080px;
 }
 
 .spicecraft-settings-wrap .form-table th {
     width: 250px;
+}
+
+/* Media Uploader Box */
+.sc-media-uploader-box {
+    margin-bottom: 8px;
+}
+
+.sc-media-preview-wrap {
+    position: relative;
+    background: #f6f7f7;
+    border: 1px dashed #c3c4c7;
+    border-radius: 4px;
+    transition: border-color 0.2s;
+}
+
+.sc-media-preview-wrap:hover {
+    border-color: #8c8f94;
+}
+
+.sc-media-preview-img {
+    border-radius: 3px;
+}
+
+.sc-media-remove-btn {
+    color: #b32d2e !important;
+    border-color: #b32d2e !important;
+}
+
+.sc-media-remove-btn:hover {
+    background: #b32d2e !important;
+    color: #fff !important;
 }

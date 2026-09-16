@@ -125,11 +125,107 @@ In Phase 2, this can be optionally extended with a custom settings page under Wo
 
 ---
 
-## 7. Roadmap for Subsequent Phases
 
-- **Phase 1 Step 2:** Activate `spicecraft` theme in WordPress, install/configure WooCommerce, verify catalog-mode rendering, and seed essential product categories (Whole Spices, Ground Spices, Blended Masalas, Export Range).
-- **Phase 2:** Product Detail Architecture, Custom Attributes (Pack Sizes, Shelf Life, Ingredients, Nutritional Breakdown, Purity Certifications), and dynamic WhatsApp enquiry payload generation.
-- **Phase 3:** Category & Subcategory Taxonomy Architecture, faceted discovery filters (Pack size, Form, Category), and AJAX product search.
-- **Phase 4:** Browser-based Favourites & Recently Viewed products (Local Storage / Cookie-based, zero login requirement).
-- **Phase 5:** Brand Experience & Information Architecture (About Us, Quality & Lab Testing, Manufacturing Facilities, Certifications, Recipes CPT, Careers CPT).
-- **Phase 6:** Lead Conversion Optimization, Business / Distributor / Export Enquiry Forms with nonces and reCAPTCHA.
+---
+
+## 7. Phase 2 — Step 1: Homepage CMS Architecture + Dynamic Section Management
+
+### Overview & Separation of Concerns
+Phase 2 Step 1 delivers a structured, WordPress-native CMS for the homepage without using heavy page builders (Elementor, Divi, WPBakery) or hardcoding content into PHP files:
+- **`spicecraft-core` plugin:** Manages data storage, option schema sanitization, custom post types (`spicecraft_testimonial`), admin management screens, and data access APIs.
+- **`spicecraft` theme:** Serves as a dynamic section orchestrator in `front-page.php` and renders modular template parts (`template-parts/home/*.php`) using semantic foundation HTML5 markup.
+
+### Admin Interface (`SpiceCraft → Homepage`)
+The homepage CMS settings screen is located under the unified admin hierarchy:
+```text
+SpiceCraft
+├── Overview
+├── Global Settings
+├── Homepage
+└── Certifications
+```
+- **Interface Structure:** Uses 8 WordPress-native navigation tabs (`nav-tab-wrapper`):
+  1. `Order & Visibility`: Displays all 14 sections with enable checkboxes, numeric priority inputs, and semantic IDs.
+  2. `Hero`: Copy, CTA links, desktop/mobile media uploaders, alt text, and background treatments.
+  3. `Categories & Featured`: WooCommerce category and product selection controls, display modes, and limits.
+  4. `Story & Why Us`: Brand story rich text, primary/secondary images, heritage stats, and repeatable differentiator items.
+  5. `Quality & Facility`: Quality narrative, laboratory media, repeatable quality points, plant photography, video URL, and facility metric stats.
+  6. `Certs & Testimonials`: Product certification terms selection and testimonial display controls.
+  7. `Discovery, Recipes & Blog`: Category groups, post category source for recipes, and blog selection.
+  8. `Business & Final CTAs`: B2B export banner, media background, dual CTAs, and final conversion banner with WhatsApp/Email lead routing.
+- **Quick Links:** Includes a "View Homepage" (`target="_blank"`) header button.
+- **Save Experience:** Preserves active tab across saves via `_wp_http_referer` and prevents accidental data erasure of inactive tabs.
+
+### Unified Option Schema: `spicecraft_homepage_settings`
+Stored as a single, optimized array in `wp_options`:
+```php
+[
+    'sections_order'   => [ 'hero' => 10, 'categories' => 20, ... , 'final_cta' => 140 ],
+    'sections_enabled' => [ 'hero' => 1, 'categories' => 1, ... , 'recipes' => 0 ],
+    'hero'             => [ 'eyebrow', 'heading', 'highlight_text', 'description', 'primary_cta_label', 'primary_cta_url', 'secondary_cta_label', 'secondary_cta_url', 'desktop_image_id', 'mobile_image_id', 'image_alt', 'badge_text', 'bg_treatment' ],
+    'categories'       => [ 'eyebrow', 'heading', 'description', 'display_mode', 'limit', 'selected_ids' ],
+    'featured_products'=> [ 'eyebrow', 'heading', 'description', 'source', 'limit', 'selected_ids', 'cta_label', 'cta_url' ],
+    'brand_story'      => [ 'eyebrow', 'heading', 'description', 'primary_image_id', 'secondary_image_id', 'stat_label', 'stat_value', 'cta_label', 'cta_url' ],
+    'why_choose_us'    => [ 'eyebrow', 'heading', 'description', 'items' => [ ['icon', 'title', 'description', 'order'] ] ],
+    'quality_sourcing' => [ 'eyebrow', 'heading', 'description', 'main_image_id', 'support_image_id', 'points' => [ ['title', 'text'] ], 'cta_label', 'cta_url' ],
+    'manufacturing'    => [ 'eyebrow', 'heading', 'description', 'main_image_id', 'support_image_id', 'video_url', 'stats' => [ ['label', 'value'] ], 'cta_label', 'cta_url' ],
+    'certifications'   => [ 'eyebrow', 'heading', 'description', 'limit', 'selected_ids' ],
+    'product_discovery'=> [ 'eyebrow', 'heading', 'description', 'category_ids', 'cta_label', 'cta_url' ],
+    'recipes'          => [ 'eyebrow', 'heading', 'description', 'source_type', 'category_id', 'limit', 'cta_label', 'cta_url' ],
+    'testimonials'     => [ 'eyebrow', 'heading', 'description', 'limit', 'selected_ids' ],
+    'blog'             => [ 'eyebrow', 'heading', 'description', 'source', 'category_id', 'selected_ids', 'limit', 'cta_label', 'cta_url' ],
+    'b2b_cta'          => [ 'eyebrow', 'heading', 'description', 'bg_image_id', 'primary_cta_label', 'primary_cta_url', 'secondary_cta_label', 'secondary_cta_url', 'enable_whatsapp' ],
+    'final_cta'        => [ 'heading', 'description', 'primary_cta_label', 'primary_cta_url', 'enable_whatsapp', 'enable_email' ]
+]
+```
+
+### 14 Semantic Section Identifiers
+| Section Name | Identifier | Template File | Data Source |
+|---|---|---|---|
+| 1. Hero Banner | `#home-hero` | `template-parts/home/hero.php` | CMS Settings (Hero) |
+| 2. Product Categories | `#product-categories` | `template-parts/home/categories.php` | WooCommerce `product_cat` |
+| 3. Featured Products | `#featured-products` | `template-parts/home/featured-products.php` | WooCommerce `product` + `content-product.php` |
+| 4. Brand Story & Heritage | `#brand-story` | `template-parts/home/brand-story.php` | CMS Settings (Brand Story) |
+| 5. Why Choose Us | `#why-choose-us` | `template-parts/home/why-choose-us.php` | CMS Settings (Repeatable Items) |
+| 6. Quality & Sourcing | `#quality-sourcing` | `template-parts/home/quality-sourcing.php` | CMS Settings (Repeatable Points) |
+| 7. Manufacturing Plant | `#manufacturing` | `template-parts/home/manufacturing.php` | CMS Settings (Repeatable Stats) |
+| 8. Certifications | `#certifications` | `template-parts/home/certifications.php` | Taxonomy `spicecraft_certification` |
+| 9. Product Discovery | `#product-discovery` | `template-parts/home/product-discovery.php` | WooCommerce `product_cat` |
+| 10. Recipes & Inspiration | `#recipes` | `template-parts/home/recipes.php` | WordPress `post` (category filter) |
+| 11. Testimonials | `#testimonials` | `template-parts/home/testimonials.php` | CPT `spicecraft_testimonial` |
+| 12. Blog & Insights | `#latest-insights` | `template-parts/home/blog.php` | WordPress `post` |
+| 13. B2B & Export CTA | `#business-enquiry` | `template-parts/home/b2b-cta.php` | CMS Settings + Global WhatsApp |
+| 14. Final Conversion CTA | `#contact-cta` | `template-parts/home/final-cta.php` | CMS Settings + Global Contact Endpoints |
+
+### Media Architecture
+- Images are stored exclusively as WordPress Attachment IDs (`absint`), not raw URLs.
+- Rendered via `spicecraft_get_media_image()`, which uses `wp_get_attachment_image()` to ensure native `srcset`, `sizes`, and lazy loading.
+- Desktop and mobile hero images are independently configurable with seamless mobile fallback.
+
+### Testimonials Content Model (`spicecraft_testimonial`)
+- Reusable Custom Post Type registered in `spicecraft-core`.
+- Meta fields:
+  - `_sc_testimonial_role`: Designation (e.g. Executive Chef, Food Technologist)
+  - `_sc_testimonial_company`: Organization / Location
+  - `_sc_testimonial_rating`: Numerical star rating (1-5, optional)
+  - `_sc_testimonial_order`: Numeric priority order
+  - Post thumbnail: Photo of client / endorser
+- **Zero Fake Data Policy:** Suppresses itself cleanly on frontend if no legitimate testimonials exist in the database.
+
+### Data Access APIs
+Available across both plugin and theme with safe fallbacks:
+- `spicecraft_get_homepage_settings()`: Entire options array with defaults.
+- `spicecraft_get_homepage_section( $section_key )`: Specific section array.
+- `spicecraft_is_homepage_section_enabled( $section_key )`: Boolean visibility state.
+- `spicecraft_get_homepage_section_order()`: Section keys sorted by numeric priority.
+- `spicecraft_get_homepage_active_sections()`: Enabled section keys in display order.
+- `spicecraft_get_media_image( $id, $size, $attr, $fallback_id )`: Responsive image tag.
+- `spicecraft_get_media_image_url( $id, $size, $fallback_id )`: Image URL string.
+
+### Deferred Functionality (Scheduled for Step 2+)
+- Visual design polish, luxurious typography treatments, and micro-interactions.
+- Scroll-driven reveals and CSS animations.
+- Multi-slide hero sliders (if required by business).
+- Dedicated Recipe CPT and career management systems.
+- Catalog faceted search and AJAX filtering.
+

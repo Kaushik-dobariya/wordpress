@@ -2,8 +2,8 @@
 /**
  * Plugin Name: SpiceCraft Core - FMCG Product Data & Global CMS
  * Plugin URI: https://spicecraft.local
- * Description: Business logic, FMCG product data architecture, global settings, repeatable nutrition tables, and custom taxonomies for SpiceCraft.
- * Version: 1.0.0
+ * Description: Business logic, FMCG product data architecture, global settings, repeatable nutrition tables, homepage CMS, and custom taxonomies for SpiceCraft.
+ * Version: 1.1.0
  * Author: SpiceCraft Architecture Team
  * Author URI: https://spicecraft.local
  * Text Domain: spicecraft-core
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define Constants
-define( 'SPICECRAFT_CORE_VERSION', '1.0.0' );
+define( 'SPICECRAFT_CORE_VERSION', '1.1.0' );
 define( 'SPICECRAFT_CORE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SPICECRAFT_CORE_URI', plugin_dir_url( __FILE__ ) );
 
@@ -27,8 +27,11 @@ define( 'SPICECRAFT_CORE_URI', plugin_dir_url( __FILE__ ) );
  * Load Core Modules
  */
 require_once SPICECRAFT_CORE_DIR . 'includes/helpers/api-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/homepage-helpers.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-global-settings.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-homepage-settings.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/products/class-taxonomies.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/products/class-testimonial-cpt.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/products/class-product-meta.php';
 
 /**
@@ -72,9 +75,19 @@ class SpiceCraft_Core {
 			SpiceCraft_Global_Settings::get_instance();
 		}
 
+		// Initialize Homepage Settings CMS
+		if ( class_exists( 'SpiceCraft_Homepage_Settings' ) ) {
+			SpiceCraft_Homepage_Settings::get_instance();
+		}
+
 		// Initialize Product Taxonomies
 		if ( class_exists( 'SpiceCraft_Product_Taxonomies' ) ) {
 			SpiceCraft_Product_Taxonomies::get_instance();
+		}
+
+		// Initialize Testimonial Custom Post Type
+		if ( class_exists( 'SpiceCraft_Testimonial_CPT' ) ) {
+			SpiceCraft_Testimonial_CPT::get_instance();
 		}
 
 		// Initialize Product Metadata Architecture
@@ -94,11 +107,15 @@ class SpiceCraft_Core {
 			return;
 		}
 
-		// Load assets on Product edit screen and SpiceCraft Global Settings page
-		$is_product_screen = 'product' === $screen->post_type;
-		$is_settings_screen = false !== strpos( $screen->id, 'spicecraft' );
+		// Load assets on Product edit screen, Testimonials, and SpiceCraft screens
+		$is_product_screen     = 'product' === $screen->post_type;
+		$is_testimonial_screen = 'spicecraft_testimonial' === $screen->post_type;
+		$is_settings_screen    = false !== strpos( $screen->id, 'spicecraft' );
 
-		if ( $is_product_screen || $is_settings_screen ) {
+		if ( $is_product_screen || $is_testimonial_screen || $is_settings_screen ) {
+			// Ensure WordPress media library scripts/styles are loaded for image selectors
+			wp_enqueue_media();
+
 			wp_enqueue_style(
 				'spicecraft-admin-meta',
 				SPICECRAFT_CORE_URI . 'assets/admin/admin-meta.css',
