@@ -134,8 +134,10 @@ $social_channels = array(
 						if ( class_exists( 'WooCommerce' ) ) {
 							echo '<li><a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">' . esc_html__( 'Products Catalog', 'spicecraft' ) . '</a></li>';
 						}
-						echo '<li><a href="' . esc_url( home_url( '/#about' ) ) . '">' . esc_html__( 'About SpiceCraft', 'spicecraft' ) . '</a></li>';
-						echo '<li><a href="' . esc_url( home_url( '/#quality' ) ) . '">' . esc_html__( 'Quality Assurance', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About SpiceCraft', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/manufacturing/' ) ) . '">' . esc_html__( 'Manufacturing', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/quality/' ) ) . '">' . esc_html__( 'Quality & Sourcing', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/certifications/' ) ) . '">' . esc_html__( 'Certifications', 'spicecraft' ) . '</a></li>';
 						echo '<li><a href="' . esc_url( home_url( '/#contact' ) ) . '">' . esc_html__( 'Contact Desks', 'spicecraft' ) . '</a></li>';
 						echo '</ul>';
 					},

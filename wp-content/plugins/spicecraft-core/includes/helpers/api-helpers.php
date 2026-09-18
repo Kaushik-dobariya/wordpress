@@ -161,6 +161,9 @@ function spicecraft_get_product_origin( $product_id ) {
  * @return array Array of WP_Term objects.
  */
 function spicecraft_get_product_certifications( $product_id ) {
+	if ( function_exists( 'spicecraft_get_product_public_certifications' ) ) {
+		return spicecraft_get_product_public_certifications( $product_id );
+	}
 	$terms = get_the_terms( $product_id, 'spicecraft_certification' );
 	if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 		return $terms;

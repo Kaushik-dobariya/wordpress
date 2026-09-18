@@ -1,0 +1,660 @@
+/**
+ * SpiceCraft - Manufacturing Facility & Capabilities Stylesheet
+ *
+ * Visual Identity: Industrial Precision, Scale, Technical Excellence, Warm Brand Accents.
+ * Fully responsive (320px to 1920px+), zero horizontal overflow, touch target compliant (>= 44px).
+ *
+ * @package SpiceCraft
+ */
+
+/* ==========================================================================
+   1. Manufacturing Page Base & Variables
+   ========================================================================== */
+.sc-mfg-page {
+	width: 100%;
+	overflow-x: hidden;
+}
+
+.sc-mfg-sections > section {
+	position: relative;
+	width: 100%;
+}
+
+/* ==========================================================================
+   2. Manufacturing Hero Banner (#sc-mfg-hero)
+   ========================================================================== */
+.sc-mfg-hero {
+	padding: var(--sc-space-12, 48px) 0 var(--sc-space-16, 64px);
+	background: linear-gradient(135deg, #111827 0%, #1f2937 60%, #1a1613 100%);
+	color: #ffffff;
+	position: relative;
+	overflow: hidden;
+}
+
+.sc-mfg-hero::after {
+	content: '';
+	position: absolute;
+	top: -50%;
+	right: -20%;
+	width: 600px;
+	height: 600px;
+	background: radial-gradient(circle, rgba(179, 57, 39, 0.15) 0%, transparent 70%);
+	border-radius: 50%;
+	pointer-events: none;
+}
+
+.sc-mfg-hero__grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--sc-space-12, 48px);
+	align-items: center;
+}
+
+.sc-mfg-hero__eyebrow {
+	display: inline-block;
+	font-size: 0.8125rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--sc-color-secondary, #d97706);
+	margin-bottom: var(--sc-space-3, 12px);
+}
+
+.sc-mfg-hero__title {
+	font-family: var(--sc-font-serif, 'Cormorant Garamond', serif);
+	font-size: clamp(2.25rem, 4vw, 3.5rem);
+	line-height: 1.15;
+	font-weight: 700;
+	color: #ffffff;
+	margin: 0 0 var(--sc-space-6, 24px);
+}
+
+.sc-mfg-hero__highlight {
+	color: #f59e0b;
+	position: relative;
+}
+
+.sc-mfg-hero__desc {
+	font-size: 1.125rem;
+	line-height: 1.7;
+	color: rgba(255, 255, 255, 0.85);
+	margin: 0 0 var(--sc-space-8, 32px);
+	max-width: 540px;
+}
+
+.sc-mfg-hero__actions {
+	display: flex;
+	gap: var(--sc-space-4, 16px);
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.sc-mfg-hero__media {
+	position: relative;
+}
+
+.sc-mfg-hero__img-frame {
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	aspect-ratio: 4 / 3;
+	background: #111827;
+}
+
+.sc-mfg-hero__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.sc-mfg-hero__placeholder-badge {
+	aspect-ratio: 4 / 3;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px dashed rgba(255, 255, 255, 0.2);
+	border-radius: 12px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	text-align: center;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.sc-mfg-hero__placeholder-badge .dashicons {
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+	margin-bottom: 12px;
+	color: #d97706;
+}
+
+/* ==========================================================================
+   3. Introduction (#sc-mfg-intro)
+   ========================================================================== */
+.sc-mfg-intro__grid {
+	display: grid;
+	grid-template-columns: 1.1fr 0.9fr;
+	gap: var(--sc-space-12, 48px);
+	align-items: center;
+}
+
+.sc-mfg-intro__visuals {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--sc-space-4, 16px);
+}
+
+.sc-mfg-intro__img-main img {
+	border-radius: 8px;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+	width: 100%;
+	height: auto;
+}
+
+.sc-mfg-intro__img-sub img {
+	border-radius: 8px;
+	width: 75%;
+	margin-top: -15%;
+	margin-left: auto;
+	border: 4px solid #ffffff;
+	box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================================
+   4. Facility Overview (#sc-mfg-facility)
+   ========================================================================== */
+.sc-mfg-facility__media-wrap {
+	display: grid;
+	grid-template-columns: 1.5fr 1fr;
+	gap: var(--sc-space-6, 24px);
+}
+
+.sc-mfg-facility__main-media img,
+.sc-mfg-facility__sub-media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
+.sc-mfg-facility__highlights-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: var(--sc-space-6, 24px);
+}
+
+.sc-mfg-facility__highlight-card {
+	padding: var(--sc-space-6, 24px);
+	border-left: 3px solid var(--sc-color-primary, #b33927);
+	background: #ffffff;
+	border-radius: 0 8px 8px 0;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sc-mfg-facility__highlight-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+}
+
+.sc-mfg-facility__highlight-title {
+	font-size: 1.15rem;
+	font-weight: 700;
+	color: var(--sc-color-text-dark, #111827);
+	margin: 0 0 8px;
+}
+
+.sc-mfg-facility__highlight-desc {
+	font-size: 0.9375rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+	line-height: 1.6;
+}
+
+/* ==========================================================================
+   5. Manufacturing Process Flow (#sc-mfg-process)
+   ========================================================================== */
+.sc-mfg-process__flow {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sc-space-8, 32px);
+	max-width: 960px;
+	margin: 0 auto;
+	position: relative;
+}
+
+.sc-mfg-process__step {
+	display: grid;
+	grid-template-columns: 60px 1fr;
+	gap: var(--sc-space-6, 24px);
+	position: relative;
+}
+
+.sc-mfg-process__node {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.sc-mfg-process__badge {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	background: var(--sc-color-primary, #b33927);
+	color: #ffffff;
+	font-weight: 700;
+	font-size: 1.1rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 12px rgba(179, 57, 39, 0.3);
+	flex-shrink: 0;
+	z-index: 2;
+}
+
+.sc-mfg-process__line {
+	flex-grow: 1;
+	width: 2px;
+	background: #e5e7eb;
+	margin-top: 8px;
+}
+
+.sc-mfg-process__step:last-child .sc-mfg-process__line {
+	display: none;
+}
+
+.sc-mfg-process__card {
+	padding: var(--sc-space-6, 24px);
+	background: #ffffff;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	border-radius: 8px;
+}
+
+.sc-mfg-process__step-tag {
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--sc-color-secondary, #d97706);
+	display: inline-block;
+	margin-bottom: 4px;
+}
+
+.sc-mfg-process__card-title {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--sc-color-text-dark, #111827);
+	margin: 0 0 10px;
+}
+
+.sc-mfg-process__card-desc {
+	font-size: 0.95rem;
+	line-height: 1.65;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+}
+
+/* ==========================================================================
+   6. Capabilities & Equipment
+   ========================================================================== */
+.sc-mfg-capabilities__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: var(--sc-space-6, 24px);
+}
+
+.sc-mfg-capabilities__card {
+	padding: var(--sc-space-6, 24px);
+	background: #ffffff;
+	border-radius: 8px;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.sc-mfg-capabilities__card-icon {
+	width: 44px;
+	height: 44px;
+	border-radius: 8px;
+	background: rgba(179, 57, 39, 0.08);
+	color: var(--sc-color-primary, #b33927);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 8px;
+}
+
+.sc-mfg-equipment__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: var(--sc-space-8, 32px);
+}
+
+.sc-mfg-equipment__card {
+	background: #ffffff;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	border-radius: 8px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.sc-mfg-equipment__card-media {
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	background: #f3f4f6;
+	overflow: hidden;
+}
+
+.sc-mfg-equipment__card-media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.sc-mfg-equipment__card-content {
+	padding: var(--sc-space-6, 24px);
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.sc-mfg-equipment__card-title {
+	font-size: 1.25rem;
+	font-weight: 700;
+	margin: 0 0 8px;
+	color: var(--sc-color-text-dark, #111827);
+}
+
+.sc-mfg-equipment__card-desc {
+	font-size: 0.9375rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0 0 16px;
+	line-height: 1.6;
+}
+
+.sc-mfg-equipment__specs-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: auto;
+	font-size: 0.85rem;
+}
+
+.sc-mfg-equipment__specs-table tr {
+	border-top: 1px solid #f3f4f6;
+}
+
+.sc-mfg-equipment__spec-lbl {
+	padding: 6px 0;
+	color: #6b7280;
+	text-align: left;
+	font-weight: 600;
+	width: 45%;
+}
+
+.sc-mfg-equipment__spec-val {
+	padding: 6px 0;
+	color: #111827;
+	text-align: right;
+	font-weight: 500;
+}
+
+/* ==========================================================================
+   7. Hygiene, Packaging & Warehousing
+   ========================================================================== */
+.sc-mfg-hygiene__grid,
+.sc-mfg-warehousing__grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--sc-space-12, 48px);
+	align-items: center;
+}
+
+.sc-mfg-hygiene__practices,
+.sc-mfg-warehousing__highlights {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sc-space-4, 16px);
+}
+
+.sc-mfg-hygiene__practice-item,
+.sc-mfg-warehousing__highlight-item {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+}
+
+.sc-mfg-hygiene__practice-title,
+.sc-mfg-warehousing__highlight-title {
+	font-size: 1.05rem;
+	font-weight: 700;
+	margin: 0 0 4px;
+	color: var(--sc-color-text-dark, #111827);
+}
+
+.sc-mfg-hygiene__practice-desc,
+.sc-mfg-warehousing__highlight-desc {
+	font-size: 0.925rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+	line-height: 1.55;
+}
+
+.sc-mfg-packaging__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: var(--sc-space-6, 24px);
+}
+
+.sc-mfg-packaging__card {
+	padding: var(--sc-space-6, 24px);
+	background: #ffffff;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	border-radius: 8px;
+}
+
+.sc-mfg-packaging__card-icon {
+	color: var(--sc-color-primary, #b33927);
+	font-size: 28px;
+	margin-bottom: 12px;
+}
+
+.sc-mfg-packaging__media-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--sc-space-6, 24px);
+}
+
+/* ==========================================================================
+   8. Statistics (#sc-mfg-stats)
+   ========================================================================== */
+.sc-mfg-stats__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: var(--sc-space-6, 24px);
+}
+
+.sc-mfg-stats__card {
+	padding: var(--sc-space-8, 32px) var(--sc-space-6, 24px);
+	background: #ffffff;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	border-radius: 8px;
+}
+
+.sc-mfg-stats__figure {
+	display: flex;
+	align-items: baseline;
+	justify-content: center;
+	gap: 2px;
+	margin-bottom: 8px;
+}
+
+.sc-mfg-stats__value {
+	font-family: var(--sc-font-serif, 'Cormorant Garamond', serif);
+	font-size: 3rem;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--sc-color-primary, #b33927);
+}
+
+.sc-mfg-stats__suffix {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--sc-color-secondary, #d97706);
+}
+
+.sc-mfg-stats__label {
+	font-size: 1.05rem;
+	font-weight: 700;
+	margin: 0 0 6px;
+	color: var(--sc-color-text-dark, #111827);
+}
+
+.sc-mfg-stats__desc {
+	font-size: 0.875rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+	line-height: 1.5;
+}
+
+/* ==========================================================================
+   9. Facility Gallery (#sc-mfg-gallery)
+   ========================================================================== */
+.sc-mfg-gallery__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: var(--sc-space-6, 24px);
+}
+
+.sc-mfg-gallery__item {
+	margin: 0;
+	border-radius: 8px;
+	overflow: hidden;
+	background: #ffffff;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.sc-mfg-gallery__link {
+	display: block;
+	position: relative;
+	aspect-ratio: 4 / 3;
+	overflow: hidden;
+}
+
+.sc-mfg-gallery__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	transition: transform 0.3s ease;
+}
+
+.sc-mfg-gallery__link:hover .sc-mfg-gallery__img {
+	transform: scale(1.04);
+}
+
+.sc-mfg-gallery__overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.35);
+	opacity: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #ffffff;
+	transition: opacity 0.2s ease;
+}
+
+.sc-mfg-gallery__link:hover .sc-mfg-gallery__overlay {
+	opacity: 1;
+}
+
+.sc-mfg-gallery__caption {
+	padding: 10px 14px;
+	font-size: 0.85rem;
+	color: #4b5563;
+	text-align: center;
+	background: #ffffff;
+	border-top: 1px solid #f3f4f6;
+}
+
+/* ==========================================================================
+   10. Responsiveness & Mobile Scale (320px to 1024px)
+   ========================================================================== */
+@media (max-width: 1024px) {
+	.sc-mfg-hero__grid,
+	.sc-mfg-intro__grid,
+	.sc-mfg-hygiene__grid,
+	.sc-mfg-warehousing__grid {
+		grid-template-columns: 1fr;
+		gap: var(--sc-space-8, 32px);
+	}
+
+	.sc-mfg-facility__media-wrap {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 768px) {
+	.sc-mfg-hero {
+		padding: var(--sc-space-8, 32px) 0 var(--sc-space-12, 48px);
+	}
+
+	.sc-mfg-hero__title {
+		font-size: 2rem;
+	}
+
+	.sc-mfg-hero__actions {
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.sc-mfg-hero__actions .sc-btn {
+		width: 100%;
+		text-align: center;
+	}
+
+	.sc-mfg-process__step {
+		grid-template-columns: 44px 1fr;
+		gap: 16px;
+	}
+
+	.sc-mfg-process__badge {
+		width: 44px;
+		height: 44px;
+		font-size: 0.95rem;
+	}
+
+	.sc-mfg-packaging__media-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.sc-mfg-stats__grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 480px) {
+	.sc-mfg-stats__grid {
+		grid-template-columns: 1fr;
+	}
+
+	.sc-mfg-process__step {
+		grid-template-columns: 1fr;
+	}
+
+	.sc-mfg-process__node {
+		flex-direction: row;
+		gap: 12px;
+		margin-bottom: 8px;
+	}
+
+	.sc-mfg-process__line {
+		display: none;
+	}
+}

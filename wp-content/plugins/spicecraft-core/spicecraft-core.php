@@ -28,11 +28,22 @@ define( 'SPICECRAFT_CORE_URI', plugin_dir_url( __FILE__ ) );
  */
 require_once SPICECRAFT_CORE_DIR . 'includes/helpers/api-helpers.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/helpers/homepage-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/about-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/shared-cms-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/manufacturing-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/quality-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/certification-helpers.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-global-settings.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-homepage-settings.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-about-settings.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-manufacturing-settings.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-quality-settings.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-certification-settings.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/products/class-taxonomies.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/products/class-testimonial-cpt.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/products/class-team-cpt.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/products/class-product-meta.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/products/class-certification-meta.php';
 
 /**
  * Plugin Bootstrap Class
@@ -80,6 +91,21 @@ class SpiceCraft_Core {
 			SpiceCraft_Homepage_Settings::get_instance();
 		}
 
+		// Initialize About Us Settings CMS
+		if ( class_exists( 'SpiceCraft_About_Settings' ) ) {
+			SpiceCraft_About_Settings::get_instance();
+		}
+
+		// Initialize Manufacturing Settings CMS
+		if ( class_exists( 'SpiceCraft_Manufacturing_Settings' ) ) {
+			SpiceCraft_Manufacturing_Settings::get_instance();
+		}
+
+		// Initialize Quality & Sourcing Settings CMS
+		if ( class_exists( 'SpiceCraft_Quality_Settings' ) ) {
+			SpiceCraft_Quality_Settings::get_instance();
+		}
+
 		// Initialize Product Taxonomies
 		if ( class_exists( 'SpiceCraft_Product_Taxonomies' ) ) {
 			SpiceCraft_Product_Taxonomies::get_instance();
@@ -90,9 +116,24 @@ class SpiceCraft_Core {
 			SpiceCraft_Testimonial_CPT::get_instance();
 		}
 
+		// Initialize Team Member Custom Post Type
+		if ( class_exists( 'SpiceCraft_Team_CPT' ) ) {
+			SpiceCraft_Team_CPT::get_instance();
+		}
+
 		// Initialize Product Metadata Architecture
 		if ( class_exists( 'SpiceCraft_Product_Meta' ) ) {
 			SpiceCraft_Product_Meta::get_instance();
+		}
+
+		// Initialize Certification Settings CMS
+		if ( class_exists( 'SpiceCraft_Certification_Settings' ) ) {
+			SpiceCraft_Certification_Settings::get_instance();
+		}
+
+		// Initialize Certification Taxonomy Meta & Admin Engine
+		if ( class_exists( 'SpiceCraft_Certification_Meta' ) ) {
+			SpiceCraft_Certification_Meta::get_instance();
 		}
 	}
 
@@ -107,12 +148,14 @@ class SpiceCraft_Core {
 			return;
 		}
 
-		// Load assets on Product edit screen, Testimonials, and SpiceCraft screens
+		// Load assets on Product edit screen, Testimonials, Team Members, and SpiceCraft screens
 		$is_product_screen     = 'product' === $screen->post_type;
 		$is_testimonial_screen = 'spicecraft_testimonial' === $screen->post_type;
+		$is_team_screen        = 'spicecraft_team' === $screen->post_type;
 		$is_settings_screen    = false !== strpos( $screen->id, 'spicecraft' );
+		$is_cert_screen        = isset( $screen->taxonomy ) && 'spicecraft_certification' === $screen->taxonomy;
 
-		if ( $is_product_screen || $is_testimonial_screen || $is_settings_screen ) {
+		if ( $is_product_screen || $is_testimonial_screen || $is_team_screen || $is_settings_screen || $is_cert_screen ) {
 			// Ensure WordPress media library scripts/styles are loaded for image selectors
 			wp_enqueue_media();
 

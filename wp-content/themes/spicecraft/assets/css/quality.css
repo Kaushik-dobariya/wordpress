@@ -1,0 +1,737 @@
+/**
+ * SpiceCraft - Quality Assurance & Sourcing Standards Stylesheet
+ *
+ * Visual Identity: Natural Purity, Transparent Origin, Trustworthy Testing, Warm Spice Accents.
+ * Fully responsive (320px to 1920px+), zero horizontal overflow, touch target compliant (>= 44px).
+ *
+ * @package SpiceCraft
+ */
+
+/* ==========================================================================
+   1. Quality Page Base
+   ========================================================================== */
+.sc-quality-page {
+	width: 100%;
+	overflow-x: hidden;
+}
+
+.sc-quality-sections > section {
+	position: relative;
+	width: 100%;
+}
+
+/* ==========================================================================
+   2. Quality Hero Banner (#sc-quality-hero)
+   ========================================================================== */
+.sc-quality-hero {
+	padding: var(--sc-space-12, 48px) 0 var(--sc-space-16, 64px);
+	background: linear-gradient(145deg, #1c1917 0%, #292524 60%, #1f1b18 100%);
+	color: #ffffff;
+	position: relative;
+	overflow: hidden;
+}
+
+.sc-quality-hero::before {
+	content: '';
+	position: absolute;
+	top: -30%;
+	left: -10%;
+	width: 500px;
+	height: 500px;
+	background: radial-gradient(circle, rgba(217, 119, 6, 0.12) 0%, transparent 70%);
+	border-radius: 50%;
+	pointer-events: none;
+}
+
+.sc-quality-hero__grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--sc-space-12, 48px);
+	align-items: center;
+}
+
+.sc-quality-hero__eyebrow {
+	display: inline-block;
+	font-size: 0.8125rem;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--sc-color-secondary, #d97706);
+	margin-bottom: var(--sc-space-3, 12px);
+}
+
+.sc-quality-hero__title {
+	font-family: var(--sc-font-serif, 'Cormorant Garamond', serif);
+	font-size: clamp(2.25rem, 4vw, 3.5rem);
+	line-height: 1.15;
+	font-weight: 700;
+	color: #ffffff;
+	margin: 0 0 var(--sc-space-6, 24px);
+}
+
+.sc-quality-hero__highlight {
+	color: #f59e0b;
+	position: relative;
+}
+
+.sc-quality-hero__desc {
+	font-size: 1.125rem;
+	line-height: 1.7;
+	color: rgba(255, 255, 255, 0.85);
+	margin: 0 0 var(--sc-space-8, 32px);
+	max-width: 540px;
+}
+
+.sc-quality-hero__actions {
+	display: flex;
+	gap: var(--sc-space-4, 16px);
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.sc-quality-hero__media {
+	position: relative;
+}
+
+.sc-quality-hero__img-frame {
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	aspect-ratio: 4 / 3;
+	background: #1c1917;
+}
+
+.sc-quality-hero__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.sc-quality-hero__placeholder-badge {
+	aspect-ratio: 4 / 3;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px dashed rgba(255, 255, 255, 0.2);
+	border-radius: 12px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	text-align: center;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.sc-quality-hero__placeholder-badge .dashicons {
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+	margin-bottom: 12px;
+	color: #d97706;
+}
+
+/* ==========================================================================
+   3. Introduction (#sc-quality-intro)
+   ========================================================================== */
+.sc-quality-intro__grid {
+	display: grid;
+	grid-template-columns: 1.1fr 0.9fr;
+	gap: var(--sc-space-12, 48px);
+	align-items: center;
+}
+
+.sc-quality-intro__visuals {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--sc-space-4, 16px);
+}
+
+.sc-quality-intro__img-main img {
+	border-radius: 8px;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+	width: 100%;
+	height: auto;
+}
+
+.sc-quality-intro__img-sub img {
+	border-radius: 8px;
+	width: 75%;
+	margin-top: -15%;
+	margin-left: auto;
+	border: 4px solid #ffffff;
+	box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================================
+   4. Quality Principles & Process
+   ========================================================================== */
+.sc-quality-principles__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: var(--sc-space-6, 24px);
+}
+
+.sc-quality-principles__card {
+	padding: var(--sc-space-6, 24px);
+	background: #ffffff;
+	border-radius: 8px;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	border-top: 3px solid var(--sc-color-secondary, #d97706);
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sc-quality-principles__card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+}
+
+.sc-quality-principles__card-icon {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: rgba(217, 119, 6, 0.1);
+	color: var(--sc-color-secondary, #d97706);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 8px;
+}
+
+.sc-quality-principles__card-title {
+	font-size: 1.15rem;
+	font-weight: 700;
+	color: var(--sc-color-text-dark, #111827);
+	margin: 0;
+}
+
+.sc-quality-principles__card-desc {
+	font-size: 0.9375rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+	line-height: 1.6;
+}
+
+.sc-quality-process__flow {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sc-space-8, 32px);
+	max-width: 960px;
+	margin: 0 auto;
+	position: relative;
+}
+
+.sc-quality-process__step {
+	display: grid;
+	grid-template-columns: 60px 1fr;
+	gap: var(--sc-space-6, 24px);
+	position: relative;
+}
+
+.sc-quality-process__node {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.sc-quality-process__badge {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	background: var(--sc-color-secondary, #d97706);
+	color: #ffffff;
+	font-weight: 700;
+	font-size: 1.1rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+	flex-shrink: 0;
+	z-index: 2;
+}
+
+.sc-quality-process__line {
+	flex-grow: 1;
+	width: 2px;
+	background: #e5e7eb;
+	margin-top: 8px;
+}
+
+.sc-quality-process__step:last-child .sc-quality-process__line {
+	display: none;
+}
+
+.sc-quality-process__card {
+	padding: var(--sc-space-6, 24px);
+	background: #ffffff;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	border-radius: 8px;
+}
+
+.sc-quality-process__step-tag {
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--sc-color-primary, #b33927);
+	display: inline-block;
+	margin-bottom: 4px;
+}
+
+.sc-quality-process__card-title {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--sc-color-text-dark, #111827);
+	margin: 0 0 10px;
+}
+
+.sc-quality-process__card-desc {
+	font-size: 0.95rem;
+	line-height: 1.65;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+}
+
+/* ==========================================================================
+   5. Testing & Laboratory (#sc-quality-testing)
+   ========================================================================== */
+.sc-quality-testing__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: var(--sc-space-6, 24px);
+}
+
+.sc-quality-testing__card {
+	padding: var(--sc-space-6, 24px);
+	background: #ffffff;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+}
+
+.sc-quality-testing__card-title {
+	font-size: 1.15rem;
+	font-weight: 700;
+	color: var(--sc-color-text-dark, #111827);
+	margin: 0 0 8px;
+}
+
+.sc-quality-testing__card-desc {
+	font-size: 0.925rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+	line-height: 1.55;
+	flex-grow: 1;
+}
+
+/* ==========================================================================
+   6. Sourcing & Structured Regions
+   ========================================================================== */
+.sc-quality-sourcing__grid {
+	display: grid;
+	grid-template-columns: 1.1fr 0.9fr;
+	gap: var(--sc-space-12, 48px);
+	align-items: center;
+}
+
+.sc-quality-sourcing__highlights {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sc-space-4, 16px);
+}
+
+.sc-quality-sourcing__hl-item {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+}
+
+.sc-quality-sourcing__hl-title {
+	font-size: 1.05rem;
+	font-weight: 700;
+	margin: 0 0 4px;
+	color: var(--sc-color-text-dark, #111827);
+}
+
+.sc-quality-sourcing__hl-desc {
+	font-size: 0.925rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+	line-height: 1.55;
+}
+
+.sc-quality-regions__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: var(--sc-space-8, 32px);
+}
+
+.sc-quality-regions__card {
+	background: #ffffff;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	border-radius: 8px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sc-quality-regions__card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+.sc-quality-regions__card-media {
+	width: 100%;
+	aspect-ratio: 16 / 10;
+	overflow: hidden;
+	background: #f3f4f6;
+}
+
+.sc-quality-regions__card-media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.sc-quality-regions__card-body {
+	padding: var(--sc-space-6, 24px);
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.sc-quality-regions__spice-tag {
+	display: inline-block;
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--sc-color-primary, #b33927);
+	background: rgba(179, 57, 39, 0.08);
+	padding: 2px 8px;
+	border-radius: 4px;
+	margin-bottom: 6px;
+}
+
+.sc-quality-regions__region-name {
+	font-size: 1.3rem;
+	font-weight: 700;
+	margin: 0 0 4px;
+	color: var(--sc-color-text-dark, #111827);
+}
+
+.sc-quality-regions__location {
+	font-size: 0.875rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0 0 12px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.sc-quality-regions__card-desc {
+	font-size: 0.9375rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+	line-height: 1.6;
+}
+
+/* ==========================================================================
+   7. Raw Materials, Traceability & Food Safety
+   ========================================================================== */
+.sc-quality-raw-materials__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: var(--sc-space-6, 24px);
+}
+
+.sc-quality-raw-materials__card {
+	padding: var(--sc-space-6, 24px);
+	background: #ffffff;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	border-radius: 8px;
+}
+
+.sc-quality-raw-materials__card-icon {
+	color: var(--sc-color-secondary, #d97706);
+	font-size: 24px;
+	margin-bottom: 8px;
+}
+
+.sc-quality-raw-materials__card-title {
+	font-size: 1.15rem;
+	font-weight: 700;
+	margin: 0 0 8px;
+	color: var(--sc-color-text-dark, #111827);
+}
+
+.sc-quality-raw-materials__card-desc {
+	font-size: 0.925rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+	line-height: 1.55;
+}
+
+.sc-quality-traceability__grid,
+.sc-quality-food-safety__grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--sc-space-12, 48px);
+	align-items: center;
+}
+
+.sc-quality-traceability__steps {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sc-space-4, 16px);
+}
+
+.sc-quality-traceability__step-item {
+	display: flex;
+	gap: 16px;
+	align-items: flex-start;
+}
+
+.sc-quality-traceability__step-num {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: var(--sc-color-secondary, #d97706);
+	color: #ffffff;
+	font-weight: 700;
+	font-size: 0.9rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.sc-quality-traceability__step-title {
+	font-size: 1.05rem;
+	font-weight: 700;
+	margin: 0 0 4px;
+	color: var(--sc-color-text-dark, #111827);
+}
+
+.sc-quality-traceability__step-desc {
+	font-size: 0.925rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+	line-height: 1.55;
+}
+
+.sc-quality-food-safety__practices {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sc-space-4, 16px);
+}
+
+.sc-quality-food-safety__practice-card {
+	padding: var(--sc-space-4, 16px) var(--sc-space-6, 24px);
+	background: #ffffff;
+	border-left: 3px solid var(--sc-color-secondary, #d97706);
+	border-radius: 0 6px 6px 0;
+}
+
+.sc-quality-food-safety__practice-title {
+	font-size: 1.05rem;
+	font-weight: 700;
+	margin: 0 0 4px;
+	color: var(--sc-color-text-dark, #111827);
+}
+
+.sc-quality-food-safety__practice-desc {
+	font-size: 0.925rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+	line-height: 1.5;
+}
+
+/* ==========================================================================
+   8. Quality Statistics (#sc-quality-stats)
+   ========================================================================== */
+.sc-quality-stats__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: var(--sc-space-6, 24px);
+}
+
+.sc-quality-stats__card {
+	padding: var(--sc-space-8, 32px) var(--sc-space-6, 24px);
+	background: #ffffff;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	border-radius: 8px;
+}
+
+.sc-quality-stats__figure {
+	display: flex;
+	align-items: baseline;
+	justify-content: center;
+	gap: 2px;
+	margin-bottom: 8px;
+}
+
+.sc-quality-stats__value {
+	font-family: var(--sc-font-serif, 'Cormorant Garamond', serif);
+	font-size: 3rem;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--sc-color-primary, #b33927);
+}
+
+.sc-quality-stats__suffix {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--sc-color-secondary, #d97706);
+}
+
+.sc-quality-stats__label {
+	font-size: 1.05rem;
+	font-weight: 700;
+	margin: 0 0 6px;
+	color: var(--sc-color-text-dark, #111827);
+}
+
+.sc-quality-stats__desc {
+	font-size: 0.875rem;
+	color: var(--sc-color-text-muted, #4b5563);
+	margin: 0;
+	line-height: 1.5;
+}
+
+/* ==========================================================================
+   9. Quality & Origin Gallery (#sc-quality-gallery)
+   ========================================================================== */
+.sc-quality-gallery__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: var(--sc-space-6, 24px);
+}
+
+.sc-quality-gallery__item {
+	margin: 0;
+	border-radius: 8px;
+	overflow: hidden;
+	background: #ffffff;
+	border: 1px solid var(--sc-color-border, #e5e7eb);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.sc-quality-gallery__link {
+	display: block;
+	position: relative;
+	aspect-ratio: 4 / 3;
+	overflow: hidden;
+}
+
+.sc-quality-gallery__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	transition: transform 0.3s ease;
+}
+
+.sc-quality-gallery__link:hover .sc-quality-gallery__img {
+	transform: scale(1.04);
+}
+
+.sc-quality-gallery__overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.35);
+	opacity: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #ffffff;
+	transition: opacity 0.2s ease;
+}
+
+.sc-quality-gallery__link:hover .sc-quality-gallery__overlay {
+	opacity: 1;
+}
+
+.sc-quality-gallery__caption {
+	padding: 10px 14px;
+	font-size: 0.85rem;
+	color: #4b5563;
+	text-align: center;
+	background: #ffffff;
+	border-top: 1px solid #f3f4f6;
+}
+
+/* ==========================================================================
+   10. Responsiveness & Mobile Scale (320px to 1024px)
+   ========================================================================== */
+@media (max-width: 1024px) {
+	.sc-quality-hero__grid,
+	.sc-quality-intro__grid,
+	.sc-quality-sourcing__grid,
+	.sc-quality-traceability__grid,
+	.sc-quality-food-safety__grid {
+		grid-template-columns: 1fr;
+		gap: var(--sc-space-8, 32px);
+	}
+}
+
+@media (max-width: 768px) {
+	.sc-quality-hero {
+		padding: var(--sc-space-8, 32px) 0 var(--sc-space-12, 48px);
+	}
+
+	.sc-quality-hero__title {
+		font-size: 2rem;
+	}
+
+	.sc-quality-hero__actions {
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.sc-quality-hero__actions .sc-btn {
+		width: 100%;
+		text-align: center;
+	}
+
+	.sc-quality-process__step {
+		grid-template-columns: 44px 1fr;
+		gap: 16px;
+	}
+
+	.sc-quality-process__badge {
+		width: 44px;
+		height: 44px;
+		font-size: 0.95rem;
+	}
+
+	.sc-quality-stats__grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 480px) {
+	.sc-quality-stats__grid {
+		grid-template-columns: 1fr;
+	}
+
+	.sc-quality-process__step {
+		grid-template-columns: 1fr;
+	}
+
+	.sc-quality-process__node {
+		flex-direction: row;
+		gap: 12px;
+		margin-bottom: 8px;
+	}
+
+	.sc-quality-process__line {
+		display: none;
+	}
+}

@@ -67,8 +67,10 @@ $cta_url      = ! empty( $cta_url ) ? $cta_url : home_url( '/#contact' );
 							echo '<li><a href="' . esc_url( home_url( '/#export-bulk' ) ) . '">' . esc_html__( 'Export Supply', 'spicecraft' ) . '</a></li>';
 							echo '</ul></li>';
 						}
-						echo '<li><a href="' . esc_url( home_url( '/#about' ) ) . '">' . esc_html__( 'About Us', 'spicecraft' ) . '</a></li>';
-						echo '<li><a href="' . esc_url( home_url( '/#quality' ) ) . '">' . esc_html__( 'Quality Assurance', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About Us', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/manufacturing/' ) ) . '">' . esc_html__( 'Manufacturing', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/quality/' ) ) . '">' . esc_html__( 'Quality & Sourcing', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/certifications/' ) ) . '">' . esc_html__( 'Certifications', 'spicecraft' ) . '</a></li>';
 						echo '<li><a href="' . esc_url( home_url( '/#contact' ) ) . '">' . esc_html__( 'Contact', 'spicecraft' ) . '</a></li>';
 						echo '</ul>';
 					},
@@ -113,9 +115,9 @@ $cta_url      = ! empty( $cta_url ) ? $cta_url : home_url( '/#contact' );
 	</div>
 </div>
 
-<!-- Header Search Drawer (Accessible Dropdown/Slide-Down) -->
-<div id="header-search-drawer" class="sc-search-drawer" aria-label="<?php esc_attr_e( 'Catalog Search Form', 'spicecraft' ); ?>">
-	<div class="sc-container sc-container--narrow">
+<!-- Search Drawer Overlay -->
+<div id="header-search-drawer" class="sc-search-drawer" aria-hidden="true">
+	<div class="sc-container sc-search-drawer__inner">
 		<?php get_search_form(); ?>
 	</div>
 </div>
@@ -135,8 +137,10 @@ $cta_url      = ! empty( $cta_url ) ? $cta_url : home_url( '/#contact' );
 					if ( class_exists( 'WooCommerce' ) ) {
 						echo '<li><a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">' . esc_html__( 'Products Catalog', 'spicecraft' ) . '</a></li>';
 					}
-					echo '<li><a href="' . esc_url( home_url( '/#about' ) ) . '">' . esc_html__( 'About Us', 'spicecraft' ) . '</a></li>';
-					echo '<li><a href="' . esc_url( home_url( '/#quality' ) ) . '">' . esc_html__( 'Quality Assurance', 'spicecraft' ) . '</a></li>';
+					echo '<li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About Us', 'spicecraft' ) . '</a></li>';
+					echo '<li><a href="' . esc_url( home_url( '/manufacturing/' ) ) . '">' . esc_html__( 'Manufacturing', 'spicecraft' ) . '</a></li>';
+					echo '<li><a href="' . esc_url( home_url( '/quality/' ) ) . '">' . esc_html__( 'Quality & Sourcing', 'spicecraft' ) . '</a></li>';
+					echo '<li><a href="' . esc_url( home_url( '/certifications/' ) ) . '">' . esc_html__( 'Certifications', 'spicecraft' ) . '</a></li>';
 					echo '<li><a href="' . esc_url( home_url( '/#contact' ) ) . '">' . esc_html__( 'Contact', 'spicecraft' ) . '</a></li>';
 					echo '</ul>';
 				},

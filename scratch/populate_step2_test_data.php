@@ -1,0 +1,365 @@
+<?php
+/**
+ * Temporarily populate realistic non-fabricated test data for visual QA & screenshots.
+ */
+require_once dirname( __DIR__ ) . '/wp-load.php';
+
+$test_mfg = array(
+	'sections_order' => array(
+		'hero'           => 10,
+		'introduction'   => 20,
+		'facility'       => 30,
+		'process'        => 40,
+		'capabilities'   => 50,
+		'equipment'      => 60,
+		'hygiene'        => 70,
+		'packaging'      => 80,
+		'warehousing'    => 90,
+		'statistics'     => 100,
+		'gallery'        => 110,
+		'certifications' => 120,
+		'products'       => 130,
+		'b2b_cta'        => 140,
+		'final_cta'      => 150,
+	),
+	'sections_enabled' => array(
+		'hero'           => 1,
+		'introduction'   => 1,
+		'facility'       => 1,
+		'process'        => 1,
+		'capabilities'   => 1,
+		'equipment'      => 1,
+		'hygiene'        => 1,
+		'packaging'      => 1,
+		'warehousing'    => 1,
+		'statistics'     => 1,
+		'gallery'        => 1,
+		'certifications' => 1,
+		'products'       => 1,
+		'b2b_cta'        => 1,
+		'final_cta'      => 1,
+	),
+	'hero' => array(
+		'eyebrow'             => 'Processing Standards',
+		'heading'             => 'Precision Spice Processing Facility',
+		'heading_highlight'   => 'Processing Facility',
+		'intro'               => 'Dedicated technical facility for consistent milling, grading, and packaging.',
+		'desktop_image_id'    => 32,
+		'cta_primary_label'   => 'Explore Process',
+		'cta_primary_url'     => '#sc-mfg-process',
+		'cta_secondary_label' => 'Technical Specs',
+		'cta_secondary_url'   => '#sc-mfg-equipment',
+	),
+	'introduction' => array(
+		'eyebrow'          => 'Plant Philosophy',
+		'heading'          => 'Engineered for Purity and Consistency',
+		'content'          => 'Our operational facility maintains systematic separation across raw receiving, processing, and finished packaging.',
+		'image_primary_id' => 31,
+		'cta_label'        => 'Facility Standards',
+		'cta_url'          => '#sc-mfg-facility',
+	),
+	'facility' => array(
+		'eyebrow'     => 'Infrastructure',
+		'heading'     => 'Purpose-Built Spice Plant Layout',
+		'description' => 'Zoned infrastructure preventing cross-contamination and ensuring food-grade hygiene.',
+		'image_id'    => 32,
+		'highlights'  => array(
+			array( 'title' => 'Segregated Zones', 'description' => 'Dedicated bays for raw cleaning and fine grinding.' ),
+			array( 'title' => 'Dust Control', 'description' => 'Integrated aspiration and pneumatic dust handling.' ),
+		),
+	),
+	'process' => array(
+		'eyebrow'     => 'Step by Step',
+		'heading'     => 'Processing Stages',
+		'description' => 'Systematic transformation from raw agricultural lot to packaged spice.',
+		'items'       => array(
+			array( 'step_number' => '01', 'title' => 'Intake & Inspection', 'description' => 'Sampling and moisture assessment.', 'order' => 10 ),
+			array( 'step_number' => '02', 'title' => 'Air Classification', 'description' => 'Removal of stones, chaff, and light impurities.', 'order' => 20 ),
+			array( 'step_number' => '03', 'title' => 'Grading & Sizing', 'description' => 'Sieve sizing according to mesh specifications.', 'order' => 30 ),
+			array( 'step_number' => '04', 'title' => 'Controlled Milling', 'description' => 'Granulation and pulverization under ambient control.', 'order' => 40 ),
+		),
+	),
+	'capabilities' => array(
+		'eyebrow'     => 'Capabilities',
+		'heading'     => 'Technical Capabilities',
+		'description' => 'Core operational capacities configured in facility.',
+		'items'       => array(
+			array( 'title' => 'Fine Pulverizing', 'description' => 'Standard mesh sizing from 30 to 100 mesh.' ),
+			array( 'title' => 'Whole Seed Grading', 'description' => 'Gravity separation and color grading.' ),
+		),
+	),
+	'equipment' => array(
+		'eyebrow'     => 'Machinery',
+		'heading'     => 'Processing Machinery',
+		'description' => 'Technical machinery configured on the production line.',
+		'items'       => array(
+			array(
+				'name'        => 'Rotary Air Separator',
+				'description' => 'De-stoning and heavy impurity separation.',
+				'order'       => 10,
+				'specs'       => array(
+					array( 'label' => 'Contact Parts', 'value' => 'Food Grade Stainless Steel' ),
+					array( 'label' => 'Aspiration Type', 'value' => 'Closed-Loop Air Flow' ),
+				),
+			),
+		),
+	),
+	'hygiene' => array(
+		'eyebrow'     => 'Hygiene',
+		'heading'     => 'Sanitation Controls',
+		'description' => 'Standard operating procedures for plant sanitation.',
+		'practices'   => array(
+			array( 'title' => 'Daily Washdowns', 'description' => 'Systematic sanitation and dry-cleaning cycles.' ),
+			array( 'title' => 'Gown & Air Shower Protocols', 'description' => 'Personnel entry procedures before line entrance.' ),
+		),
+	),
+	'packaging' => array(
+		'eyebrow'      => 'Packaging',
+		'heading'      => 'Packaging Options',
+		'description'  => 'Flexible packing formats for food service and commercial trade.',
+		'capabilities' => array(
+			array( 'title' => 'Nitrogen Flushed Pouches', 'description' => 'Protection against aroma loss and oxidation.' ),
+			array( 'title' => 'Bulk Corrugated Cartons', 'description' => 'Export-grade double-walled secondary cases.' ),
+		),
+	),
+	'warehousing' => array(
+		'eyebrow'     => 'Warehousing',
+		'heading'     => 'Finished Goods Storage',
+		'description' => 'Temperature and humidity controlled storage bays.',
+		'highlights'  => array(
+			array( 'title' => 'Palletized Storage', 'description' => 'Racked inventory ensuring FIFO dispatch.' ),
+		),
+	),
+	'statistics' => array(
+		'eyebrow'     => 'Verified Scale',
+		'heading'     => 'Plant Metrics',
+		'description' => 'Operational figures recorded by site administration.',
+		'items'       => array(
+			array( 'value' => '100', 'suffix' => '%', 'label' => 'Stainless Steel Contact', 'order' => 10 ),
+			array( 'value' => '24', 'suffix' => 'h', 'label' => 'Batch Quarantine', 'order' => 20 ),
+		),
+	),
+	'gallery' => array(
+		'eyebrow'        => 'Visual Tour',
+		'heading'        => 'Facility Photos',
+		'description'    => 'Real-world visual inspection of operational areas.',
+		'attachment_ids' => array( 31, 32, 33 ),
+	),
+	'certifications' => array(
+		'eyebrow'      => 'Standards',
+		'heading'      => 'Plant Accreditations',
+		'description'  => 'Food safety management systems in place.',
+		'selected_ids' => array(),
+	),
+	'products' => array(
+		'eyebrow'     => 'Output',
+		'heading'     => 'Processed Spice Categories',
+		'description' => 'Browse our finished catalog items.',
+		'source'      => 'categories',
+	),
+	'b2b_cta' => array(
+		'eyebrow'           => 'Commercial Inquiries',
+		'heading'           => 'Inquire for Contract Milling',
+		'description'       => 'Discuss specific packaging sizes and custom grind specifications.',
+		'primary_cta_label' => 'Contact Plant Manager',
+		'primary_cta_url'   => '#sc-mfg-final-cta',
+	),
+	'final_cta' => array(
+		'heading'       => 'Get in Touch with our Technical Team',
+		'description'   => 'Direct coordination for samples and technical facility documentation.',
+		'cta_label'     => 'Send Enquiry',
+		'cta_url'       => '/contact/',
+		'show_whatsapp' => 1,
+		'show_email'    => 1,
+	),
+);
+
+$test_q = array(
+	'sections_order' => array(
+		'hero'           => 10,
+		'introduction'   => 20,
+		'principles'     => 30,
+		'process'        => 40,
+		'testing'        => 50,
+		'sourcing'       => 60,
+		'regions'        => 70,
+		'raw_materials'  => 80,
+		'traceability'   => 90,
+		'food_safety'    => 100,
+		'certifications' => 110,
+		'statistics'     => 120,
+		'gallery'        => 130,
+		'products'       => 140,
+		'b2b_cta'        => 150,
+		'final_cta'      => 160,
+	),
+	'sections_enabled' => array(
+		'hero'           => 1,
+		'introduction'   => 1,
+		'principles'     => 1,
+		'process'        => 1,
+		'testing'        => 1,
+		'sourcing'       => 1,
+		'regions'        => 1,
+		'raw_materials'  => 1,
+		'traceability'   => 1,
+		'food_safety'    => 1,
+		'certifications' => 1,
+		'statistics'     => 1,
+		'gallery'        => 1,
+		'products'       => 1,
+		'b2b_cta'        => 1,
+		'final_cta'      => 1,
+	),
+	'hero' => array(
+		'eyebrow'             => 'Quality Assurance',
+		'heading'             => 'Rigorous Quality & Ethical Sourcing',
+		'heading_highlight'   => 'Quality & Ethical',
+		'intro'               => 'Structured testing, documented origin verification, and uncompromising standards across each lot.',
+		'desktop_image_id'    => 33,
+		'cta_primary_label'   => 'Quality Protocols',
+		'cta_primary_url'     => '#sc-quality-process',
+		'cta_secondary_label' => 'Sourcing Regions',
+		'cta_secondary_url'   => '#sc-quality-regions',
+	),
+	'introduction' => array(
+		'eyebrow'          => 'Quality Philosophy',
+		'heading'          => 'Setting Empirical Benchmarks',
+		'content'          => 'Quality is established at source and maintained through measurable parameters rather than inspection alone.',
+		'image_primary_id' => 32,
+		'cta_label'        => 'Explore Principles',
+		'cta_url'          => '#sc-quality-principles',
+	),
+	'principles' => array(
+		'eyebrow'     => 'Core Principles',
+		'heading'     => 'Our Quality Pillars',
+		'description' => 'Guiding criteria followed from intake to dispatch.',
+		'items'       => array(
+			array( 'title' => 'Zero Filler Policy', 'description' => 'Unadulterated whole and ground spices.', 'order' => 10 ),
+			array( 'title' => 'Volatile Oil Retention', 'description' => 'Milling and packing methods preserving essential oils.', 'order' => 20 ),
+		),
+	),
+	'process' => array(
+		'eyebrow'     => 'Control Flow',
+		'heading'     => 'Multi-Stage Inspection',
+		'description' => 'Standardized gate checks before any lot is cleared.',
+		'stages'      => array(
+			array( 'title' => 'Incoming Raw Lot Assessment', 'description' => 'Visual grading, moisture reading, and foreign matter inspection.', 'order' => 10 ),
+			array( 'title' => 'In-Line Process Check', 'description' => 'Mesh distribution and magnetic separation monitoring.', 'order' => 20 ),
+			array( 'title' => 'Pre-Shipment Retention Testing', 'description' => 'Aroma retention, seal integrity, and moisture validation.', 'order' => 30 ),
+		),
+	),
+	'testing' => array(
+		'eyebrow'         => 'Empirical Verification',
+		'heading'         => 'Laboratory & Analytical Testing',
+		'description'     => 'Parametric analysis against established food-grade criteria.',
+		'testing_context' => 'combination',
+		'items'           => array(
+			array( 'name' => 'Moisture Analysis', 'description' => 'Moisture balance checks per batch.', 'method' => 'Halogen Moisture Analyzer' ),
+			array( 'name' => 'Volatile Oil Content', 'description' => 'Steam distillation verification.', 'method' => 'Clevenger Distillation' ),
+		),
+	),
+	'sourcing' => array(
+		'eyebrow'     => 'Origin Integrity',
+		'heading'     => 'Regional Sourcing Philosophy',
+		'description' => 'Direct regional procurement respecting native growing belts and climatic terroirs.',
+		'highlights'  => array(
+			array( 'title' => 'Seasonal Procurement', 'description' => 'Harvest-timed purchases maximizing natural spice oil potency.' ),
+		),
+	),
+	'regions' => array(
+		'eyebrow'     => 'Geographic Origins',
+		'heading'     => 'Cultivation Hubs',
+		'description' => 'Regional agricultural zones configured by procurement management.',
+		'items'       => array(
+			array(
+				'region_name' => 'Wayanad High Ranges',
+				'state'       => 'Kerala',
+				'country'     => 'India',
+				'ingredient'  => 'Black Pepper (Tellicherry Garbled Extra Bold)',
+				'description' => 'High-altitude rain-fed slopes producing robust piperine concentrations.',
+				'order'       => 10,
+			),
+			array(
+				'region_name' => 'Idukki Cardamom Hills',
+				'state'       => 'Kerala',
+				'country'     => 'India',
+				'ingredient'  => 'Green Cardamom (8mm+ Pods)',
+				'description' => 'Shaded canopy cultivation ensuring high essential oil and vibrant green color.',
+				'order'       => 20,
+			),
+		),
+	),
+	'raw_materials' => array(
+		'eyebrow'     => 'Procurement Criteria',
+		'heading'     => 'Raw Material Acceptance Standards',
+		'description' => 'Stringent incoming specifications for raw lots.',
+		'items'       => array(
+			array( 'title' => 'Physical Cleanliness', 'description' => 'Limits on extraneous matter, light berries, and pinheads.' ),
+		),
+	),
+	'traceability' => array(
+		'eyebrow'     => 'Chain of Custody',
+		'heading'     => 'Batch Traceability Protocol',
+		'description' => 'Documented chain of custody from regional lot intake to finished shipment number.',
+		'steps'       => array(
+			array( 'title' => 'Lot Inward Code', 'description' => 'Unique identifier assigned upon weighbridge entry.' ),
+			array( 'title' => 'Batch Record Sheet', 'description' => 'Tracking processing line, operator, and sieve mesh.' ),
+		),
+	),
+	'food_safety' => array(
+		'eyebrow'     => 'Safety First',
+		'heading'     => 'Food Safety Standards',
+		'description' => 'Integrated safety management throughout handling and storage.',
+		'practices'   => array(
+			array( 'title' => 'Allergen Separation', 'description' => 'Dedicated lines preventing cross-contamination.' ),
+		),
+	),
+	'certifications' => array(
+		'eyebrow'      => 'Accreditation',
+		'heading'      => 'Verified Quality Standards',
+		'description'  => 'Formally accredited food safety and processing standards.',
+		'selected_ids' => array(),
+	),
+	'statistics' => array(
+		'eyebrow'     => 'Key Indicators',
+		'heading'     => 'Quality Assurance Metrics',
+		'description' => 'Measurable parameters recorded across our operations.',
+		'items'       => array(
+			array( 'value' => '100', 'suffix' => '%', 'label' => 'Batch Logged Traceability', 'order' => 10 ),
+			array( 'value' => '0', 'suffix' => '%', 'label' => 'Artificial Fillers Allowed', 'order' => 20 ),
+		),
+	),
+	'gallery' => array(
+		'eyebrow'        => 'Verification',
+		'heading'        => 'Quality & Sourcing in Action',
+		'description'    => 'Real-world visual documentation of sampling and origin verification.',
+		'attachment_ids' => array( 31, 32, 33 ),
+	),
+	'products' => array(
+		'eyebrow'     => 'Verified Quality',
+		'heading'     => 'Certified Spice Selections',
+		'description' => 'Experience our lab-tested spice catalogue.',
+		'source'      => 'products',
+	),
+	'b2b_cta' => array(
+		'eyebrow'           => 'Custom Requirements',
+		'heading'           => 'Request Quality Documentation & COA',
+		'description'       => 'Receive technical data sheets, Certificate of Analysis samples, and batch reports.',
+		'primary_cta_label' => 'Request COA Samples',
+		'primary_cta_url'   => '#sc-quality-final-cta',
+	),
+	'final_cta' => array(
+		'heading'       => 'Connect with our Quality Assurance Team',
+		'description'   => 'Direct coordination for technical inquiries, documentation, and audits.',
+		'cta_label'     => 'Submit Inquiry',
+		'cta_url'       => '/contact/',
+		'show_whatsapp' => 1,
+		'show_email'    => 1,
+	),
+);
+
+spicecraft_update_manufacturing_settings( $test_mfg );
+spicecraft_update_quality_settings( $test_q );
+
+echo "Test data successfully populated for visual QA and screenshot capture.\n";

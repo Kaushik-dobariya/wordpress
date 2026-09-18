@@ -165,17 +165,7 @@ $mailto_url = 'mailto:' . sanitize_email( $contact_email ) . '?subject=' . rawur
 				<?php endif; ?>
 			</div><!-- .sc-single-product__rating-row -->
 
-			<!-- Certifications Row (Rendered only when assigned) -->
-			<?php if ( ! empty( $certifications ) ) : ?>
-				<div class="sc-single-product__certs-row" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-					<?php foreach ( $certifications as $cert ) : ?>
-						<span class="sc-cert-pill" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.6rem; border-radius: 9999px; background: rgba(34, 197, 94, 0.1); color: #16a34a; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.02em;">
-							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-							<?php echo esc_html( $cert->name ); ?>
-						</span>
-					<?php endforeach; ?>
-				</div>
-			<?php endif; ?>
+
 
 			<!-- Short Description -->
 			<div class="sc-single-product__short-desc">
@@ -309,6 +299,41 @@ $mailto_url = 'mailto:' . sanitize_email( $contact_email ) . '?subject=' . rawur
 						</div>
 					<?php endforeach; ?>
 				</div><!-- .sc-trust-row -->
+			<?php endif; ?>
+
+			<!-- Product Certified Standards (Strictly scoped to this product/category) -->
+			<?php
+			$prod_certs = function_exists( 'spicecraft_get_product_public_certifications' )
+				? spicecraft_get_product_public_certifications( $product_id )
+				: array();
+
+			if ( ! empty( $prod_certs ) ) : ?>
+				<div class="sc-product-certs" aria-label="<?php esc_attr_e( 'Verified Product Certifications', 'spicecraft' ); ?>">
+					<span class="sc-product-certs__label"><?php esc_html_e( 'Certified Standards:', 'spicecraft' ); ?></span>
+					<div class="sc-product-certs__badges">
+						<?php foreach ( $prod_certs as $pc_term ) :
+							$pc_meta       = function_exists( 'spicecraft_get_certification_meta' ) ? spicecraft_get_certification_meta( $pc_term->term_id ) : array();
+							$pc_logo_id    = absint( $pc_meta['logo_id'] ?? 0 );
+							$pc_short      = ! empty( $pc_meta['short_name'] ) ? $pc_meta['short_name'] : $pc_term->name;
+							$pc_has_detail = function_exists( 'spicecraft_has_certification_public_detail' ) ? spicecraft_has_certification_public_detail( $pc_term->term_id ) : true;
+							$pc_url        = get_term_link( $pc_term );
+							?>
+							<div class="sc-product-cert-pill">
+								<?php if ( $pc_logo_id ) : ?>
+									<?php echo wp_get_attachment_image( $pc_logo_id, 'thumbnail', false, array( 'class' => 'sc-product-cert-pill__logo', 'loading' => 'lazy', 'alt' => esc_attr( $pc_term->name ) ) ); ?>
+								<?php else : ?>
+									<span class="dashicons dashicons-awards sc-product-cert-pill__icon" aria-hidden="true"></span>
+								<?php endif; ?>
+								<span class="sc-product-cert-pill__title"><?php echo esc_html( $pc_short ); ?></span>
+								<?php if ( $pc_has_detail && ! is_wp_error( $pc_url ) ) : ?>
+									<a href="<?php echo esc_url( $pc_url ); ?>" class="sc-product-cert-pill__link" title="<?php echo esc_attr( sprintf( __( 'View %s audit specifications', 'spicecraft' ), $pc_term->name ) ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'View %s audit specifications', 'spicecraft' ), $pc_term->name ) ); ?>">
+										<span class="dashicons dashicons-arrow-right-alt2" aria-hidden="true"></span>
+									</a>
+								<?php endif; ?>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				</div>
 			<?php endif; ?>
 
 			<!-- Product Metadata (SKU, Categories, Tags) -->

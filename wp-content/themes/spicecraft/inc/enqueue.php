@@ -104,6 +104,50 @@ function spicecraft_scripts() {
 		);
 	}
 
+	// 5d. About Us Dedicated Stylesheet (Phase 3 Step 1)
+	if ( is_page_template( 'page-about.php' ) || is_page( 'about' ) || is_page( 'about-us' ) ) {
+		$about_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/about.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/about.css' ) : SPICECRAFT_VERSION;
+		wp_enqueue_style(
+			'spicecraft-about',
+			SPICECRAFT_URI . '/assets/css/about.css',
+			array( 'spicecraft-responsive' ),
+			$about_css_ver
+		);
+	}
+
+	// 5e. Manufacturing Dedicated Stylesheet (Phase 3 Step 2)
+	if ( is_page_template( 'page-manufacturing.php' ) || is_page( 'manufacturing' ) ) {
+		$mfg_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/manufacturing.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/manufacturing.css' ) : SPICECRAFT_VERSION;
+		wp_enqueue_style(
+			'spicecraft-manufacturing',
+			SPICECRAFT_URI . '/assets/css/manufacturing.css',
+			array( 'spicecraft-responsive' ),
+			$mfg_css_ver
+		);
+	}
+
+	// 5f. Quality & Sourcing Dedicated Stylesheet (Phase 3 Step 2)
+	if ( is_page_template( 'page-quality.php' ) || is_page( 'quality' ) || is_page( 'quality-sourcing' ) ) {
+		$quality_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/quality.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/quality.css' ) : SPICECRAFT_VERSION;
+		wp_enqueue_style(
+			'spicecraft-quality',
+			SPICECRAFT_URI . '/assets/css/quality.css',
+			array( 'spicecraft-responsive' ),
+			$quality_css_ver
+		);
+	}
+
+	// 5g. Certifications Dedicated Stylesheet (Phase 3 Step 3)
+	if ( is_page_template( 'page-certifications.php' ) || is_page( 'certifications' ) || is_tax( 'spicecraft_certification' ) || is_singular( 'product' ) ) {
+		$cert_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/certifications.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/certifications.css' ) : SPICECRAFT_VERSION;
+		wp_enqueue_style(
+			'spicecraft-certifications',
+			SPICECRAFT_URI . '/assets/css/certifications.css',
+			array( 'spicecraft-responsive' ),
+			$cert_css_ver
+		);
+	}
+
 	// 5c. Product Discovery Stylesheet (Catalog filtering, chips, favourites, search, engagement)
 	$disc_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/product-discovery.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/product-discovery.css' ) : SPICECRAFT_VERSION;
 	wp_enqueue_style(
