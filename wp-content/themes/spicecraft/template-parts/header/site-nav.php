@@ -55,23 +55,12 @@ $cta_url      = ! empty( $cta_url ) ? $cta_url : home_url( '/#contact' );
 					'menu_class'     => 'sc-nav-menu',
 					'container'      => false,
 					'fallback_cb'    => function () {
+						$shop_url = class_exists( 'WooCommerce' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 						echo '<ul class="sc-nav-menu">';
 						echo '<li><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Home', 'spicecraft' ) . '</a></li>';
-						if ( class_exists( 'WooCommerce' ) ) {
-							echo '<li class="menu-item-has-children"><a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">' . esc_html__( 'Products Catalog', 'spicecraft' ) . '</a>';
-							echo '<ul class="sub-menu">';
-							echo '<li><a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">' . esc_html__( 'All Spices', 'spicecraft' ) . '</a></li>';
-							echo '<li><a href="' . esc_url( home_url( '/#ground-spices' ) ) . '">' . esc_html__( 'Ground Spices', 'spicecraft' ) . '</a></li>';
-							echo '<li><a href="' . esc_url( home_url( '/#whole-spices' ) ) . '">' . esc_html__( 'Whole Spices', 'spicecraft' ) . '</a></li>';
-							echo '<li><a href="' . esc_url( home_url( '/#blended-masalas' ) ) . '">' . esc_html__( 'Blended Masalas', 'spicecraft' ) . '</a></li>';
-							echo '<li><a href="' . esc_url( home_url( '/#export-bulk' ) ) . '">' . esc_html__( 'Export Supply', 'spicecraft' ) . '</a></li>';
-							echo '</ul></li>';
-						}
 						echo '<li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About Us', 'spicecraft' ) . '</a></li>';
-						echo '<li><a href="' . esc_url( home_url( '/manufacturing/' ) ) . '">' . esc_html__( 'Manufacturing', 'spicecraft' ) . '</a></li>';
-						echo '<li><a href="' . esc_url( home_url( '/quality/' ) ) . '">' . esc_html__( 'Quality & Sourcing', 'spicecraft' ) . '</a></li>';
-						echo '<li><a href="' . esc_url( home_url( '/certifications/' ) ) . '">' . esc_html__( 'Certifications', 'spicecraft' ) . '</a></li>';
-						echo '<li><a href="' . esc_url( home_url( '/#contact' ) ) . '">' . esc_html__( 'Contact', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( $shop_url ) . '">' . esc_html__( 'Products', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/#contact' ) ) . '" class="sc-open-enquiry-modal">' . esc_html__( 'Contact Us', 'spicecraft' ) . '</a></li>';
 						echo '</ul>';
 					},
 				)
@@ -99,7 +88,7 @@ $cta_url      = ! empty( $cta_url ) ? $cta_url : home_url( '/#contact' );
 			</a>
 
 			<!-- Desktop Contact / Trade Enquiry CTA -->
-			<a href="<?php echo esc_url( $cta_url ); ?>" class="sc-btn sc-btn--primary sc-header-cta">
+			<a href="<?php echo esc_url( $cta_url ); ?>" class="sc-btn sc-btn--primary sc-header-cta sc-open-enquiry-modal">
 				<?php echo esc_html( $cta_text ); ?>
 			</a>
 
@@ -132,23 +121,19 @@ $cta_url      = ! empty( $cta_url ) ? $cta_url : home_url( '/#contact' );
 				'menu_class'     => 'sc-mobile-menu',
 				'container'      => false,
 				'fallback_cb'    => function () {
+					$shop_url = class_exists( 'WooCommerce' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 					echo '<ul class="sc-mobile-menu">';
 					echo '<li><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Home', 'spicecraft' ) . '</a></li>';
-					if ( class_exists( 'WooCommerce' ) ) {
-						echo '<li><a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">' . esc_html__( 'Products Catalog', 'spicecraft' ) . '</a></li>';
-					}
 					echo '<li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About Us', 'spicecraft' ) . '</a></li>';
-					echo '<li><a href="' . esc_url( home_url( '/manufacturing/' ) ) . '">' . esc_html__( 'Manufacturing', 'spicecraft' ) . '</a></li>';
-					echo '<li><a href="' . esc_url( home_url( '/quality/' ) ) . '">' . esc_html__( 'Quality & Sourcing', 'spicecraft' ) . '</a></li>';
-					echo '<li><a href="' . esc_url( home_url( '/certifications/' ) ) . '">' . esc_html__( 'Certifications', 'spicecraft' ) . '</a></li>';
-					echo '<li><a href="' . esc_url( home_url( '/#contact' ) ) . '">' . esc_html__( 'Contact', 'spicecraft' ) . '</a></li>';
+					echo '<li><a href="' . esc_url( $shop_url ) . '">' . esc_html__( 'Products', 'spicecraft' ) . '</a></li>';
+					echo '<li><a href="' . esc_url( home_url( '/#contact' ) ) . '" class="sc-open-enquiry-modal">' . esc_html__( 'Contact Us', 'spicecraft' ) . '</a></li>';
 					echo '</ul>';
 				},
 			)
 		);
 		?>
 		<div style="padding: var(--sc-space-4); border-top: 1px solid var(--sc-color-border-subtle); margin-top: var(--sc-space-4);">
-			<a href="<?php echo esc_url( $cta_url ); ?>" class="sc-btn sc-btn--primary sc-btn--full">
+			<a href="<?php echo esc_url( $cta_url ); ?>" class="sc-btn sc-btn--primary sc-btn--full sc-open-enquiry-modal">
 				<?php echo esc_html( $cta_text ); ?>
 			</a>
 		</div>

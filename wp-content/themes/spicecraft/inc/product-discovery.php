@@ -556,9 +556,15 @@ function spicecraft_favourites_shortcode() {
 		<div class="woocommerce" id="sc-favourites-grid-wrap" style="display: none;">
 			<div class="sc-favourites-meta-bar">
 				<span class="sc-favourites-count" id="sc-favourites-count-label"></span>
-				<button type="button" class="sc-btn sc-btn--outline sc-btn--sm" id="sc-clear-favourites-btn">
-					<?php esc_html_e( 'Clear All Favourites', 'spicecraft' ); ?>
-				</button>
+				<div class="sc-favourites-actions" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+					<button type="button" class="sc-btn sc-btn--primary sc-btn--sm sc-open-enquiry-modal" id="sc-enquire-favourites-btn">
+						<svg class="sc-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+						<?php esc_html_e( 'Request Information for Favourites', 'spicecraft' ); ?>
+					</button>
+					<button type="button" class="sc-btn sc-btn--outline sc-btn--sm" id="sc-clear-favourites-btn">
+						<?php esc_html_e( 'Clear All Favourites', 'spicecraft' ); ?>
+					</button>
+				</div>
 			</div>
 			<ul class="products columns-4 sc-products-grid" id="sc-favourites-grid"></ul>
 		</div>

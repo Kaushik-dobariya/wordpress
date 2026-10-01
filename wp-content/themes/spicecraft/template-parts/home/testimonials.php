@@ -24,7 +24,7 @@ $limit        = ! empty( $tst_settings['limit'] ) ? absint( $tst_settings['limit
 $selected_ids = ! empty( $tst_settings['selected_ids'] ) ? array_map( 'absint', (array) $tst_settings['selected_ids'] ) : array();
 
 $query_args = array(
-	'post_type'      => 'spicecraft_testimonial',
+	'post_type'      => 'sc_testimonial',
 	'post_status'    => 'publish',
 	'posts_per_page' => $limit,
 	'meta_key'       => '_sc_testimonial_order',
@@ -68,46 +68,23 @@ if ( ! $testimonials_query->have_posts() ) {
 			<?php
 			while ( $testimonials_query->have_posts() ) :
 				$testimonials_query->the_post();
-				$post_id = get_the_ID();
-				$role    = get_post_meta( $post_id, '_sc_testimonial_role', true );
-				$company = get_post_meta( $post_id, '_sc_testimonial_company', true );
-				$rating  = get_post_meta( $post_id, '_sc_testimonial_rating', true );
-				?>
-				<article class="sc-testimonial-card">
-					<div class="sc-testimonial-quote-mark" aria-hidden="true">&ldquo;</div>
-
-					<?php if ( ! empty( $rating ) && absint( $rating ) >= 1 ) : ?>
-						<div class="sc-testimonial-stars" aria-label="<?php echo esc_attr( sprintf( _n( '%d star rating', '%d stars rating', $rating, 'spicecraft' ), $rating ) ); ?>">
-							<?php for ( $s = 0; $s < absint( $rating ); $s++ ) : ?>
-								<svg class="sc-star-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-							<?php endfor; ?>
-						</div>
-					<?php endif; ?>
-
-					<blockquote class="sc-testimonial-text">
-						<?php echo wp_kses_post( wpautop( get_the_content() ) ); ?>
-					</blockquote>
-
-					<div class="sc-testimonial-author">
-						<?php if ( has_post_thumbnail() ) : ?>
-							<div class="sc-author-avatar">
-								<?php the_post_thumbnail( array( 54, 54 ), array( 'class' => 'sc-avatar-img', 'alt' => get_the_title() ) ); ?>
-							</div>
-						<?php endif; ?>
-						<div class="sc-author-meta">
-							<strong class="sc-author-name"><?php the_title(); ?></strong>
-							<?php if ( ! empty( $role ) || ! empty( $company ) ) : ?>
-								<span class="sc-author-role">
-									<?php echo esc_html( implode( ' · ', array_filter( array( $role, $company ) ) ) ); ?>
-								</span>
-							<?php endif; ?>
-						</div>
-					</div>
-				</article>
-				<?php
+				get_template_part(
+					'template-parts/content/testimonial-card',
+					null,
+					array(
+						'post_id' => get_the_ID(),
+					)
+				);
 			endwhile;
 			wp_reset_postdata();
 			?>
+		</div>
+
+		<div class="sc-testimonials-footer sc-text-center">
+			<a href="<?php echo esc_url( function_exists( 'spicecraft_get_testimonials_url' ) ? spicecraft_get_testimonials_url() : home_url( '/testimonials/' ) ); ?>" class="sc-btn sc-btn--outline sc-btn--icon-right">
+				<span><?php esc_html_e( 'View All Client Stories', 'spicecraft' ); ?></span>
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+			</a>
 		</div>
 	</div>
 </section>

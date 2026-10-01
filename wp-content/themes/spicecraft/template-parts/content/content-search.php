@@ -22,6 +22,10 @@ if ( 'product' === $post_type ) {
 	$badge_label = __( 'Spice Product', 'spicecraft' );
 	$badge_class = 'sc-badge--primary';
 	$cta_label   = __( 'View Product Details', 'spicecraft' );
+} elseif ( 'spicecraft_recipe' === $post_type ) {
+	$badge_label = __( 'Recipe & Inspiration', 'spicecraft' );
+	$badge_class = 'sc-badge--accent';
+	$cta_label   = __( 'View Recipe', 'spicecraft' );
 } elseif ( 'post' === $post_type ) {
 	$badge_label = __( 'Article & Insight', 'spicecraft' );
 	$badge_class = 'sc-badge--secondary';
@@ -47,7 +51,14 @@ if ( 'product' === $post_type ) {
 			<span class="sc-badge <?php echo esc_attr( $badge_class ); ?>" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
 				<?php echo esc_html( $badge_label ); ?>
 			</span>
-			<?php if ( 'post' === $post_type ) : ?>
+			<?php if ( 'spicecraft_recipe' === $post_type ) :
+				$rc_cats = get_the_term_list( get_the_ID(), 'spicecraft_recipe_category', '', ', ' );
+				if ( ! empty( $rc_cats ) && ! is_wp_error( $rc_cats ) ) : ?>
+					<span style="font-size: 0.8rem; color: var(--sc-color-text-muted);">
+						<?php echo wp_kses_post( $rc_cats ); ?>
+					</span>
+				<?php endif;
+			elseif ( 'post' === $post_type ) : ?>
 				<span style="font-size: 0.8rem; color: var(--sc-color-text-muted);">
 					<?php echo esc_html( get_the_date() ); ?>
 				</span>

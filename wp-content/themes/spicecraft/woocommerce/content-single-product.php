@@ -231,18 +231,20 @@ $mailto_url = 'mailto:' . sanitize_email( $contact_email ) . '?subject=' . rawur
 							</a>
 						<?php endif; ?>
 
-						<!-- Secondary CTA: Email Product Enquiry -->
-						<?php if ( ! empty( $contact_email ) ) : ?>
-							<a href="<?php echo esc_url( $mailto_url ); ?>" 
-								id="sc-email-enquiry-cta" 
-								class="sc-btn sc-btn--secondary sc-btn--lg sc-btn--full">
-								<svg class="sc-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-									<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-									<polyline points="22,6 12,13 2,6"></polyline>
-								</svg>
-								<span><?php esc_html_e( 'Email Trade Enquiry', 'spicecraft' ); ?></span>
-							</a>
-						<?php endif; ?>
+						<!-- Secondary CTA: Enquire About This Product (Direct Modal Engine) -->
+						<button type="button" 
+							id="sc-open-enquiry-modal-btn" 
+							class="sc-btn sc-btn--primary sc-btn--lg sc-btn--full sc-open-enquiry-modal" 
+							data-product-id="<?php echo esc_attr( $product_id ); ?>" 
+							data-product-name="<?php echo esc_attr( $product_name ); ?>" 
+							data-product-sku="<?php echo esc_attr( $sku ); ?>" 
+							data-product-url="<?php echo esc_url( get_permalink( $product_id ) ); ?>">
+							<svg class="sc-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+								<polyline points="22,6 12,13 2,6"></polyline>
+							</svg>
+							<span><?php esc_html_e( 'Enquire About This Product', 'spicecraft' ); ?></span>
+						</button>
 					</div>
 
 					<div class="sc-enquiry-box__notice">
@@ -555,6 +557,40 @@ $mailto_url = 'mailto:' . sanitize_email( $contact_email ) . '?subject=' . rawur
 		</div>
 
 	</div><!-- .sc-single-product__details-tabs -->
+
+	<!-- ====================================================================
+	     2b. RECIPES USING THIS PRODUCT (PART Y Integration)
+	     Conditionally displayed ONLY when an explicit relationship exists!
+	     ==================================================================== -->
+	<?php
+	$product_recipes = function_exists( 'spicecraft_get_recipes_for_product' )
+		? spicecraft_get_recipes_for_product( $product_id, 3 )
+		: array();
+
+	if ( ! empty( $product_recipes ) ) :
+	?>
+	<section class="sc-product-recipes sc-no-print" aria-labelledby="recipes-using-product-heading" style="margin-top: 4rem; padding-top: 3.5rem; border-top: 1px solid #e5e7eb;">
+		<div class="sc-related-products__header" style="text-align: center; margin-bottom: 2.5rem;">
+			<span class="sc-related-products__eyebrow"><?php esc_html_e( 'Culinary Inspiration', 'spicecraft' ); ?></span>
+			<h2 id="recipes-using-product-heading" class="sc-related-products__title">
+				<?php printf( esc_html__( 'Recipes Using %s', 'spicecraft' ), esc_html( get_the_title() ) ); ?>
+			</h2>
+			<p class="sc-related-products__sub">
+				<?php esc_html_e( 'Formulated by our test kitchen blenders to highlight the authentic aromas and culinary characteristics of this spice.', 'spicecraft' ); ?>
+			</p>
+		</div>
+
+		<div class="sc-grid sc-grid--3 sc-recipes-grid">
+			<?php
+			foreach ( $product_recipes as $recipe_post ) :
+				if ( function_exists( 'spicecraft_render_recipe_card' ) ) {
+					spicecraft_render_recipe_card( $recipe_post );
+				}
+			endforeach;
+			?>
+		</div>
+	</section>
+	<?php endif; ?>
 
 	<!-- ====================================================================
 	     3. RELATED PRODUCTS SECTION (Uses the EXACT SAME unified card!)

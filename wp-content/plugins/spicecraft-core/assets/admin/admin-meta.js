@@ -614,5 +614,267 @@ jQuery(document).ready(function ($) {
         container.append(row);
         row.find('input:first').focus();
     });
+
+    // =========================================================================
+    // 30. Recipe Admin Interactions
+    // =========================================================================
+
+    // Add Ingredient Group
+    $('#sc-add-ingredient-group-btn').on('click', function (e) {
+        e.preventDefault();
+        var container = $('#sc-ingredient-groups-container');
+        var gIdx = Date.now();
+        var firstGroup = container.find('.sc-ingredient-group-box').first();
+
+        // Sample product options from first select if available
+        var selectHtml = '<select name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][0][product_id]" class="widefat"><option value="0">— No Linked Product —</option></select>';
+        if (firstGroup.length && firstGroup.find('select').length) {
+            var optionsHtml = firstGroup.find('select').first().html();
+            selectHtml = '<select name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][0][product_id]" class="widefat">' + optionsHtml + '</select>';
+        }
+
+        var groupHtml = $(
+            '<div class="sc-ingredient-group-box" data-group-index="' + gIdx + '" style="border: 1px solid #c3c4c7; background: #fafafa; border-radius: 6px; padding: 14px; margin-bottom: 16px;">' +
+            '<div class="sc-group-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #e2e4e7;">' +
+            '<div style="display: flex; align-items: center; gap: 8px; flex-grow: 1; max-width: 450px;">' +
+            '<span class="dashicons dashicons-menu sc-drag-handle" style="color: #8c8f94; cursor: grab;"></span>' +
+            '<input type="text" name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][group_name]" value="" class="widefat" placeholder="Group Name (e.g. For the Tadka)" style="font-weight: 600;" />' +
+            '</div>' +
+            '<button type="button" class="button sc-remove-group-btn" style="color: #b32d2e;"><span class="dashicons dashicons-trash" style="margin-top: -2px;"></span> Remove Group</button>' +
+            '</div>' +
+            '<table class="wp-list-table widefat striped sc-group-items-table" style="background: #fff; margin-bottom: 8px;">' +
+            '<thead><tr><th style="width: 100px;">Qty</th><th style="width: 90px;">Unit</th><th>Ingredient Name</th><th>Preparation / Note</th><th style="width: 260px;">Linked Spice Product (Optional)</th><th style="width: 40px; text-align: center;"></th></tr></thead>' +
+            '<tbody>' +
+            '<tr>' +
+            '<td><input type="text" name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][0][quantity]" value="" class="widefat" placeholder="1, 1/2, 2" /></td>' +
+            '<td><input type="text" name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][0][unit]" value="" class="widefat" placeholder="tsp, g" /></td>' +
+            '<td><input type="text" name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][0][ingredient]" value="" class="widefat" placeholder="e.g. Cumin Seeds" /></td>' +
+            '<td><input type="text" name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][0][note]" value="" class="widefat" placeholder="e.g. roasted" /></td>' +
+            '<td>' + selectHtml + '</td>' +
+            '<td style="text-align: center;"><button type="button" class="button sc-remove-row-btn">&times;</button></td>' +
+            '</tr>' +
+            '</tbody>' +
+            '</table>' +
+            '<button type="button" class="button sc-add-ingredient-item-btn" data-group-index="' + gIdx + '"><span class="dashicons dashicons-plus-alt" style="margin-top: -2px;"></span> Add Ingredient Row</button>' +
+            '</div>'
+        );
+
+        container.append(groupHtml);
+        groupHtml.find('input:first').focus();
+    });
+
+    // Remove Ingredient Group
+    $(document).on('click', '.sc-remove-group-btn', function (e) {
+        e.preventDefault();
+        var groupBox = $(this).closest('.sc-ingredient-group-box');
+        if (confirm('Are you sure you want to remove this ingredient group and all its ingredients?')) {
+            groupBox.fadeOut(150, function () { groupBox.remove(); });
+        }
+    });
+
+    // Add Ingredient Row to a Group
+    $(document).on('click', '.sc-add-ingredient-item-btn', function (e) {
+        e.preventDefault();
+        var groupBox = $(this).closest('.sc-ingredient-group-box');
+        var gIdx = groupBox.data('group-index');
+        var tbody = groupBox.find('tbody');
+        var iIdx = Date.now();
+
+        var selectHtml = '<select name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][' + iIdx + '][product_id]" class="widefat"><option value="0">— No Linked Product —</option></select>';
+        if (tbody.find('select').length) {
+            var optionsHtml = tbody.find('select').first().html();
+            selectHtml = '<select name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][' + iIdx + '][product_id]" class="widefat">' + optionsHtml + '</select>';
+        }
+
+        var newRow = $(
+            '<tr>' +
+            '<td><input type="text" name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][' + iIdx + '][quantity]" value="" class="widefat" placeholder="1, 1/2, 2" /></td>' +
+            '<td><input type="text" name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][' + iIdx + '][unit]" value="" class="widefat" placeholder="tsp, g" /></td>' +
+            '<td><input type="text" name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][' + iIdx + '][ingredient]" value="" class="widefat" placeholder="e.g. Turmeric Powder" /></td>' +
+            '<td><input type="text" name="_spicecraft_recipe_ingredient_groups[' + gIdx + '][items][' + iIdx + '][note]" value="" class="widefat" placeholder="" /></td>' +
+            '<td>' + selectHtml + '</td>' +
+            '<td style="text-align: center;"><button type="button" class="button sc-remove-row-btn">&times;</button></td>' +
+            '</tr>'
+        );
+
+        tbody.append(newRow);
+        newRow.find('input:first').focus();
+    });
+
+    // Add Instruction Step
+    $('#sc-add-instruction-step-btn').on('click', function (e) {
+        e.preventDefault();
+        var container = $('#sc-instruction-steps-container');
+        var count = container.find('.sc-instruction-step-box').length + 1;
+        var sIdx = Date.now();
+        var countStr = count < 10 ? '0' + count : count;
+
+        var stepHtml = $(
+            '<div class="sc-instruction-step-box" data-step-index="' + sIdx + '" style="border: 1px solid #c3c4c7; background: #fff; border-radius: 6px; padding: 16px; margin-bottom: 16px;">' +
+            '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f1;">' +
+            '<div style="display: flex; align-items: center; gap: 8px;">' +
+            '<span class="dashicons dashicons-menu sc-drag-handle" style="color: #8c8f94; cursor: grab;"></span>' +
+            '<span class="sc-step-badge" style="background: #2b7a78; color: #fff; font-weight: 700; padding: 2px 10px; border-radius: 12px; font-size: 13px;">Step ' + countStr + '</span>' +
+            '</div>' +
+            '<button type="button" class="button sc-remove-step-btn" style="color: #b32d2e;"><span class="dashicons dashicons-trash" style="margin-top: -2px;"></span> Remove Step</button>' +
+            '</div>' +
+            '<div style="display: grid; grid-template-columns: 1fr 200px; gap: 16px;">' +
+            '<div>' +
+            '<div style="margin-bottom: 10px;">' +
+            '<label style="font-weight: 600; display: block; margin-bottom: 4px;">Step Heading (Optional)</label>' +
+            '<input type="text" name="_spicecraft_recipe_instruction_steps[' + sIdx + '][heading]" value="" class="widefat" placeholder="e.g. Sauté Aromatics" />' +
+            '</div>' +
+            '<div style="margin-bottom: 10px;">' +
+            '<label style="font-weight: 600; display: block; margin-bottom: 4px;">Step Instruction <span style="color: red;">*</span></label>' +
+            '<textarea name="_spicecraft_recipe_instruction_steps[' + sIdx + '][instruction]" rows="3" class="widefat" placeholder="Describe this preparation step clearly..."></textarea>' +
+            '</div>' +
+            '<div>' +
+            '<label style="font-weight: 600; display: block; margin-bottom: 4px;">Chef’s Tip (Optional)</label>' +
+            '<input type="text" name="_spicecraft_recipe_instruction_steps[' + sIdx + '][tip]" value="" class="widefat" placeholder="e.g. Keep flame medium-low." />' +
+            '</div>' +
+            '</div>' +
+            '<div>' +
+            '<label style="font-weight: 600; display: block; margin-bottom: 4px;">Step Photo (Optional)</label>' +
+            '<div class="sc-step-media-preview" style="width: 100%; height: 110px; background: #f0f0f1; border: 1px dashed #c3c4c7; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 6px;">' +
+            '<span style="color: #8c8f94; font-size: 11px;">No step image</span>' +
+            '</div>' +
+            '<input type="hidden" name="_spicecraft_recipe_instruction_steps[' + sIdx + '][image_id]" class="sc-step-image-id" value="" />' +
+            '<div style="display: flex; gap: 4px;">' +
+            '<button type="button" class="button button-small sc-step-media-upload-btn">Select</button>' +
+            '<button type="button" class="button button-small sc-step-media-remove-btn" style="display: none;">Remove</button>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>'
+        );
+
+        container.append(stepHtml);
+        stepHtml.find('textarea').focus();
+    });
+
+    // Remove Instruction Step
+    $(document).on('click', '.sc-remove-step-btn', function (e) {
+        e.preventDefault();
+        var stepBox = $(this).closest('.sc-instruction-step-box');
+        stepBox.fadeOut(150, function () {
+            stepBox.remove();
+            // Renumber remaining steps
+            $('#sc-instruction-steps-container .sc-instruction-step-box').each(function (idx) {
+                var num = idx + 1;
+                var numStr = num < 10 ? '0' + num : num;
+                $(this).find('.sc-step-badge').text('Step ' + numStr);
+            });
+        });
+    });
+
+    // Step Media Upload
+    $(document).on('click', '.sc-step-media-upload-btn', function (e) {
+        e.preventDefault();
+        var parent = $(this).closest('.sc-instruction-step-box');
+        var input = parent.find('.sc-step-image-id');
+        var preview = parent.find('.sc-step-media-preview');
+        var removeBtn = parent.find('.sc-step-media-remove-btn');
+
+        var frame = wp.media({
+            title: 'Select Step Photograph',
+            button: { text: 'Use This Photo' },
+            multiple: false
+        });
+
+        frame.on('select', function () {
+            var attachment = frame.state().get('selection').first().toJSON();
+            input.val(attachment.id);
+            var url = (attachment.sizes && attachment.sizes.medium) ? attachment.sizes.medium.url : attachment.url;
+            preview.html('<img src="' + url + '" alt="" style="width:100%;height:100%;object-fit:cover;" />');
+            removeBtn.show();
+        });
+
+        frame.open();
+    });
+
+    // Step Media Remove
+    $(document).on('click', '.sc-step-media-remove-btn', function (e) {
+        e.preventDefault();
+        var parent = $(this).closest('.sc-instruction-step-box');
+        parent.find('.sc-step-image-id').val('');
+        parent.find('.sc-step-media-preview').html('<span style="color:#8c8f94;font-size:11px;">No step image</span>');
+        $(this).hide();
+    });
+
+    // Careers: Add Responsibility
+    $('#sc-add-responsibility-btn').on('click', function (e) {
+        e.preventDefault();
+        var row = $('<div class="sc-repeatable-row" style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">' +
+            '<span class="dashicons dashicons-menu sc-drag-handle" style="color: #8c8f94; cursor: grab;"></span>' +
+            '<input type="text" name="_sc_job_responsibilities[]" value="" class="widefat" placeholder="e.g. Oversee precision milling and cryo-grinding lines to ensure particle consistency." />' +
+            '<button type="button" class="button sc-remove-row-btn">&times;</button>' +
+            '</div>');
+        $('#sc-responsibilities-container').append(row);
+        row.find('input').focus();
+    });
+
+    // Careers: Add Required Qualification
+    $('#sc-add-qualification-btn').on('click', function (e) {
+        e.preventDefault();
+        var row = $('<div class="sc-repeatable-row" style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">' +
+            '<span class="dashicons dashicons-menu sc-drag-handle" style="color: #8c8f94; cursor: grab;"></span>' +
+            '<input type="text" name="_sc_job_qualifications[]" value="" class="widefat" placeholder="e.g. Bachelor\'s degree in Food Science, Chemical Engineering, or related discipline." />' +
+            '<button type="button" class="button sc-remove-row-btn">&times;</button>' +
+            '</div>');
+        $('#sc-qualifications-container').append(row);
+        row.find('input').focus();
+    });
+
+    // Careers: Add Preferred Qualification
+    $('#sc-add-preferred-qualification-btn').on('click', function (e) {
+        e.preventDefault();
+        var row = $('<div class="sc-repeatable-row" style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">' +
+            '<span class="dashicons dashicons-menu sc-drag-handle" style="color: #8c8f94; cursor: grab;"></span>' +
+            '<input type="text" name="_sc_job_preferred_qualifications[]" value="" class="widefat" placeholder="e.g. Prior experience with US FDA, ISO 22000, or BRCGS spice audit standards." />' +
+            '<button type="button" class="button sc-remove-row-btn">&times;</button>' +
+            '</div>');
+        $('#sc-pref-qualifications-container').append(row);
+        row.find('input').focus();
+    });
+
+    // Careers: Add Skill Chip
+    $('#sc-add-skill-btn').on('click', function (e) {
+        e.preventDefault();
+        var row = $('<div class="sc-repeatable-row" style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">' +
+            '<span class="dashicons dashicons-menu sc-drag-handle" style="color: #8c8f94; cursor: grab;"></span>' +
+            '<input type="text" name="_sc_job_skills[]" value="" class="widefat" placeholder="e.g. Cryo-Milling, HACCP, Sensory Analysis, Spice Blending, Steam Sterilization" />' +
+            '<button type="button" class="button sc-remove-row-btn">&times;</button>' +
+            '</div>');
+        $('#sc-skills-container').append(row);
+        row.find('input').focus();
+    });
+
+    // Careers: Add Benefit
+    $('#sc-add-benefit-btn').on('click', function (e) {
+        e.preventDefault();
+        var row = $('<div class="sc-repeatable-row" style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">' +
+            '<span class="dashicons dashicons-menu sc-drag-handle" style="color: #8c8f94; cursor: grab;"></span>' +
+            '<input type="text" name="_sc_job_benefits[]" value="" class="widefat" placeholder="e.g. Comprehensive Family Medical Cover" />' +
+            '<button type="button" class="button sc-remove-row-btn">&times;</button>' +
+            '</div>');
+        $('#sc-benefits-container').append(row);
+        row.find('input').focus();
+    });
+
+    // Careers Settings: Add Culture Point
+    $('#sc-add-culture-point-btn').on('click', function (e) {
+        e.preventDefault();
+        var idx = $('#sc-culture-points-container .sc-repeatable-row').length;
+        var row = $('<div class="sc-repeatable-row sc-card" style="padding: 14px; margin-bottom: 12px; background: #fafafa; border: 1px solid #cbd5e1; border-radius: 4px;">' +
+            '<div style="display: flex; gap: 10px; margin-bottom: 8px;">' +
+            '<input type="text" name="spicecraft_careers_settings[culture_points][' + idx + '][title]" value="" placeholder="Pillar Title" class="regular-text" style="flex-grow: 1; font-weight: 600;" />' +
+            '<input type="text" name="spicecraft_careers_settings[culture_points][' + idx + '][icon]" value="star" placeholder="Icon (shield, leaf, award, heart)" style="width: 140px;" />' +
+            '<button type="button" class="button sc-remove-row-btn">&times;</button>' +
+            '</div>' +
+            '<textarea name="spicecraft_careers_settings[culture_points][' + idx + '][description]" placeholder="Pillar description..." rows="2" class="widefat"></textarea>' +
+            '</div>');
+        $('#sc-culture-points-container').append(row);
+        row.find('input:first').focus();
+    });
 });
 

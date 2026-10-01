@@ -143,14 +143,19 @@ function spicecraft_catalog_single_enquiry_cta() {
 				<span><?php esc_html_e( 'Enquire on WhatsApp', 'spicecraft' ); ?></span>
 			</a>
 
-			<!-- Secondary CTA: Email Trade Enquiry -->
-			<a href="<?php echo esc_url( $mailto_url ); ?>" class="sc-btn sc-btn--secondary sc-btn--lg">
+			<!-- Secondary CTA: Enquire About This Product -->
+			<button type="button" 
+				class="sc-btn sc-btn--secondary sc-btn--lg sc-open-enquiry-modal" 
+				data-product-id="<?php echo esc_attr( $product_id ); ?>" 
+				data-product-name="<?php echo esc_attr( $product_name ); ?>" 
+				data-product-sku="<?php echo esc_attr( $sku ); ?>" 
+				data-product-url="<?php echo esc_url( get_permalink( $product_id ) ); ?>">
 				<svg class="sc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 					<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
 					<polyline points="22,6 12,13 2,6"/>
 				</svg>
-				<span><?php esc_html_e( 'Email Product Enquiry', 'spicecraft' ); ?></span>
-			</a>
+				<span><?php esc_html_e( 'Enquire About This Product', 'spicecraft' ); ?></span>
+			</button>
 		</div>
 
 		<?php

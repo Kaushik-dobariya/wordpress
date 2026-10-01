@@ -1,7 +1,7 @@
 # SpiceCraft — Premium Spices Manufacturer CMS & Product Catalog Website
 
-> **Phase 3 (Step 1: About Us CMS, Step 2: Manufacturing & Quality CMS, Step 3: Certifications CMS) Complete**  
-> **Status:** Phase 3 Step 3 Complete · Ready for Verification & Phase 3 Step 4 Planning
+> **Phase 3 (Step 1: About Us, Step 2: Manufacturing & Quality, Step 3: Certifications, Step 4: Recipe CMS & Inspiration Hub) Complete**  
+> **Status:** Phase 3 Step 4 Complete · Zero Fabricated Content Verified · Catalog Mode Intact · Ready for Phase 3 Step 5 Planning
 
 ---
 
@@ -922,13 +922,227 @@ All term metadata keys follow the canonical `_sc_cert_*` naming convention:
 4. Set **Public Detail Page** to *Yes* for comprehensive records or *No* for thin records (name + logo only).
 5. Configure archive hero and display toggles under `SpiceCraft -> Certifications Display`.
 
-### 28. Deferred Functionality
-The following items belong to future steps/phases:
-- Recipe CMS & Culinary Innovation blog (Phase 3 Step 4)
-- Career application portal
+### 28. Deferred Functionality (Step 3 Scope)
+The following items were deferred from Step 3:
+- Career application portal (Phase 3 Step 5)
 - Interactive customer distributor portal / CRM
 - Automated registrar API verification integrations
 - Certificate OCR / automated scanning
 - Protected private document server
+
+---
+
+## 8. Phase 3 Step 4: Recipe CMS & Premium Inspiration Hub
+
+### 1. Recipe Custom Post Type Architecture
+- **CPT Key:** `spicecraft_recipe` (17 chars, strictly adhering to WordPress 20-character limit).
+- **Public Endpoints:**
+  - Archive: `/recipes/`
+  - Individual Detail: `/recipes/{recipe-slug}/`
+- **Native WP Features:** `title`, `editor` (for optional background story / narrative), `thumbnail` (Featured Image), `excerpt`, `revisions`, `author`.
+- **Rewrite Implementation:** Registered via WordPress rewrite APIs and flushed cleanly without hardcoded rewrite strings.
+
+### 2. Recipe Taxonomies
+1. **Recipe Category (`spicecraft_recipe_category`):** Hierarchical taxonomy for broad recipe classification (e.g. *Curries*, *Biryanis & Rice*, *Marinades & Rubs*, *Beverages & Chaas*).
+2. **Cuisine (`spicecraft_cuisine`):** Non-hierarchical taxonomy for regional and international heritage (e.g. *Kashmiri*, *Mughlai*, *Chettinad*, *Awadhi*, *Goan*).
+3. **Meal Type (`spicecraft_meal_type`):** Non-hierarchical taxonomy for dining occasions (e.g. *Breakfast*, *Lunch*, *Dinner*, *Festive Feasts*, *Snacks*).
+*Zero-Pre-Seeding Policy:* 0 terms are automatically created; administrators define genuine culinary terms matching their test kitchen recipes.
+
+### 3. Metadata Schema (`_spicecraft_recipe_*`)
+- `_spicecraft_recipe_prep_minutes` (int): Preparation time in numeric minutes.
+- `_spicecraft_recipe_cook_minutes` (int): Cooking time in numeric minutes.
+- `_spicecraft_recipe_additional_minutes` (int): Inactive/marinating time in numeric minutes.
+- `_spicecraft_recipe_total_minutes` (int): Total duration in minutes (calculated automatically or admin-overridden).
+- `_spicecraft_recipe_yield` (string): Serving yield (e.g. "4 Servings", "Makes 12 Kebabs").
+- `_spicecraft_recipe_difficulty` (string): Controlled value: `easy`, `medium`, `advanced`, or empty ("Not Specified").
+- `_spicecraft_recipe_dietary` (array): Explicit administrator-verified dietary claims (`vegetarian`, `vegan`, `gluten_free`, `dairy_free`, `jain`, `nut_free`).
+- `_spicecraft_recipe_ingredient_groups` (array): Repeatable groups containing structured ingredient rows.
+- `_spicecraft_recipe_instruction_steps` (array): Repeatable numbered steps with headings, text, media attachments, and blender tips.
+- `_spicecraft_recipe_notes_chef`, `_notes_serving`, `_notes_storage`, `_notes_subs` (text): Specific culinary guidance.
+- `_spicecraft_recipe_nutrition` (array): Optional verified nutritional facts (`serving_size`, `calories`, `protein`, `carbs`, `fat`, `sat_fat`, `fiber`, `sugar`, `sodium`).
+- `_spicecraft_recipe_featured_products` (array): WooCommerce product IDs explicitly showcased.
+- `_spicecraft_recipe_linked_product_ids` (array): Deduplicated indexed array of all product IDs referenced across ingredients and featured products.
+- `_spicecraft_recipe_related_categories` (array): Product category IDs to encourage broader discovery.
+- `_spicecraft_recipe_hero_image_id` & `_mobile_hero_image_id` (attachment IDs): Responsive hero overrides.
+- `_spicecraft_recipe_gallery_ids` (array): Media attachment IDs for culinary gallery.
+- `_spicecraft_recipe_video_url` (URL): oEmbed video URL (YouTube, Vimeo).
+
+### 4. Ingredient Architecture & Groups
+- Ingredients are organized into **Repeatable Ingredient Groups** (e.g. *"For the Marinade"*, *"For the Spice Tempering"*, *"For the Curry Sauce"*).
+- Each group contains a `group_name` and an array of `items`.
+- Each ingredient item has dedicated, structured fields:
+  - `quantity`: Amount (e.g. `1`, `2.5`, `1/2`).
+  - `unit`: Free-text unit (e.g. `tsp`, `tbsp`, `g`, `pinch`, `cups`).
+  - `ingredient`: The ingredient name (e.g. `Tellicherry Black Peppercorns`).
+  - `note`: Preparation note (e.g. `lightly crushed in a mortar`).
+  - `product_id`: Optional explicit WooCommerce Product ID link.
+
+### 5. Ingredient / Product Relationships
+- When an ingredient connects to a real SpiceCraft product, the frontend displays a subtle, non-intrusive `"View Product"` link.
+- Never inferred from ingredient names; requires explicit admin selection.
+- All product links lead to WooCommerce product pages in strict catalog mode.
+
+### 6. Structured Instruction Steps
+- Stored as structured repeatable steps rather than a single monolithic WYSIWYG blob.
+- Each step includes:
+  - `step_number`: Auto-sequenced numeric counter.
+  - `heading`: Optional step title (e.g. *"Tempering the Whole Aromatics"*).
+  - `instruction`: Step body prose formatted via `wpautop()`.
+  - `image_id`: Optional media library attachment ID rendered with `wp_get_attachment_image()`.
+  - `tip`: Optional Master Blender culinary tip highlighted in an editorial callout box.
+
+### 7. Time Architecture & Formatting
+- All times are stored as positive integers representing minutes.
+- Zero or negative values are automatically suppressed from frontend output.
+- Formatting helper (`spicecraft_format_recipe_time`):
+  - `15` -> `15 mins`
+  - `60` -> `1 hr`
+  - `65` -> `1 hr 5 mins`
+  - `120` -> `2 hrs`
+- ISO 8601 Duration converter (`spicecraft_minutes_to_iso8601`) for Schema.org:
+  - `65` -> `PT1H5M`
+  - `45` -> `PT45M`
+
+### 8. Nutrition Architecture
+- **Strictly Optional:** The entire nutrition section is completely omitted from the frontend if no calorie count is provided.
+- **Zero Fabrication:** No auto-calculation, no generic nutritional assumptions.
+- **Admin Notice:** Displays a prominent helper advisory: *"Enter nutrition information only when it has been calculated or verified from an appropriate lab analysis or official nutritional database."*
+
+### 9. Bidirectional Product & Category Relationships
+- **Recipe -> Product:** `spicecraft_get_recipe_linked_products()` retrieves all unique WooCommerce product IDs linked to a recipe (both from ingredient rows and featured products), deduplicating results and verifying published status.
+- **Product -> Recipe:** `spicecraft_get_recipes_for_product()` executes an indexed meta query to find all recipes that explicitly link to the current product, powering the *"Recipes Using [Product]"* section on WooCommerce single product pages.
+
+### 10. Recipe Archive Settings (`spicecraft_recipe_settings`)
+- Configured under `wp-admin -> SpiceCraft -> Recipes`:
+  - `archive_enabled`: Toggle archive page.
+  - `eyebrow`, `heading`, `introduction`: Editorial hero typography.
+  - `desktop_hero_id`, `mobile_hero_id`: Hero photography.
+  - `featured_recipe_id`: Primary editorial recipe showcase.
+  - `show_search`, `show_category_filter`, `show_cuisine_filter`, `show_meal_type_filter`, `show_difficulty_filter`: Discovery toggles.
+  - `recipes_per_page`: Pagination limit (default 9).
+  - `default_sort`: Default sort order (`date_desc`, `title_asc`, `prep_time`, `total_time`).
+  - `final_cta_enabled`, `cta_heading`, `cta_description`, `cta_image_id`, `cta_whatsapp_enabled`, `cta_email_enabled`: Bottom commercial conversion panel.
+
+### 11. Recipe Archive & Inspiration Hub
+- **Template:** `archive-spicecraft_recipe.php` (with dedicated taxonomy templates `taxonomy-spicecraft_recipe_category.php`, `taxonomy-spicecraft_cuisine.php`, `taxonomy-spicecraft_meal_type.php`).
+- **Layout Structure:**
+  1. Editorial Hero Banner with CMS typography and overlay.
+  2. Promoted Featured Recipe Showcase (editorial 2-column card with Master Blender's Choice badge).
+  3. Recipe Discovery Bar with search input, clear button, mobile filter trigger, and desktop dropdowns.
+  4. Active Filter Chips with individual remove links and "Clear All".
+  5. Mobile Off-Canvas Filter Drawer (`#sc-recipe-filter-drawer`) with backdrop, focus trap, and Escape key handling.
+  6. Reusable 3-Column Recipe Grid (`.sc-recipes-archive-grid`).
+  7. SEO-Friendly WordPress Pagination (`paginate_links`).
+  8. Product Discovery Banner connecting culinary inspiration to pure spice sourcing.
+  9. Final CTA with WhatsApp and Email trade consultation options.
+
+### 12. Unified Recipe Card (`template-parts/content/recipe-card.php`)
+- Reusable across Archive, Taxonomies, Homepage, Related Recipes, Product Pages, and Global Search.
+- Card elements:
+  - Responsive thumbnail with aspect ratio `4:3` and zoom hover effect.
+  - Primary category badge.
+  - Semantic `<h3>` recipe title linking to the permalink.
+  - Concise excerpt (trimmed to 18 words).
+  - Metrics bar: Total time with clock icon, yield with serving icon, difficulty badge with color coding (`easy`, `medium`, `advanced`).
+  - "View Recipe" editorial text link with animated right-arrow.
+  - Clean omission of empty or zero values (no `0 mins`, no `0 servings`, no fake star ratings).
+
+### 13. Search & Multi-Dimensional Filtering
+- **Search:** Queries title, excerpt, narrative, and ingredient names.
+- **Filters:**
+  - Category (`sc_cat`)
+  - Cuisine (`sc_cuisine`)
+  - Meal Type (`sc_meal`)
+  - Difficulty (`sc_diff`)
+  - Sort (`sc_sort`)
+- **URL State:** Clean GET parameters preserved across page refreshes, browser history (`popstate`), and shareable links.
+
+### 14. Recipe Detail Page (`single-spicecraft_recipe.php`)
+- **Layout Structure:**
+  1. Accessible Breadcrumbs with Schema.org `BreadcrumbList`.
+  2. Recipe Header with category, cuisine, meal type badges, verified dietary claims, H1 title, excerpt, and Action Toolbar.
+  3. Action Toolbar: Web Share API button with clipboard write fallback and `#sc-share-toast`, WhatsApp direct share, and Print button triggering `window.print()`.
+  4. Hero Media with high `fetchpriority` and eager loading.
+  5. Quick Facts Bar displaying non-zero metrics (Prep, Cook, Total, Yield, Difficulty).
+  6. Intro / Story narrative section (`the_content()`).
+  7. Structured Repeatable Ingredients with interactive client-side checkboxes and subtle "View Product" links.
+  8. Numbered Step-by-Step Instructions with step badges (`01`, `02`), prose, photography, and tips.
+  9. Culinary Notes (Chef's guidance, Serving suggestions, Storage advice, Substitutions).
+  10. Verified Nutrition Facts table (serving size, calories, macros, sodium).
+  11. Culinary Gallery grid and responsive oEmbed Video player.
+  12. "Spices Used in This Recipe" WooCommerce catalog product showcase.
+  13. Deterministic Related Recipes grid (matching category, cuisine, or meal type).
+  14. Final Conversion CTA.
+
+### 15. Integrations
+1. **Homepage Integration (`template-parts/home/recipes.php`):** Replaced temporary posts logic with dedicated `spicecraft_recipe` CPT query, consuming homepage section settings (`latest`, `category`, or `selected`). Suppresses section cleanly when 0 recipes exist.
+2. **WooCommerce Single Product (`woocommerce/content-single-product.php`):** Displays *"Recipes Using [Spice Name]"* exclusively when reciprocal relationships exist. Preserves catalog mode.
+3. **Global Site Search (`template-parts/content/content-search.php`):** Categorizes search results with distinct `Recipe` badges and metadata pills.
+4. **Blog Separation:** Standard WordPress Posts remain 100% dedicated to Industry Insights / Blog. Exactly 0 recipes are stored as standard posts.
+
+### 16. Recipe Schema.org Structured Data
+- Compliant JSON-LD output with `@type: Recipe`:
+  - `name`, `headline`, `description`, `image`, `datePublished`, `dateModified`.
+  - `prepTime`, `cookTime`, `totalTime` formatted into ISO 8601 durations (`PT1H5M`).
+  - `recipeYield`, `recipeCategory`, `recipeCuisine`.
+  - `recipeIngredient` (flat array of formatted ingredient strings).
+  - `recipeInstructions` (array of `HowToStep` objects with name, text, and position).
+  - `nutrition` (only when calories exist).
+- **Strictly Excludes:** Fake reviews, fake star ratings, fake `aggregateRating`.
+
+### 17. Print & Share Architecture
+- **Print Stylesheet (`recipes.css` `@media print`):**
+  - Hides: Top header, footer, mobile drawers, share buttons, CTAs, related products, related recipes, videos, interactive checkboxes.
+  - Preserves: Recipe title, metrics, ingredients checklist, numbered instructions, essential notes, high-contrast monochrome printing.
+- **Share Implementation:**
+  - Invokes native `navigator.share()` on mobile/desktop browsers supporting the Web Share API.
+  - Automatically falls back to `navigator.clipboard.writeText()` with a floating accessible toast `#sc-share-toast`.
+  - Dedicated WhatsApp share button with pre-formatted URL.
+
+### 18. Responsive Design & Accessibility (QA)
+- **14 Breakpoints Verified:** 1920, 1600, 1440, 1366, 1280, 1024, 820, 768, 480, 430, 390, 375, 360, 320px.
+- **Zero Horizontal Overflow:** Verified across all 14 viewports on both Archive and Detail (`scrollWidth <= winWidth`).
+- **Touch Targets:** All interactive triggers comply with >= 44px (or >= 36px inline action) minimum bounds.
+- **Single H1:** Exactly one `<h1>` per page.
+- **Interactive Checkboxes:** Client-side only with `localStorage` persistence per recipe; no server round-trips or account requirements.
+
+### 19. Administrator Workflow
+1. Navigate to `wp-admin -> Recipes -> Add Recipe`.
+2. Enter Recipe Title and optional story narrative.
+3. Set Featured Image in the standard WordPress sidebar.
+4. Assign **Recipe Category**, **Cuisine**, and **Meal Type** terms.
+5. In the **Recipe Overview & Times** metabox tab, enter Prep Minutes, Cook Minutes, Yield, and Difficulty.
+6. In **Dietary Classifications**, verify and check applicable dietary badges.
+7. In **Ingredients**, click *"Add Ingredient Group"*, name the group (e.g. *"For the Marinade"*), and click *"Add Ingredient"* to enter quantity, unit, ingredient name, note, and optionally select a SpiceCraft WooCommerce product.
+8. In **Instructions**, click *"Add Step"*, enter step heading, instruction text, optional image, and blender tip.
+9. In **Chef & Kitchen Notes**, enter serving, storage, or substitution suggestions.
+10. In **Nutrition**, enter verified lab values (or leave completely blank to hide).
+11. In **Product Relationships**, select featured products to highlight in the footer showcase.
+12. Click **Publish**. The recipe immediately appears in the Archive, on related Product pages, and on the Homepage.
+
+### 20. Navigation Setup
+- To add Recipes to the site menu:
+  1. Go to `wp-admin -> Appearance -> Menus`.
+  2. In the left accordion, expand **Recipes** or **Custom Links**.
+  3. Check **Recipes** (Archive URL: `/recipes/`) or enter URL `/recipes/` with label `Recipes & Inspiration`.
+  4. Add to menu and save. (A theme fallback link to `/recipes/` is also active in `site-nav.php`).
+
+### 21. Deferred Features
+The following features are intentionally deferred from this step:
+- Recipe user comments & rating/review system
+- Recipe user favourites / bookmarks
+- User registration / accounts
+- Meal planner / shopping list generator
+- AI recipe generation / auto-tagging
+- Careers CMS & Job Application engine (Phase 3 Step 5)
+- E-commerce cart, checkout, or payments
+
+### 22. Test Suite & Verification Results
+- **Backend Verification Suite:** 100% PASS (CPT, rewrite, taxonomies, time helpers, ISO 8601 formatting, meta persistence, bidirectional product linkage).
+- **Frontend HTTP & Integration Audit:** 58/58 tests PASSED (Archive empty state, H1 hierarchy, active recipe cards, filtering parameters, Schema.org Recipe JSON-LD, ingredient checkboxes, instruction steps, notes, nutrition table, print/share toolbar, product page integration, homepage integration, global search).
+- **Responsive Viewport Suite (Headless Chrome CDP):** 14/14 viewports PASSED with 0 horizontal overflow and single H1 on both Archive and Detail.
+- **Regression Suite:** 23/23 tests PASSED across Homepage, About, Manufacturing, Quality, Certifications, Shop, Product Detail, Favourites, Recently Viewed, WhatsApp/Email enquiry, Sticky Header, Mobile Menu, Step 4A Blank Slot, and Catalog Mode.
+- **Zero Fabricated Content Audit:** PASS. Exactly 0 fake recipes, fake chef credentials, or fabricated ratings exist in production.
+
 
 

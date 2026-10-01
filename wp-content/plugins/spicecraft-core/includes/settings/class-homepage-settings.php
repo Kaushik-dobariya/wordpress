@@ -270,14 +270,15 @@ class SpiceCraft_Homepage_Settings {
 		// 12. Recipes
 		if ( isset( $input['recipes'] ) && is_array( $input['recipes'] ) ) {
 			$rc = $input['recipes'];
-			$clean['recipes']['eyebrow']     = isset( $rc['eyebrow'] ) ? sanitize_text_field( $rc['eyebrow'] ) : '';
-			$clean['recipes']['heading']     = isset( $rc['heading'] ) ? sanitize_text_field( $rc['heading'] ) : '';
-			$clean['recipes']['description'] = isset( $rc['description'] ) ? sanitize_textarea_field( $rc['description'] ) : '';
-			$clean['recipes']['source_type'] = isset( $rc['source_type'] ) ? sanitize_key( $rc['source_type'] ) : 'post_category';
-			$clean['recipes']['category_id'] = isset( $rc['category_id'] ) ? absint( $rc['category_id'] ) : 0;
-			$clean['recipes']['limit']       = isset( $rc['limit'] ) ? max( 1, min( 12, absint( $rc['limit'] ) ) ) : 3;
-			$clean['recipes']['cta_label']   = isset( $rc['cta_label'] ) ? sanitize_text_field( $rc['cta_label'] ) : '';
-			$clean['recipes']['cta_url']     = isset( $rc['cta_url'] ) ? esc_url_raw( $rc['cta_url'] ) : '';
+			$clean['recipes']['eyebrow']      = isset( $rc['eyebrow'] ) ? sanitize_text_field( $rc['eyebrow'] ) : '';
+			$clean['recipes']['heading']      = isset( $rc['heading'] ) ? sanitize_text_field( $rc['heading'] ) : '';
+			$clean['recipes']['description']  = isset( $rc['description'] ) ? sanitize_textarea_field( $rc['description'] ) : '';
+			$clean['recipes']['source_type']  = isset( $rc['source_type'] ) && in_array( $rc['source_type'], array( 'latest', 'category', 'selected', 'post_category' ), true ) ? $rc['source_type'] : 'latest';
+			$clean['recipes']['category_id']  = isset( $rc['category_id'] ) ? absint( $rc['category_id'] ) : 0;
+			$clean['recipes']['selected_ids'] = isset( $rc['selected_ids'] ) && is_array( $rc['selected_ids'] ) ? array_map( 'absint', $rc['selected_ids'] ) : array();
+			$clean['recipes']['limit']        = isset( $rc['limit'] ) ? max( 1, min( 12, absint( $rc['limit'] ) ) ) : 3;
+			$clean['recipes']['cta_label']    = isset( $rc['cta_label'] ) ? sanitize_text_field( $rc['cta_label'] ) : '';
+			$clean['recipes']['cta_url']      = isset( $rc['cta_url'] ) ? esc_url_raw( $rc['cta_url'] ) : '';
 		}
 
 		// 13. Testimonials
@@ -948,7 +949,7 @@ class SpiceCraft_Homepage_Settings {
 
 					<h3><?php esc_html_e( 'Section 11: Testimonials & Endorsements', 'spicecraft-core' ); ?></h3>
 					<div class="notice notice-info inline">
-						<p><?php esc_html_e( 'Testimonials are managed via the reusable Custom Post Type. If no testimonials are published, this section hides cleanly.', 'spicecraft-core' ); ?> <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=spicecraft_testimonial' ) ); ?>"><?php esc_html_e( 'Manage Testimonials &rarr;', 'spicecraft-core' ); ?></a></p>
+						<p><?php esc_html_e( 'Testimonials are managed via the reusable Custom Post Type. If no testimonials are published, this section hides cleanly.', 'spicecraft-core' ); ?> <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=sc_testimonial' ) ); ?>"><?php esc_html_e( 'Manage Testimonials &rarr;', 'spicecraft-core' ); ?></a></p>
 					</div>
 					<table class="form-table" role="presentation">
 						<tr>
@@ -972,7 +973,7 @@ class SpiceCraft_Homepage_Settings {
 						<tr>
 							<th scope="row"><?php esc_html_e( 'Specific Testimonials', 'spicecraft-core' ); ?></th>
 							<td>
-								<?php $this->render_post_multiselect( 'spicecraft_testimonial', self::OPTION_NAME . '[testimonials][selected_ids]', $tst['selected_ids'] ); ?>
+								<?php $this->render_post_multiselect( 'sc_testimonial', self::OPTION_NAME . '[testimonials][selected_ids]', $tst['selected_ids'] ); ?>
 								<p class="description"><?php esc_html_e( 'Leave unselected to automatically show published testimonials in display order.', 'spicecraft-core' ); ?></p>
 							</td>
 						</tr>
@@ -1030,7 +1031,7 @@ class SpiceCraft_Homepage_Settings {
 
 					<h3><?php esc_html_e( 'Section 10: Recipes & Culinary Inspiration', 'spicecraft-core' ); ?></h3>
 					<div class="notice notice-info inline">
-						<p><?php esc_html_e( 'Extensible foundation: Currently consumes WordPress Posts from a chosen category. Full Recipe CPT will be introduced in subsequent phases without breaking this architecture.', 'spicecraft-core' ); ?></p>
+						<p><?php esc_html_e( 'Consumes structured recipes from the dedicated Recipe CMS (spicecraft_recipe). If no published recipes are found, this section automatically suppresses on the frontend.', 'spicecraft-core' ); ?> <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=spicecraft_recipe' ) ); ?>"><?php esc_html_e( 'Manage Recipes &rarr;', 'spicecraft-core' ); ?></a></p>
 					</div>
 					<table class="form-table" role="presentation">
 						<tr>
@@ -1052,18 +1053,41 @@ class SpiceCraft_Homepage_Settings {
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="sc_rc_cat"><?php esc_html_e( 'Post Category Source', 'spicecraft-core' ); ?></label></th>
+							<th scope="row"><label for="sc_rc_source_type"><?php esc_html_e( 'Recipe Source', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<?php $rc_source = ! empty( $rc['source_type'] ) ? $rc['source_type'] : 'latest'; ?>
+								<select name="<?php echo esc_attr( self::OPTION_NAME ); ?>[recipes][source_type]" id="sc_rc_source_type">
+									<option value="latest" <?php selected( $rc_source, 'latest' ); ?>><?php esc_html_e( 'Latest Published Recipes', 'spicecraft-core' ); ?></option>
+									<option value="category" <?php selected( $rc_source, 'category' ); ?>><?php esc_html_e( 'Filter by Recipe Category', 'spicecraft-core' ); ?></option>
+									<option value="selected" <?php selected( $rc_source, 'selected' ); ?>><?php esc_html_e( 'Specific Promoted Recipes', 'spicecraft-core' ); ?></option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="sc_rc_cat"><?php esc_html_e( 'Recipe Category Source', 'spicecraft-core' ); ?></label></th>
 							<td>
 								<?php
 								wp_dropdown_categories( array(
-									'show_option_all' => __( '— All Post Categories —', 'spicecraft-core' ),
+									'show_option_all' => __( '— All Recipe Categories —', 'spicecraft-core' ),
 									'name'            => self::OPTION_NAME . '[recipes][category_id]',
 									'id'              => 'sc_rc_cat',
 									'selected'        => $rc['category_id'],
+									'taxonomy'        => 'spicecraft_recipe_category',
 									'hierarchical'    => true,
 									'hide_empty'      => false,
 								) );
 								?>
+								<p class="description"><?php esc_html_e( 'Active when "Filter by Recipe Category" is selected.', 'spicecraft-core' ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Specific Promoted Recipes', 'spicecraft-core' ); ?></th>
+							<td>
+								<?php
+								$selected_rc_ids = ! empty( $rc['selected_ids'] ) && is_array( $rc['selected_ids'] ) ? $rc['selected_ids'] : array();
+								$this->render_post_multiselect( 'spicecraft_recipe', self::OPTION_NAME . '[recipes][selected_ids]', $selected_rc_ids );
+								?>
+								<p class="description"><?php esc_html_e( 'Active when "Specific Promoted Recipes" is selected.', 'spicecraft-core' ); ?></p>
 							</td>
 						</tr>
 						<tr>
@@ -1076,7 +1100,7 @@ class SpiceCraft_Homepage_Settings {
 							<th scope="row"><?php esc_html_e( 'CTA Button', 'spicecraft-core' ); ?></th>
 							<td>
 								<input type="text" name="<?php echo esc_attr( self::OPTION_NAME ); ?>[recipes][cta_label]" value="<?php echo esc_attr( $rc['cta_label'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'View All Recipes', 'spicecraft-core' ); ?>" style="margin-bottom: 6px;" /><br>
-								<input type="url" name="<?php echo esc_attr( self::OPTION_NAME ); ?>[recipes][cta_url]" value="<?php echo esc_attr( $rc['cta_url'] ); ?>" class="regular-text" />
+								<input type="url" name="<?php echo esc_attr( self::OPTION_NAME ); ?>[recipes][cta_url]" value="<?php echo esc_attr( $rc['cta_url'] ); ?>" class="regular-text" placeholder="<?php echo esc_attr( home_url( '/recipes/' ) ); ?>" />
 							</td>
 						</tr>
 					</table>

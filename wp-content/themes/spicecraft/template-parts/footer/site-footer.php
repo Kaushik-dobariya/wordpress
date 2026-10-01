@@ -119,9 +119,9 @@ $social_channels = array(
 			<?php endif; ?>
 		</div>
 
-		<!-- Column 2: Footer Menu 1 -->
+		<!-- Column 2: Footer Menu 1 - Company & Facilities -->
 		<div class="sc-footer-col">
-			<h4><?php esc_html_e( 'Quick Links', 'spicecraft' ); ?></h4>
+			<h4><?php esc_html_e( 'Company & Facilities', 'spicecraft' ); ?></h4>
 			<?php
 			wp_nav_menu(
 				array(
@@ -130,15 +130,11 @@ $social_channels = array(
 					'container'      => false,
 					'fallback_cb'    => function () {
 						echo '<ul class="sc-footer-menu">';
-						echo '<li><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Home', 'spicecraft' ) . '</a></li>';
-						if ( class_exists( 'WooCommerce' ) ) {
-							echo '<li><a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">' . esc_html__( 'Products Catalog', 'spicecraft' ) . '</a></li>';
-						}
-						echo '<li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About SpiceCraft', 'spicecraft' ) . '</a></li>';
-						echo '<li><a href="' . esc_url( home_url( '/manufacturing/' ) ) . '">' . esc_html__( 'Manufacturing', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About Us', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/manufacturing/' ) ) . '">' . esc_html__( 'Manufacturing & Milling', 'spicecraft' ) . '</a></li>';
 						echo '<li><a href="' . esc_url( home_url( '/quality/' ) ) . '">' . esc_html__( 'Quality & Sourcing', 'spicecraft' ) . '</a></li>';
-						echo '<li><a href="' . esc_url( home_url( '/certifications/' ) ) . '">' . esc_html__( 'Certifications', 'spicecraft' ) . '</a></li>';
-						echo '<li><a href="' . esc_url( home_url( '/#contact' ) ) . '">' . esc_html__( 'Contact Desks', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/certifications/' ) ) . '">' . esc_html__( 'Certifications & Accreditations', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/careers/' ) ) . '">' . esc_html__( 'Careers & Opportunities', 'spicecraft' ) . '</a></li>';
 						echo '</ul>';
 					},
 				)
@@ -146,9 +142,9 @@ $social_channels = array(
 			?>
 		</div>
 
-		<!-- Column 3: Footer Menu 2 -->
+		<!-- Column 3: Footer Menu 2 - Culinary & Resources -->
 		<div class="sc-footer-col">
-			<h4><?php esc_html_e( 'Spice Categories', 'spicecraft' ); ?></h4>
+			<h4><?php esc_html_e( 'Culinary & Resources', 'spicecraft' ); ?></h4>
 			<?php
 			wp_nav_menu(
 				array(
@@ -156,19 +152,13 @@ $social_channels = array(
 					'menu_class'     => 'sc-footer-menu',
 					'container'      => false,
 					'fallback_cb'    => function () {
+						$shop_url = class_exists( 'WooCommerce' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 						echo '<ul class="sc-footer-menu">';
-						if ( class_exists( 'WooCommerce' ) ) {
-							$cats = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false, 'parent' => 0, 'number' => 5 ) );
-							if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
-								foreach ( $cats as $c ) {
-									if ( 'uncategorized' !== $c->slug ) {
-										echo '<li><a href="' . esc_url( get_term_link( $c ) ) . '">' . esc_html( $c->name ) . '</a></li>';
-									}
-								}
-							} else {
-								echo '<li><a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">' . esc_html__( 'All Spices', 'spicecraft' ) . '</a></li>';
-							}
-						}
+						echo '<li><a href="' . esc_url( $shop_url ) . '">' . esc_html__( 'Products Catalog', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/recipes/' ) ) . '">' . esc_html__( 'Recipes & Inspiration', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/blog/' ) ) . '">' . esc_html__( 'Blog & Industry Insights', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/#export-bulk' ) ) . '">' . esc_html__( 'Wholesale & Export Supply', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/#contact' ) ) . '" class="sc-open-enquiry-modal">' . esc_html__( 'Contact Trade Desk', 'spicecraft' ) . '</a></li>';
 						echo '</ul>';
 					},
 				)

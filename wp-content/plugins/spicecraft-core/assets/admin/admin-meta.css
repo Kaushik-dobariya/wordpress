@@ -144,3 +144,28 @@
     background: #b32d2e !important;
     color: #fff !important;
 }
+
+/* Recipe Admin Repeaters & Steps */
+.sc-ingredient-group-box {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sc-ingredient-group-box:hover {
+    border-color: #8c8f94;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sc-instruction-step-box {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sc-instruction-step-box:hover {
+    border-color: #8c8f94;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.sc-step-badge {
+    user-select: none;
+    letter-spacing: 0.03em;
+}
+

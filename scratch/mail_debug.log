@@ -1,0 +1,86 @@
+ATTEMPTING TO SEND:
+Array
+(
+    [to] => career@cubeontechs.com
+    [subject] => New Job Application — Senior Food Technologist — Cryo-Milling &amp; Blending — Test Applicant
+    [message] => <h2>New Job Application Received</h2>
+<p>A new candidate has submitted an application on the <strong>Madki</strong> Careers portal.</p>
+<hr />
+<table cellpadding='6' cellspacing='0' style='font-family: sans-serif; font-size: 14px; width: 100%; max-width: 600px;'>
+<tr><td style='width: 160px; font-weight: bold;'>Position Applied For:</td><td><strong>Senior Food Technologist — Cryo-Milling &amp; Blending</strong></td></tr>
+<tr><td style='font-weight: bold;'>Candidate Name:</td><td>Test Applicant</td></tr>
+<tr><td style='font-weight: bold;'>Email:</td><td><a href='mailto:applicant@example.com'>applicant@example.com</a></td></tr>
+<tr><td style='font-weight: bold;'>Phone:</td><td><a href='tel:+91 9876543210'>+91 9876543210</a></td></tr>
+<tr><td style='font-weight: bold;'>Current Location:</td><td>Ahmedabad</td></tr>
+<tr><td style='font-weight: bold;'>Current Company:</td><td>Test Co</td></tr>
+<tr><td style='font-weight: bold;'>Current Designation:</td><td>Food Technologist</td></tr>
+<tr><td style='font-weight: bold;'>Experience:</td><td>3 Years</td></tr>
+<tr><td style='font-weight: bold;'>LinkedIn Profile:</td><td><a href='https://linkedin.com'>https://linkedin.com</a></td></tr>
+<tr><td style='font-weight: bold;'>Submission Date:</td><td>September 24, 2026, 11:53 am</td></tr>
+</table>
+<h3>Cover Message:</h3>
+<blockquote style='background: #f8fafc; border-left: 4px solid #9e2a2b; padding: 12px; margin: 10px 0; font-style: italic;'>This is a test application to verify mail sending.</blockquote>
+<p style='margin-top: 20px;'><a href='http://localhost/wp-admin/post.php?post=77&action=edit' style='background: #9e2a2b; color: #fff; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold;'>Review Candidate in WordPress Admin &rarr;</a></p>
+<hr />
+<p style='font-size: 11px; color: #64748b;'>This notification was routed dynamically to the configured Careers Profile Receiving Email: career@cubeontechs.com</p>
+
+    [headers] => Array
+        (
+            [0] => Content-Type: text/html; charset=UTF-8
+            [1] => From: Madki Recruitment <no-reply@localhost>
+            [2] => Reply-To: Test Applicant <applicant@example.com>
+        )
+
+    [attachments] => Array
+        (
+            [0] => E:/NSK-Prectices-etc/Antigravity/wordpress/wp-content/uploads/spicecraft_resumes/resume_20260924_115342_CyRCkOm6.pdf
+        )
+
+    [embeds] => Array
+        (
+        )
+
+)
+
+FAILED: Invalid address:  (From): no-reply@localhost
+Array
+(
+    [to] => Array
+        (
+            [0] => career@cubeontechs.com
+        )
+
+    [subject] => New Job Application — Senior Food Technologist — Cryo-Milling &amp; Blending — Test Applicant
+    [message] => <h2>New Job Application Received</h2>
+<p>A new candidate has submitted an application on the <strong>Madki</strong> Careers portal.</p>
+<hr />
+<table cellpadding='6' cellspacing='0' style='font-family: sans-serif; font-size: 14px; width: 100%; max-width: 600px;'>
+<tr><td style='width: 160px; font-weight: bold;'>Position Applied For:</td><td><strong>Senior Food Technologist — Cryo-Milling &amp; Blending</strong></td></tr>
+<tr><td style='font-weight: bold;'>Candidate Name:</td><td>Test Applicant</td></tr>
+<tr><td style='font-weight: bold;'>Email:</td><td><a href='mailto:applicant@example.com'>applicant@example.com</a></td></tr>
+<tr><td style='font-weight: bold;'>Phone:</td><td><a href='tel:+91 9876543210'>+91 9876543210</a></td></tr>
+<tr><td style='font-weight: bold;'>Current Location:</td><td>Ahmedabad</td></tr>
+<tr><td style='font-weight: bold;'>Current Company:</td><td>Test Co</td></tr>
+<tr><td style='font-weight: bold;'>Current Designation:</td><td>Food Technologist</td></tr>
+<tr><td style='font-weight: bold;'>Experience:</td><td>3 Years</td></tr>
+<tr><td style='font-weight: bold;'>LinkedIn Profile:</td><td><a href='https://linkedin.com'>https://linkedin.com</a></td></tr>
+<tr><td style='font-weight: bold;'>Submission Date:</td><td>September 24, 2026, 11:53 am</td></tr>
+</table>
+<h3>Cover Message:</h3>
+<blockquote style='background: #f8fafc; border-left: 4px solid #9e2a2b; padding: 12px; margin: 10px 0; font-style: italic;'>This is a test application to verify mail sending.</blockquote>
+<p style='margin-top: 20px;'><a href='http://localhost/wp-admin/post.php?post=77&action=edit' style='background: #9e2a2b; color: #fff; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold;'>Review Candidate in WordPress Admin &rarr;</a></p>
+<hr />
+<p style='font-size: 11px; color: #64748b;'>This notification was routed dynamically to the configured Careers Profile Receiving Email: career@cubeontechs.com</p>
+
+    [headers] => Array
+        (
+        )
+
+    [attachments] => Array
+        (
+            [0] => E:/NSK-Prectices-etc/Antigravity/wordpress/wp-content/uploads/spicecraft_resumes/resume_20260924_115342_CyRCkOm6.pdf
+        )
+
+    [phpmailer_exception_code] => 0
+)
+

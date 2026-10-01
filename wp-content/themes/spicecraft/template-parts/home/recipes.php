@@ -3,10 +3,11 @@
  * Homepage Template Part: Recipes & Culinary Inspiration
  * Semantic ID: #recipes
  *
- * Extensible foundation consuming WordPress Posts from a configured category.
+ * Consumes structured recipes from the dedicated Recipe CMS (spicecraft_recipe).
  * Styled as an editorial culinary journal / magazine grid.
  *
  * @package SpiceCraft
+ * @since 1.2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,28 +18,45 @@ $recipes = function_exists( 'spicecraft_get_homepage_section' )
 	? spicecraft_get_homepage_section( 'recipes' )
 	: array();
 
-$eyebrow     = ! empty( $recipes['eyebrow'] ) ? $recipes['eyebrow'] : '';
-$heading     = ! empty( $recipes['heading'] ) ? $recipes['heading'] : '';
-$description = ! empty( $recipes['description'] ) ? $recipes['description'] : '';
-$category_id = ! empty( $recipes['category_id'] ) ? absint( $recipes['category_id'] ) : 0;
-$limit       = ! empty( $recipes['limit'] ) ? absint( $recipes['limit'] ) : 3;
-$cta_label   = ! empty( $recipes['cta_label'] ) ? $recipes['cta_label'] : '';
-$cta_url     = ! empty( $recipes['cta_url'] ) ? $recipes['cta_url'] : home_url( '/recipes/' );
+$eyebrow      = ! empty( $recipes['eyebrow'] ) ? $recipes['eyebrow'] : __( 'From Our Test Kitchen', 'spicecraft' );
+$heading      = ! empty( $recipes['heading'] ) ? $recipes['heading'] : __( 'Recipes & Spice Pairings', 'spicecraft' );
+$description  = ! empty( $recipes['description'] ) ? $recipes['description'] : '';
+$source_type  = ! empty( $recipes['source_type'] ) ? $recipes['source_type'] : 'latest';
+$category_id  = ! empty( $recipes['category_id'] ) ? absint( $recipes['category_id'] ) : 0;
+$selected_ids = ! empty( $recipes['selected_ids'] ) && is_array( $recipes['selected_ids'] ) ? array_map( 'absint', $recipes['selected_ids'] ) : array();
+$limit        = ! empty( $recipes['limit'] ) ? absint( $recipes['limit'] ) : 3;
+$cta_label    = ! empty( $recipes['cta_label'] ) ? $recipes['cta_label'] : __( 'Explore All Recipes', 'spicecraft' );
+$cta_url      = ! empty( $recipes['cta_url'] ) ? $recipes['cta_url'] : get_post_type_archive_link( 'spicecraft_recipe' );
+if ( empty( $cta_url ) ) {
+	$cta_url = home_url( '/recipes/' );
+}
 
 $query_args = array(
-	'post_type'      => 'post',
+	'post_type'      => 'spicecraft_recipe',
 	'post_status'    => 'publish',
 	'posts_per_page' => $limit,
 	'no_found_rows'  => true,
 );
 
-if ( $category_id > 0 ) {
-	$query_args['cat'] = $category_id;
+if ( 'selected' === $source_type && ! empty( $selected_ids ) ) {
+	$query_args['post__in'] = $selected_ids;
+	$query_args['orderby']  = 'post__in';
+} elseif ( 'category' === $source_type && $category_id > 0 ) {
+	$query_args['tax_query'] = array(
+		array(
+			'taxonomy' => 'spicecraft_recipe_category',
+			'field'    => 'term_id',
+			'terms'    => $category_id,
+		),
+	);
+} else {
+	$query_args['orderby'] = 'date';
+	$query_args['order']   = 'DESC';
 }
 
 $recipes_query = new WP_Query( $query_args );
 
-// Graceful empty state: Suppress if no posts available
+// Graceful empty state: Suppress section cleanly if no published recipes exist
 if ( ! $recipes_query->have_posts() ) {
 	wp_reset_postdata();
 	return;
@@ -52,11 +70,7 @@ if ( ! $recipes_query->have_posts() ) {
 				<p class="sc-eyebrow"><?php echo esc_html( $eyebrow ); ?></p>
 			<?php endif; ?>
 
-			<?php if ( ! empty( $heading ) ) : ?>
-				<h2 id="sec-heading-recipes" class="sc-section-title"><?php echo esc_html( $heading ); ?></h2>
-			<?php else : ?>
-				<h2 id="sec-heading-recipes" class="sc-section-title"><?php esc_html_e( 'Culinary Pairings & Recipes', 'spicecraft' ); ?></h2>
-			<?php endif; ?>
+			<h2 id="sec-heading-recipes" class="sc-section-title"><?php echo esc_html( $heading ); ?></h2>
 
 			<?php if ( ! empty( $description ) ) : ?>
 				<p class="sc-section-subtitle"><?php echo esc_html( $description ); ?></p>
@@ -67,44 +81,16 @@ if ( ! $recipes_query->have_posts() ) {
 			<?php
 			while ( $recipes_query->have_posts() ) :
 				$recipes_query->the_post();
-				$post_cats = get_the_category();
-				$cat_name  = ! empty( $post_cats ) ? $post_cats[0]->name : __( 'Culinary', 'spicecraft' );
-				?>
-				<article class="sc-card sc-card--recipe">
-					<div class="sc-card-media">
-						<?php if ( has_post_thumbnail() ) : ?>
-							<a href="<?php the_permalink(); ?>" class="sc-card-media-link">
-								<?php the_post_thumbnail( 'medium_large', array( 'class' => 'sc-recipe-thumb', 'alt' => get_the_title(), 'loading' => 'lazy' ) ); ?>
-							</a>
-						<?php else : ?>
-							<a href="<?php the_permalink(); ?>" class="sc-card-media-link sc-media-empty">
-								<div class="sc-recipe-placeholder" aria-hidden="true">
-									<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-								</div>
-							</a>
-						<?php endif; ?>
-						<span class="sc-recipe-category-tag"><?php echo esc_html( $cat_name ); ?></span>
-					</div>
-
-					<div class="sc-card-body">
-						<h3 class="sc-card-title">
-							<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-						</h3>
-						<p class="sc-card-excerpt"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 16 ) ); ?></p>
-						<a href="<?php the_permalink(); ?>" class="sc-link-arrow sc-card-readmore">
-							<span><?php esc_html_e( 'View Recipe', 'spicecraft' ); ?></span>
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-						</a>
-					</div>
-				</article>
-				<?php
+				if ( function_exists( 'spicecraft_render_recipe_card' ) ) {
+					spicecraft_render_recipe_card( get_post() );
+				}
 			endwhile;
 			wp_reset_postdata();
 			?>
 		</div>
 
 		<?php if ( ! empty( $cta_label ) ) : ?>
-			<div class="sc-recipes-footer">
+			<div class="sc-recipes-footer" style="text-align: center; margin-top: var(--sc-space-10, 40px);">
 				<a href="<?php echo esc_url( $cta_url ); ?>" class="sc-btn sc-btn--secondary sc-btn--md">
 					<span><?php echo esc_html( $cta_label ); ?></span>
 					<svg class="sc-icon sc-icon-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>

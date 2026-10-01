@@ -154,6 +154,8 @@ class SpiceCraft_Global_Settings {
 		$clean['email_sales']               = isset( $input['email_sales'] ) ? sanitize_email( $input['email_sales'] ) : '';
 		$clean['email_export']              = isset( $input['email_export'] ) ? sanitize_email( $input['email_export'] ) : '';
 		$clean['email_career']              = isset( $input['email_career'] ) ? sanitize_email( $input['email_career'] ) : '';
+		$clean['enquiry_receiving_email']         = isset( $input['enquiry_receiving_email'] ) ? sanitize_email( $input['enquiry_receiving_email'] ) : '';
+		$clean['enquiry_customer_email_enabled']  = ! empty( $input['enquiry_customer_email_enabled'] ) ? '1' : '0';
 
 		// Social Links
 		$clean['social_facebook']          = isset( $input['social_facebook'] ) ? esc_url_raw( $input['social_facebook'] ) : '';
@@ -350,6 +352,23 @@ class SpiceCraft_Global_Settings {
 								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[email_career]" type="email" id="sc_email_career" value="<?php echo esc_attr( $settings['email_career'] ?? '' ); ?>" class="regular-text" />
 							</td>
 						</tr>
+						<tr>
+							<th scope="row"><label for="sc_enquiry_receiving_email"><?php esc_html_e( 'Enquiry Receiving Email', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[enquiry_receiving_email]" type="email" id="sc_enquiry_receiving_email" value="<?php echo esc_attr( $settings['enquiry_receiving_email'] ?? '' ); ?>" class="regular-text" placeholder="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>" />
+								<p class="description"><?php esc_html_e( 'Target inbox for admin email notifications when visitors submit product and business enquiries. Changing this dynamically routes all future enquiries.', 'spicecraft-core' ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Customer Confirmation Email', 'spicecraft-core' ); ?></th>
+							<td>
+								<label for="sc_enquiry_customer_email">
+									<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[enquiry_customer_email_enabled]" type="checkbox" id="sc_enquiry_customer_email" value="1" <?php checked( ! empty( $settings['enquiry_customer_email_enabled'] ) ); ?> />
+									<?php esc_html_e( 'Send automatic acknowledgement email to customers upon submission', 'spicecraft-core' ); ?>
+								</label>
+								<p class="description"><?php esc_html_e( 'Sends a professional branded confirmation copy to the customer\'s provided email address.', 'spicecraft-core' ); ?></p>
+							</td>
+						</tr>
 					</table>
 
 				<?php
@@ -509,6 +528,9 @@ class SpiceCraft_Global_Settings {
 		$published_pages = isset( $pages_count->publish ) ? $pages_count->publish : 0;
 		$posts_count = wp_count_posts( 'post' );
 		$published_posts = isset( $posts_count->publish ) ? $posts_count->publish : 0;
+		$enquiries_count = wp_count_posts( 'spicecraft_enquiry' );
+		$total_enquiries = isset( $enquiries_count->publish ) ? $enquiries_count->publish : 0;
+		$new_enquiries   = function_exists( 'spicecraft_count_new_enquiries' ) ? spicecraft_count_new_enquiries() : 0;
 		?>
 		<div class="wrap spicecraft-overview-wrap">
 			<h1 class="wp-heading-inline"><?php esc_html_e( 'SpiceCraft CMS Overview', 'spicecraft-core' ); ?></h1>
@@ -685,6 +707,31 @@ class SpiceCraft_Global_Settings {
 					</div>
 					<div class="sc-card-actions">
 						<a href="<?php echo esc_url( admin_url( 'edit-comments.php' ) ); ?>" class="button button-secondary"><?php esc_html_e( 'Moderate Reviews', 'spicecraft-core' ); ?></a>
+					</div>
+				</div>
+			</div>
+
+			<h2 class="sc-overview-section-title"><?php esc_html_e( 'Lead Management & Customer Enquiries', 'spicecraft-core' ); ?></h2>
+			<div class="sc-overview-grid">
+				<div class="sc-overview-card" style="border-left: 4px solid #b83d27;">
+					<div>
+						<h3>
+							<span class="dashicons dashicons-email-alt" style="color:#b83d27;"></span>
+							<?php esc_html_e( 'Product Enquiries & Leads', 'spicecraft-core' ); ?>
+							<?php if ( $new_enquiries > 0 ) : ?>
+								<span class="update-plugins count-<?php echo esc_attr( $new_enquiries ); ?>" style="background:#b83d27; color:#fff; border-radius:10px; padding:2px 8px; font-size:11px; font-weight:700;">
+									<?php echo esc_html( $new_enquiries ); ?> <?php esc_html_e( 'New', 'spicecraft-core' ); ?>
+								</span>
+							<?php endif; ?>
+						</h3>
+						<p><?php esc_html_e( 'Manage incoming customer leads, institutional bulk supply requests, and international export enquiries. Track lead status, record private internal notes, and export CSV reports.', 'spicecraft-core' ); ?></p>
+					</div>
+					<div class="sc-card-actions">
+						<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=spicecraft_enquiry' ) ); ?>" class="button button-primary"><?php esc_html_e( 'All Enquiries', 'spicecraft-core' ); ?> &rarr;</a>
+						<?php if ( $new_enquiries > 0 ) : ?>
+							<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=spicecraft_enquiry&enquiry_status=new' ) ); ?>" class="button button-secondary" style="color:#b83d27; border-color:#b83d27;"><?php esc_html_e( 'Filter New Leads', 'spicecraft-core' ); ?> (<?php echo esc_html( $new_enquiries ); ?>)</a>
+						<?php endif; ?>
+						<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=spicecraft_export_enquiries_csv' ), 'spicecraft_export_enquiries_csv_nonce' ) ); ?>" class="button button-secondary"><?php esc_html_e( 'Export CSV', 'spicecraft-core' ); ?></a>
 					</div>
 				</div>
 			</div>

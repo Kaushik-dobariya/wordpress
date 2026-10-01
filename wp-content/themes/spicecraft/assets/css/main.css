@@ -338,7 +338,8 @@ body.admin-bar .site-header {
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: var(--sc-space-6);
+    gap: var(--sc-space-8, 32px);
+    align-items: center;
 }
 
 .sc-nav-menu li {
@@ -347,11 +348,29 @@ body.admin-bar .site-header {
 
 .sc-nav-menu a {
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.975rem;
+    letter-spacing: 0.01em;
     color: var(--sc-color-dark);
     padding: var(--sc-space-2) 0;
     display: inline-block;
+    position: relative;
     transition: color var(--sc-transition-fast);
+}
+
+.sc-nav-menu a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--sc-color-primary, #C0392B);
+    transition: width var(--sc-transition-fast);
+}
+
+.sc-nav-menu a:hover::after,
+.sc-nav-menu .current-menu-item > a::after {
+    width: 100%;
 }
 
 .sc-nav-menu a:hover,
@@ -567,7 +586,20 @@ body.admin-bar .site-header {
 }
 
 .sc-footer-menu li {
-    margin-bottom: var(--sc-space-2);
+    margin-bottom: var(--sc-space-2, 8px);
+}
+
+.sc-footer-menu a {
+    color: #d1d5db;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    display: inline-block;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.sc-footer-menu a:hover {
+    color: var(--sc-color-accent-light, #f6d89b);
+    transform: translateX(4px);
 }
 
 .sc-footer-bottom {

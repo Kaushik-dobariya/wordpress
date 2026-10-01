@@ -33,17 +33,34 @@ require_once SPICECRAFT_CORE_DIR . 'includes/helpers/shared-cms-helpers.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/helpers/manufacturing-helpers.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/helpers/quality-helpers.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/helpers/certification-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/recipe-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/careers-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/blog-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/testimonial-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/enquiry-helpers.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-global-settings.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-homepage-settings.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-about-settings.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-manufacturing-settings.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-quality-settings.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-certification-settings.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-recipe-settings.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-careers-settings.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-blog-settings.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/products/class-taxonomies.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/products/class-testimonial-cpt.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/products/class-team-cpt.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/products/class-product-meta.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/products/class-certification-meta.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/recipes/class-recipe-cpt.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/recipes/class-recipe-meta.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/careers/class-careers-cpt.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/careers/class-careers-meta.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/careers/class-careers-application.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/blog/class-blog-meta.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/enquiries/class-enquiry-cpt.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/enquiries/class-enquiry-meta.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/enquiries/class-enquiry-engine.php';
 
 /**
  * Plugin Bootstrap Class
@@ -135,6 +152,56 @@ class SpiceCraft_Core {
 		if ( class_exists( 'SpiceCraft_Certification_Meta' ) ) {
 			SpiceCraft_Certification_Meta::get_instance();
 		}
+
+		// Initialize Recipe CPT & Taxonomies
+		if ( class_exists( 'SpiceCraft_Recipe_CPT' ) ) {
+			SpiceCraft_Recipe_CPT::get_instance();
+		}
+
+		// Initialize Recipe Meta Engine
+		if ( class_exists( 'SpiceCraft_Recipe_Meta' ) ) {
+			SpiceCraft_Recipe_Meta::get_instance();
+		}
+
+		// Initialize Recipe Settings CMS
+		if ( class_exists( 'SpiceCraft_Recipe_Settings' ) ) {
+			SpiceCraft_Recipe_Settings::get_instance();
+		}
+
+		// Initialize Careers CPT & Applications CPT
+		if ( class_exists( 'SpiceCraft_Careers_CPT' ) ) {
+			SpiceCraft_Careers_CPT::get_instance();
+		}
+
+		// Initialize Careers Meta Engine
+		if ( class_exists( 'SpiceCraft_Careers_Meta' ) ) {
+			SpiceCraft_Careers_Meta::get_instance();
+		}
+
+		// Initialize Careers Application Engine
+		if ( class_exists( 'SpiceCraft_Careers_Application' ) ) {
+			SpiceCraft_Careers_Application::get_instance();
+		}
+
+		// Initialize Careers Settings CMS
+		if ( class_exists( 'SpiceCraft_Careers_Settings' ) ) {
+			SpiceCraft_Careers_Settings::get_instance();
+		}
+
+		// Initialize Enquiry & Lead Management CPT
+		if ( class_exists( 'SpiceCraft_Enquiry_CPT' ) ) {
+			SpiceCraft_Enquiry_CPT::get_instance();
+		}
+
+		// Initialize Enquiry Meta Engine
+		if ( class_exists( 'SpiceCraft_Enquiry_Meta' ) ) {
+			SpiceCraft_Enquiry_Meta::get_instance();
+		}
+
+		// Initialize Enquiry Engine
+		if ( class_exists( 'SpiceCraft_Enquiry_Engine' ) ) {
+			SpiceCraft_Enquiry_Engine::get_instance();
+		}
 	}
 
 	/**
@@ -148,14 +215,18 @@ class SpiceCraft_Core {
 			return;
 		}
 
-		// Load assets on Product edit screen, Testimonials, Team Members, and SpiceCraft screens
+		// Load assets on Product edit screen, Testimonials, Team Members, Recipes, Careers, Enquiries, and SpiceCraft screens
 		$is_product_screen     = 'product' === $screen->post_type;
-		$is_testimonial_screen = 'spicecraft_testimonial' === $screen->post_type;
+		$is_testimonial_screen = 'sc_testimonial' === $screen->post_type;
 		$is_team_screen        = 'spicecraft_team' === $screen->post_type;
+		$is_recipe_screen      = 'spicecraft_recipe' === $screen->post_type;
+		$is_job_screen         = 'spicecraft_job' === $screen->post_type;
+		$is_app_screen         = 'spicecraft_app' === $screen->post_type;
+		$is_enquiry_screen     = 'spicecraft_enquiry' === $screen->post_type;
 		$is_settings_screen    = false !== strpos( $screen->id, 'spicecraft' );
 		$is_cert_screen        = isset( $screen->taxonomy ) && 'spicecraft_certification' === $screen->taxonomy;
 
-		if ( $is_product_screen || $is_testimonial_screen || $is_team_screen || $is_settings_screen || $is_cert_screen ) {
+		if ( $is_product_screen || $is_testimonial_screen || $is_team_screen || $is_recipe_screen || $is_job_screen || $is_app_screen || $is_enquiry_screen || $is_settings_screen || $is_cert_screen ) {
 			// Ensure WordPress media library scripts/styles are loaded for image selectors
 			wp_enqueue_media();
 

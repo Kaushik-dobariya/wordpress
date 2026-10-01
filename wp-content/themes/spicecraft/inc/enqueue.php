@@ -83,6 +83,15 @@ function spicecraft_scripts() {
 		$resp_css_ver
 	);
 
+	// 4b. Lead & Product Enquiry Stylesheet (Global Modal & Form)
+	$enquiry_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/enquiry.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/enquiry.css' ) : SPICECRAFT_VERSION;
+	wp_enqueue_style(
+		'spicecraft-enquiry',
+		SPICECRAFT_URI . '/assets/css/enquiry.css',
+		array( 'spicecraft-responsive' ),
+		$enquiry_css_ver
+	);
+
 	// 5. WooCommerce Catalog Stylesheet (Loaded when WooCommerce is active or on catalog pages)
 	if ( class_exists( 'WooCommerce' ) || is_singular( 'product' ) || is_post_type_archive( 'product' ) || is_tax( array( 'product_cat', 'product_tag' ) ) ) {
 		wp_enqueue_style(
@@ -148,6 +157,86 @@ function spicecraft_scripts() {
 		);
 	}
 
+	// 5h. Recipes Dedicated Stylesheet (Phase 3 Step 4)
+	if ( is_post_type_archive( 'spicecraft_recipe' ) || is_tax( array( 'spicecraft_recipe_category', 'spicecraft_cuisine', 'spicecraft_meal_type' ) ) || is_singular( 'spicecraft_recipe' ) || is_singular( 'product' ) || is_front_page() || is_search() ) {
+		$recipes_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/recipes.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/recipes.css' ) : SPICECRAFT_VERSION;
+		wp_enqueue_style(
+			'spicecraft-recipes',
+			SPICECRAFT_URI . '/assets/css/recipes.css',
+			array( 'spicecraft-responsive' ),
+			$recipes_css_ver
+		);
+	}
+
+	// 5i. Careers Dedicated Stylesheet & Script (Phase 3 Step 5)
+	if ( is_post_type_archive( 'spicecraft_job' ) || is_singular( 'spicecraft_job' ) || is_page( 'careers' ) || is_page_template( 'page-careers.php' ) ) {
+		$careers_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/careers.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/careers.css' ) : SPICECRAFT_VERSION;
+		wp_enqueue_style(
+			'spicecraft-careers',
+			SPICECRAFT_URI . '/assets/css/careers.css',
+			array( 'spicecraft-responsive' ),
+			$careers_css_ver
+		);
+
+		$careers_js_ver = file_exists( SPICECRAFT_DIR . '/assets/js/careers.js' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/js/careers.js' ) : SPICECRAFT_VERSION;
+		wp_enqueue_script(
+			'spicecraft-careers',
+			SPICECRAFT_URI . '/assets/js/careers.js',
+			array(),
+			$careers_js_ver,
+			true
+		);
+
+		wp_localize_script(
+			'spicecraft-careers',
+			'spicecraftCareersConfig',
+			array(
+				'ajaxUrl' => esc_url( admin_url( 'admin-ajax.php' ) ),
+				'nonce'   => wp_create_nonce( 'spicecraft_careers_nonce' ),
+			)
+		);
+	}
+
+	// 5j. Blog / News Dedicated Stylesheet & Script (Phase 3 Step 6)
+	if ( is_home() || is_singular( 'post' ) || is_category() || is_tag() || is_page( 'blog' ) || is_page_template( 'page-blog.php' ) || is_front_page() ) {
+		$blog_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/blog.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/blog.css' ) : SPICECRAFT_VERSION;
+		wp_enqueue_style(
+			'spicecraft-blog',
+			SPICECRAFT_URI . '/assets/css/blog.css',
+			array( 'spicecraft-responsive' ),
+			$blog_css_ver
+		);
+
+		$blog_js_ver = file_exists( SPICECRAFT_DIR . '/assets/js/blog.js' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/js/blog.js' ) : SPICECRAFT_VERSION;
+		wp_enqueue_script(
+			'spicecraft-blog',
+			SPICECRAFT_URI . '/assets/js/blog.js',
+			array(),
+			$blog_js_ver,
+			true
+		);
+	}
+
+	// 5k. Testimonials Dedicated Stylesheet & Script (Phase 3 Step 7)
+	if ( is_post_type_archive( 'sc_testimonial' ) || is_singular( 'sc_testimonial' ) || is_page( 'testimonials' ) || is_page_template( 'page-testimonials.php' ) || is_front_page() ) {
+		$test_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/testimonials.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/testimonials.css' ) : SPICECRAFT_VERSION;
+		wp_enqueue_style(
+			'spicecraft-testimonials',
+			SPICECRAFT_URI . '/assets/css/testimonials.css',
+			array( 'spicecraft-responsive' ),
+			$test_css_ver
+		);
+
+		$test_js_ver = file_exists( SPICECRAFT_DIR . '/assets/js/testimonials.js' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/js/testimonials.js' ) : SPICECRAFT_VERSION;
+		wp_enqueue_script(
+			'spicecraft-testimonials',
+			SPICECRAFT_URI . '/assets/js/testimonials.js',
+			array(),
+			$test_js_ver,
+			true
+		);
+	}
+
 	// 5c. Product Discovery Stylesheet (Catalog filtering, chips, favourites, search, engagement)
 	$disc_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/product-discovery.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/product-discovery.css' ) : SPICECRAFT_VERSION;
 	wp_enqueue_style(
@@ -174,6 +263,46 @@ function spicecraft_scripts() {
 		array( 'spicecraft-main' ),
 		$disc_js_ver,
 		true
+	);
+
+	// 6c. Recipes JavaScript (Archive filters, mobile drawer, ingredient checklist, share)
+	if ( is_post_type_archive( 'spicecraft_recipe' ) || is_tax( array( 'spicecraft_recipe_category', 'spicecraft_cuisine', 'spicecraft_meal_type' ) ) || is_singular( 'spicecraft_recipe' ) ) {
+		$recipes_js_ver = file_exists( SPICECRAFT_DIR . '/assets/js/recipes.js' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/js/recipes.js' ) : SPICECRAFT_VERSION;
+		wp_enqueue_script(
+			'spicecraft-recipes',
+			SPICECRAFT_URI . '/assets/js/recipes.js',
+			array( 'spicecraft-main' ),
+			$recipes_js_ver,
+			true
+		);
+	}
+
+	// 6d. Product & Trade Enquiry Controller JavaScript
+	$enquiry_js_ver = file_exists( SPICECRAFT_DIR . '/assets/js/enquiry.js' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/js/enquiry.js' ) : SPICECRAFT_VERSION;
+	wp_enqueue_script(
+		'spicecraft-enquiry',
+		SPICECRAFT_URI . '/assets/js/enquiry.js',
+		array( 'spicecraft-main' ),
+		$enquiry_js_ver,
+		true
+	);
+
+	wp_localize_script(
+		'spicecraft-enquiry',
+		'spicecraftEnquiryConfig',
+		array(
+			'ajaxUrl' => esc_url( admin_url( 'admin-ajax.php' ) ),
+			'nonce'   => wp_create_nonce( 'spicecraft_enquiry_action' ),
+			'i18n'    => array(
+				'submitting'     => esc_html__( 'Submitting Enquiry...', 'spicecraft' ),
+				'submit'         => esc_html__( 'Submit Enquiry', 'spicecraft' ),
+				'successHeading' => esc_html__( 'Thank you for your enquiry!', 'spicecraft' ),
+				'successMessage' => esc_html__( 'We have received your request and our spice specialist team will get back to you shortly.', 'spicecraft' ),
+				'networkError'   => esc_html__( 'A network error occurred. Please try again or reach out on WhatsApp.', 'spicecraft' ),
+				'invalidEmail'   => esc_html__( 'Please enter a valid email address.', 'spicecraft' ),
+				'requiredFields' => esc_html__( 'Please fill in all required fields.', 'spicecraft' ),
+			),
+		)
 	);
 
 	// Localize script for secure AJAX, nonces, and global client settings
@@ -205,3 +334,12 @@ function spicecraft_scripts() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'spicecraft_scripts' );
+
+/**
+ * Render the Global Product & Trade Enquiry Modal in Footer.
+ */
+function spicecraft_render_enquiry_modal() {
+	get_template_part( 'template-parts/components/enquiry-modal' );
+}
+add_action( 'wp_footer', 'spicecraft_render_enquiry_modal', 20 );
+
