@@ -84,6 +84,20 @@ class SpiceCraft_Global_Settings {
 			'spicecraft-settings',
 			array( $this, 'render_settings_page' )
 		);
+
+		// Submenu 3: Import / Export
+		add_submenu_page(
+			'spicecraft-overview',
+			__( 'Import / Export', 'spicecraft-core' ),
+			__( 'Import / Export', 'spicecraft-core' ),
+			'manage_options',
+			'spicecraft-import-export',
+			function () {
+				if ( class_exists( 'SpiceCraft_Import_Export' ) ) {
+					SpiceCraft_Import_Export::get_instance()->render_admin_page();
+				}
+			}
+		);
 	}
 
 	/**
@@ -126,55 +140,99 @@ class SpiceCraft_Global_Settings {
 			return array();
 		}
 
-		$clean = array();
+		$existing = get_option( self::OPTION_NAME, array() );
+		$clean    = is_array( $existing ) ? $existing : array();
 
-		// Company Info
-		$clean['company_name']            = isset( $input['company_name'] ) ? sanitize_text_field( $input['company_name'] ) : '';
-		$clean['company_description']     = isset( $input['company_description'] ) ? sanitize_textarea_field( $input['company_description'] ) : '';
-		$clean['registered_company_name'] = isset( $input['registered_company_name'] ) ? sanitize_text_field( $input['registered_company_name'] ) : '';
-		$clean['phone_primary']           = isset( $input['phone_primary'] ) ? sanitize_text_field( $input['phone_primary'] ) : '';
-		$clean['phone_secondary']         = isset( $input['phone_secondary'] ) ? sanitize_text_field( $input['phone_secondary'] ) : '';
-		$clean['business_hours']          = isset( $input['business_hours'] ) ? sanitize_text_field( $input['business_hours'] ) : '';
-		$clean['address_primary']         = isset( $input['address_primary'] ) ? sanitize_textarea_field( $input['address_primary'] ) : '';
-		$clean['address_factory']         = isset( $input['address_factory'] ) ? sanitize_textarea_field( $input['address_factory'] ) : '';
-		$clean['map_embed_url']           = isset( $input['map_embed_url'] ) ? esc_url_raw( $input['map_embed_url'] ) : '';
+		// Company Info (only if submitted)
+		if ( isset( $input['company_name'] ) || isset( $input['address_primary'] ) ) {
+			$clean['company_name']            = isset( $input['company_name'] ) ? sanitize_text_field( $input['company_name'] ) : '';
+			$clean['company_description']     = isset( $input['company_description'] ) ? sanitize_textarea_field( $input['company_description'] ) : '';
+			$clean['registered_company_name'] = isset( $input['registered_company_name'] ) ? sanitize_text_field( $input['registered_company_name'] ) : '';
+			$clean['phone_primary']           = isset( $input['phone_primary'] ) ? sanitize_text_field( $input['phone_primary'] ) : '';
+			$clean['phone_secondary']         = isset( $input['phone_secondary'] ) ? sanitize_text_field( $input['phone_secondary'] ) : '';
+			$clean['business_hours']          = isset( $input['business_hours'] ) ? sanitize_text_field( $input['business_hours'] ) : '';
+			$clean['address_primary']         = isset( $input['address_primary'] ) ? sanitize_textarea_field( $input['address_primary'] ) : '';
+			$clean['address_factory']         = isset( $input['address_factory'] ) ? sanitize_textarea_field( $input['address_factory'] ) : '';
+			$clean['map_embed_url']           = isset( $input['map_embed_url'] ) ? esc_url_raw( $input['map_embed_url'] ) : '';
+			$clean['header_cta_text']         = isset( $input['header_cta_text'] ) ? sanitize_text_field( $input['header_cta_text'] ) : '';
+			$clean['header_cta_url']          = isset( $input['header_cta_url'] ) ? esc_url_raw( $input['header_cta_url'] ) : '';
+		}
 
-		// Branding
-		$clean['footer_logo_url']         = isset( $input['footer_logo_url'] ) ? esc_url_raw( $input['footer_logo_url'] ) : '';
+		// WhatsApp & Enquiries (only if submitted)
+		if ( isset( $input['whatsapp_number'] ) || isset( $input['email_general'] ) || isset( $input['enquiry_receiving_email'] ) ) {
+			$clean['whatsapp_number']           = isset( $input['whatsapp_number'] ) ? sanitize_text_field( $input['whatsapp_number'] ) : '';
+			$clean['whatsapp_default_message']  = isset( $input['whatsapp_default_message'] ) ? sanitize_textarea_field( $input['whatsapp_default_message'] ) : '';
+			$clean['whatsapp_product_template'] = isset( $input['whatsapp_product_template'] ) ? sanitize_textarea_field( $input['whatsapp_product_template'] ) : '';
+			$clean['email_general']             = isset( $input['email_general'] ) ? sanitize_email( $input['email_general'] ) : '';
+			$clean['email_sales']               = isset( $input['email_sales'] ) ? sanitize_email( $input['email_sales'] ) : '';
+			$clean['email_export']              = isset( $input['email_export'] ) ? sanitize_email( $input['email_export'] ) : '';
+			$clean['email_career']              = isset( $input['email_career'] ) ? sanitize_email( $input['email_career'] ) : '';
+			$clean['enquiry_receiving_email']        = isset( $input['enquiry_receiving_email'] ) ? sanitize_email( $input['enquiry_receiving_email'] ) : '';
+			$clean['enquiry_customer_email_enabled'] = ! empty( $input['enquiry_customer_email_enabled'] ) ? '1' : '0';
+		}
 
-		// Header CTA
-		$clean['header_cta_text']          = isset( $input['header_cta_text'] ) ? sanitize_text_field( $input['header_cta_text'] ) : '';
-		$clean['header_cta_url']           = isset( $input['header_cta_url'] ) ? esc_url_raw( $input['header_cta_url'] ) : '';
+		// Branding (only if submitted)
+		if ( isset( $input['footer_logo_url'] ) ) {
+			$clean['footer_logo_url'] = esc_url_raw( $input['footer_logo_url'] );
+		}
 
-		// WhatsApp & Enquiries
-		$clean['whatsapp_number']           = isset( $input['whatsapp_number'] ) ? sanitize_text_field( $input['whatsapp_number'] ) : '';
-		$clean['whatsapp_default_message']  = isset( $input['whatsapp_default_message'] ) ? sanitize_textarea_field( $input['whatsapp_default_message'] ) : '';
-		$clean['whatsapp_product_template'] = isset( $input['whatsapp_product_template'] ) ? sanitize_textarea_field( $input['whatsapp_product_template'] ) : '';
-		$clean['email_general']             = isset( $input['email_general'] ) ? sanitize_email( $input['email_general'] ) : '';
-		$clean['email_sales']               = isset( $input['email_sales'] ) ? sanitize_email( $input['email_sales'] ) : '';
-		$clean['email_export']              = isset( $input['email_export'] ) ? sanitize_email( $input['email_export'] ) : '';
-		$clean['email_career']              = isset( $input['email_career'] ) ? sanitize_email( $input['email_career'] ) : '';
-		$clean['enquiry_receiving_email']         = isset( $input['enquiry_receiving_email'] ) ? sanitize_email( $input['enquiry_receiving_email'] ) : '';
-		$clean['enquiry_customer_email_enabled']  = ! empty( $input['enquiry_customer_email_enabled'] ) ? '1' : '0';
+		// Social Links (only if submitted)
+		if ( isset( $input['social_facebook'] ) || isset( $input['social_instagram'] ) ) {
+			$clean['social_facebook']  = isset( $input['social_facebook'] ) ? esc_url_raw( $input['social_facebook'] ) : '';
+			$clean['social_instagram'] = isset( $input['social_instagram'] ) ? esc_url_raw( $input['social_instagram'] ) : '';
+			$clean['social_linkedin']  = isset( $input['social_linkedin'] ) ? esc_url_raw( $input['social_linkedin'] ) : '';
+			$clean['social_youtube']   = isset( $input['social_youtube'] ) ? esc_url_raw( $input['social_youtube'] ) : '';
+			$clean['social_pinterest'] = isset( $input['social_pinterest'] ) ? esc_url_raw( $input['social_pinterest'] ) : '';
+			$clean['social_twitter']   = isset( $input['social_twitter'] ) ? esc_url_raw( $input['social_twitter'] ) : '';
+		}
 
-		// Social Links
-		$clean['social_facebook']          = isset( $input['social_facebook'] ) ? esc_url_raw( $input['social_facebook'] ) : '';
-		$clean['social_instagram']         = isset( $input['social_instagram'] ) ? esc_url_raw( $input['social_instagram'] ) : '';
-		$clean['social_linkedin']          = isset( $input['social_linkedin'] ) ? esc_url_raw( $input['social_linkedin'] ) : '';
-		$clean['social_youtube']           = isset( $input['social_youtube'] ) ? esc_url_raw( $input['social_youtube'] ) : '';
-		$clean['social_pinterest']         = isset( $input['social_pinterest'] ) ? esc_url_raw( $input['social_pinterest'] ) : '';
-		$clean['social_twitter']           = isset( $input['social_twitter'] ) ? esc_url_raw( $input['social_twitter'] ) : '';
+		// Regulatory & Compliance (only if submitted)
+		if ( isset( $input['fssai_license'] ) || isset( $input['gst_number'] ) ) {
+			$clean['fssai_license']          = isset( $input['fssai_license'] ) ? sanitize_text_field( $input['fssai_license'] ) : '';
+			$clean['gst_number']             = isset( $input['gst_number'] ) ? sanitize_text_field( $input['gst_number'] ) : '';
+			$clean['iec_code']               = isset( $input['iec_code'] ) ? sanitize_text_field( $input['iec_code'] ) : '';
+			$clean['certifications_summary'] = isset( $input['certifications_summary'] ) ? sanitize_text_field( $input['certifications_summary'] ) : '';
+		}
 
-		// Regulatory & Compliance (Optional - No fake defaults)
-		$clean['fssai_license']            = isset( $input['fssai_license'] ) ? sanitize_text_field( $input['fssai_license'] ) : '';
-		$clean['gst_number']               = isset( $input['gst_number'] ) ? sanitize_text_field( $input['gst_number'] ) : '';
-		$clean['iec_code']                 = isset( $input['iec_code'] ) ? sanitize_text_field( $input['iec_code'] ) : '';
-		$clean['certifications_summary']   = isset( $input['certifications_summary'] ) ? sanitize_text_field( $input['certifications_summary'] ) : '';
+		// Footer & Legal (only if submitted)
+		if ( isset( $input['footer_description'] ) || isset( $input['footer_copyright'] ) ) {
+			$clean['footer_description'] = isset( $input['footer_description'] ) ? sanitize_textarea_field( $input['footer_description'] ) : '';
+			$clean['footer_copyright']   = isset( $input['footer_copyright'] ) ? sanitize_text_field( $input['footer_copyright'] ) : '';
+			$clean['footer_disclaimer']  = isset( $input['footer_disclaimer'] ) ? sanitize_textarea_field( $input['footer_disclaimer'] ) : '';
+		}
 
-		// Footer & Legal
-		$clean['footer_description']       = isset( $input['footer_description'] ) ? sanitize_textarea_field( $input['footer_description'] ) : '';
-		$clean['footer_copyright']         = isset( $input['footer_copyright'] ) ? sanitize_text_field( $input['footer_copyright'] ) : '';
-		$clean['footer_disclaimer']        = isset( $input['footer_disclaimer'] ) ? sanitize_textarea_field( $input['footer_disclaimer'] ) : '';
+		// Contact Page & Location (only if submitted)
+		if ( isset( $input['contact_hero_title'] ) || isset( $input['contact_hero_eyebrow'] ) ) {
+			$clean['contact_hero_eyebrow']    = isset( $input['contact_hero_eyebrow'] ) ? sanitize_text_field( $input['contact_hero_eyebrow'] ) : '';
+			$clean['contact_hero_title']      = isset( $input['contact_hero_title'] ) ? sanitize_text_field( $input['contact_hero_title'] ) : '';
+			$clean['contact_hero_subtitle']   = isset( $input['contact_hero_subtitle'] ) ? sanitize_textarea_field( $input['contact_hero_subtitle'] ) : '';
+			$clean['contact_hero_badge']      = isset( $input['contact_hero_badge'] ) ? sanitize_text_field( $input['contact_hero_badge'] ) : '';
+			$clean['contact_map_latitude']    = isset( $input['contact_map_latitude'] ) ? sanitize_text_field( $input['contact_map_latitude'] ) : '';
+			$clean['contact_map_longitude']   = isset( $input['contact_map_longitude'] ) ? sanitize_text_field( $input['contact_map_longitude'] ) : '';
+			$clean['contact_map_zoom']        = isset( $input['contact_map_zoom'] ) ? sanitize_text_field( $input['contact_map_zoom'] ) : '';
+			$clean['contact_map_title']       = isset( $input['contact_map_title'] ) ? sanitize_text_field( $input['contact_map_title'] ) : '';
+			$clean['contact_faq_heading']     = isset( $input['contact_faq_heading'] ) ? sanitize_text_field( $input['contact_faq_heading'] ) : '';
+			$clean['contact_faq_subtitle']    = isset( $input['contact_faq_subtitle'] ) ? sanitize_text_field( $input['contact_faq_subtitle'] ) : '';
+			$clean['contact_cta_heading']     = isset( $input['contact_cta_heading'] ) ? sanitize_text_field( $input['contact_cta_heading'] ) : '';
+			$clean['contact_cta_subtitle']    = isset( $input['contact_cta_subtitle'] ) ? sanitize_textarea_field( $input['contact_cta_subtitle'] ) : '';
+			$clean['contact_cta_button_text'] = isset( $input['contact_cta_button_text'] ) ? sanitize_text_field( $input['contact_cta_button_text'] ) : '';
+			$clean['contact_cta_button_url']  = isset( $input['contact_cta_button_url'] ) ? esc_url_raw( $input['contact_cta_button_url'] ) : '';
+
+			// FAQs repeater
+			$clean['contact_faqs'] = array();
+			if ( ! empty( $input['contact_faqs'] ) && is_array( $input['contact_faqs'] ) ) {
+				foreach ( $input['contact_faqs'] as $faq ) {
+					$q = isset( $faq['q'] ) ? sanitize_text_field( $faq['q'] ) : '';
+					$a = isset( $faq['a'] ) ? sanitize_textarea_field( $faq['a'] ) : '';
+					if ( ! empty( $q ) && ! empty( $a ) ) {
+						$clean['contact_faqs'][] = array(
+							'q' => $q,
+							'a' => $a,
+						);
+					}
+				}
+			}
+		}
 
 		return $clean;
 	}
@@ -187,7 +245,7 @@ class SpiceCraft_Global_Settings {
 			return;
 		}
 
-		$settings = get_option( self::OPTION_NAME, array() );
+		$settings   = get_option( self::OPTION_NAME, array() );
 		$active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'company';
 		?>
 		<div class="wrap spicecraft-settings-wrap">
@@ -202,6 +260,9 @@ class SpiceCraft_Global_Settings {
 			<h2 class="nav-tab-wrapper">
 				<a href="?page=spicecraft-settings&tab=company" class="nav-tab <?php echo 'company' === $active_tab ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'Company Info', 'spicecraft-core' ); ?>
+				</a>
+				<a href="?page=spicecraft-settings&tab=contact" class="nav-tab <?php echo 'contact' === $active_tab ? 'nav-tab-active' : ''; ?>">
+					<?php esc_html_e( 'Contact Page & Map', 'spicecraft-core' ); ?>
 				</a>
 				<a href="?page=spicecraft-settings&tab=enquiries" class="nav-tab <?php echo 'enquiries' === $active_tab ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'WhatsApp & Enquiries', 'spicecraft-core' ); ?>
@@ -296,6 +357,129 @@ class SpiceCraft_Global_Settings {
 							<td>
 								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[header_cta_url]" type="text" id="sc_header_cta_url" value="<?php echo esc_attr( $settings['header_cta_url'] ?? '' ); ?>" class="regular-text" placeholder="<?php echo esc_attr( home_url( '/#contact' ) ); ?>" />
 								<p class="description"><?php esc_html_e( 'Link target for the header CTA button. Defaults to /#contact if left empty.', 'spicecraft-core' ); ?></p>
+							</td>
+						</tr>
+					</table>
+
+				<?php
+				// TAB: Contact Page & Map
+				elseif ( 'contact' === $active_tab ) :
+					$contact_defaults = function_exists( 'spicecraft_get_contact_settings' ) ? spicecraft_get_contact_settings() : array();
+					$faqs             = function_exists( 'spicecraft_get_contact_faqs' ) ? spicecraft_get_contact_faqs() : array();
+					?>
+					<h3 class="title"><?php esc_html_e( 'Contact Hero Section', 'spicecraft-core' ); ?></h3>
+					<table class="form-table" role="presentation">
+						<tr>
+							<th scope="row"><label for="sc_contact_hero_eyebrow"><?php esc_html_e( 'Hero Eyebrow / Tag', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_hero_eyebrow]" type="text" id="sc_contact_hero_eyebrow" value="<?php echo esc_attr( $settings['contact_hero_eyebrow'] ?? $contact_defaults['hero_eyebrow'] ); ?>" class="regular-text" />
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="sc_contact_hero_title"><?php esc_html_e( 'Hero Main Title', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_hero_title]" type="text" id="sc_contact_hero_title" value="<?php echo esc_attr( $settings['contact_hero_title'] ?? $contact_defaults['hero_title'] ); ?>" class="large-text" />
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="sc_contact_hero_subtitle"><?php esc_html_e( 'Hero Introduction / Subtitle', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<textarea name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_hero_subtitle]" id="sc_contact_hero_subtitle" rows="3" class="large-text"><?php echo esc_textarea( $settings['contact_hero_subtitle'] ?? $contact_defaults['hero_subtitle'] ); ?></textarea>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="sc_contact_hero_badge"><?php esc_html_e( 'Response Time Badge', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_hero_badge]" type="text" id="sc_contact_hero_badge" value="<?php echo esc_attr( $settings['contact_hero_badge'] ?? $contact_defaults['hero_badge'] ); ?>" class="regular-text" />
+							</td>
+						</tr>
+					</table>
+
+					<h3 class="title"><?php esc_html_e( 'Location & Map Coordinates', 'spicecraft-core' ); ?></h3>
+					<table class="form-table" role="presentation">
+						<tr>
+							<th scope="row"><label for="sc_contact_map_title"><?php esc_html_e( 'Campus / Campus Name', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_map_title]" type="text" id="sc_contact_map_title" value="<?php echo esc_attr( $settings['contact_map_title'] ?? $contact_defaults['map_title'] ); ?>" class="regular-text" />
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="sc_contact_map_lat"><?php esc_html_e( 'Map Latitude', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_map_latitude]" type="text" id="sc_contact_map_lat" value="<?php echo esc_attr( $settings['contact_map_latitude'] ?? $contact_defaults['map_latitude'] ); ?>" class="regular-text" placeholder="10.0159" />
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="sc_contact_map_lng"><?php esc_html_e( 'Map Longitude', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_map_longitude]" type="text" id="sc_contact_map_lng" value="<?php echo esc_attr( $settings['contact_map_longitude'] ?? $contact_defaults['map_longitude'] ); ?>" class="regular-text" placeholder="76.3419" />
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="sc_contact_map_zoom"><?php esc_html_e( 'Default Zoom Level', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_map_zoom]" type="number" min="1" max="20" id="sc_contact_map_zoom" value="<?php echo esc_attr( $settings['contact_map_zoom'] ?? $contact_defaults['map_zoom'] ); ?>" class="small-text" />
+								<p class="description"><?php esc_html_e( 'Recommended: 13 to 16. Google Maps Embed iframe URL can also be set in Company Info tab.', 'spicecraft-core' ); ?></p>
+							</td>
+						</tr>
+					</table>
+
+					<h3 class="title"><?php esc_html_e( 'Frequently Asked Trade Questions (FAQs)', 'spicecraft-core' ); ?></h3>
+					<table class="form-table" role="presentation">
+						<tr>
+							<th scope="row"><label for="sc_contact_faq_heading"><?php esc_html_e( 'FAQ Section Heading', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_faq_heading]" type="text" id="sc_contact_faq_heading" value="<?php echo esc_attr( $settings['contact_faq_heading'] ?? $contact_defaults['faq_heading'] ); ?>" class="large-text" />
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="sc_contact_faq_subtitle"><?php esc_html_e( 'FAQ Subtitle / Note', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<textarea name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_faq_subtitle]" id="sc_contact_faq_subtitle" rows="2" class="large-text"><?php echo esc_textarea( $settings['contact_faq_subtitle'] ?? $contact_defaults['faq_subtitle'] ); ?></textarea>
+							</td>
+						</tr>
+						<?php
+						$max_faqs = max( count( $faqs ), 5 );
+						for ( $i = 0; $i < $max_faqs; $i++ ) :
+							$faq_q = isset( $faqs[ $i ]['q'] ) ? $faqs[ $i ]['q'] : '';
+							$faq_a = isset( $faqs[ $i ]['a'] ) ? $faqs[ $i ]['a'] : '';
+							?>
+							<tr>
+								<th scope="row"><?php /* translators: %d: FAQ number */ printf( esc_html__( 'FAQ #%d', 'spicecraft-core' ), $i + 1 ); ?></th>
+								<td>
+									<p><strong><?php esc_html_e( 'Question:', 'spicecraft-core' ); ?></strong></p>
+									<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_faqs][<?php echo esc_attr( $i ); ?>][q]" type="text" value="<?php echo esc_attr( $faq_q ); ?>" class="large-text" placeholder="<?php esc_attr_e( 'Enter question...', 'spicecraft-core' ); ?>" />
+									<p style="margin-top:8px;"><strong><?php esc_html_e( 'Answer:', 'spicecraft-core' ); ?></strong></p>
+									<textarea name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_faqs][<?php echo esc_attr( $i ); ?>][a]" rows="3" class="large-text" placeholder="<?php esc_attr_e( 'Enter detailed response...', 'spicecraft-core' ); ?>"><?php echo esc_textarea( $faq_a ); ?></textarea>
+								</td>
+							</tr>
+						<?php endfor; ?>
+					</table>
+
+					<h3 class="title"><?php esc_html_e( 'Final B2B Conversion CTA Banner', 'spicecraft-core' ); ?></h3>
+					<table class="form-table" role="presentation">
+						<tr>
+							<th scope="row"><label for="sc_contact_cta_heading"><?php esc_html_e( 'CTA Heading', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_cta_heading]" type="text" id="sc_contact_cta_heading" value="<?php echo esc_attr( $settings['contact_cta_heading'] ?? $contact_defaults['cta_heading'] ); ?>" class="large-text" />
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="sc_contact_cta_subtitle"><?php esc_html_e( 'CTA Subtitle', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<textarea name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_cta_subtitle]" id="sc_contact_cta_subtitle" rows="2" class="large-text"><?php echo esc_textarea( $settings['contact_cta_subtitle'] ?? $contact_defaults['cta_subtitle'] ); ?></textarea>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="sc_contact_cta_btn_text"><?php esc_html_e( 'CTA Button Text', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_cta_button_text]" type="text" id="sc_contact_cta_btn_text" value="<?php echo esc_attr( $settings['contact_cta_button_text'] ?? $contact_defaults['cta_button_text'] ); ?>" class="regular-text" />
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="sc_contact_cta_btn_url"><?php esc_html_e( 'CTA Button URL', 'spicecraft-core' ); ?></label></th>
+							<td>
+								<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>[contact_cta_button_url]" type="text" id="sc_contact_cta_btn_url" value="<?php echo esc_attr( $settings['contact_cta_button_url'] ?? $contact_defaults['cta_button_url'] ); ?>" class="large-text" />
 							</td>
 						</tr>
 					</table>
@@ -519,6 +703,11 @@ class SpiceCraft_Global_Settings {
 	 */
 	public function render_overview_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		if ( class_exists( 'SpiceCraft_Dashboard' ) ) {
+			SpiceCraft_Dashboard::render_overview_screen();
 			return;
 		}
 

@@ -237,6 +237,17 @@ function spicecraft_scripts() {
 		);
 	}
 
+	// 5l. Contact Us Dedicated Stylesheet (Phase 5 Contact Us Page)
+	if ( is_page_template( 'page-contact.php' ) || is_page( 'contact' ) || is_page( 'contact-us' ) ) {
+		$contact_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/contact.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/contact.css' ) : SPICECRAFT_VERSION;
+		wp_enqueue_style(
+			'spicecraft-contact',
+			SPICECRAFT_URI . '/assets/css/contact.css',
+			array( 'spicecraft-responsive', 'spicecraft-enquiry' ),
+			$contact_css_ver
+		);
+	}
+
 	// 5c. Product Discovery Stylesheet (Catalog filtering, chips, favourites, search, engagement)
 	$disc_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/product-discovery.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/product-discovery.css' ) : SPICECRAFT_VERSION;
 	wp_enqueue_style(
@@ -244,6 +255,15 @@ function spicecraft_scripts() {
 		SPICECRAFT_URI . '/assets/css/product-discovery.css',
 		array( 'spicecraft-responsive' ),
 		$disc_css_ver
+	);
+
+	// 5m. Reusable Component Library Stylesheet (Phase 5.4)
+	$comp_css_ver = file_exists( SPICECRAFT_DIR . '/assets/css/components.css' ) ? (string) filemtime( SPICECRAFT_DIR . '/assets/css/components.css' ) : SPICECRAFT_VERSION;
+	wp_enqueue_style(
+		'spicecraft-components',
+		SPICECRAFT_URI . '/assets/css/components.css',
+		array( 'spicecraft-responsive' ),
+		$comp_css_ver
 	);
 
 	// 6. Main Interactive JavaScript (Mobile Menu, Submenus, Search, Accessibility)

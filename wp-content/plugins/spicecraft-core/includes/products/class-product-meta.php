@@ -108,6 +108,14 @@ class SpiceCraft_Product_Meta {
 		$serving_size  = get_post_meta( $post_id, '_sc_serving_size', true );
 		$nutrition     = get_post_meta( $post_id, '_sc_nutrition_data', true );
 		$nutrition     = is_array( $nutrition ) ? $nutrition : array();
+
+		// B2B & Bulk Packaging Specs
+		$sieve_mesh       = get_post_meta( $post_id, '_sc_sieve_mesh', true );
+		$volatile_oil     = get_post_meta( $post_id, '_sc_volatile_oil', true );
+		$moisture_content = get_post_meta( $post_id, '_sc_moisture_content', true );
+		$bulk_packaging   = get_post_meta( $post_id, '_sc_bulk_packaging', true );
+		$storage_protocol = get_post_meta( $post_id, '_sc_storage_protocol', true );
+		$moq              = get_post_meta( $post_id, '_sc_moq', true );
 		?>
 		<div class="sc-metabox-wrapper">
 
@@ -124,6 +132,9 @@ class SpiceCraft_Product_Meta {
 				</button>
 				<button type="button" class="sc-metabox-tab-btn" data-tab="tab-nutrition">
 					<?php esc_html_e( 'Nutrition Facts Table', 'spicecraft-core' ); ?>
+				</button>
+				<button type="button" class="sc-metabox-tab-btn" data-tab="tab-packaging">
+					<?php esc_html_e( 'B2B & Bulk Packaging', 'spicecraft-core' ); ?>
 				</button>
 			</div>
 
@@ -297,6 +308,50 @@ class SpiceCraft_Product_Meta {
 				</div>
 			</div>
 
+			<!-- Tab 5: B2B Packaging & Bulk Specifications -->
+			<div class="sc-metabox-panel" id="tab-packaging" style="display:none;">
+				<div class="sc-form-row">
+					<div class="sc-col">
+						<label for="sc_sieve_mesh"><strong><?php esc_html_e( 'Sieve Mesh / Granulation Size', 'spicecraft-core' ); ?></strong></label>
+						<input type="text" name="_sc_sieve_mesh" id="sc_sieve_mesh" value="<?php echo esc_attr( $sieve_mesh ); ?>" class="widefat" placeholder="<?php esc_attr_e( 'e.g. 60-80 Mesh (Powder) / 550GL (Whole)', 'spicecraft-core' ); ?>" />
+						<p class="description"><?php esc_html_e( 'Granulation fineness standard for industrial milling and export specifications.', 'spicecraft-core' ); ?></p>
+					</div>
+					<div class="sc-col">
+						<label for="sc_volatile_oil"><strong><?php esc_html_e( 'Volatile Oil Content (% v/w)', 'spicecraft-core' ); ?></strong></label>
+						<input type="text" name="_sc_volatile_oil" id="sc_volatile_oil" value="<?php echo esc_attr( $volatile_oil ); ?>" class="widefat" placeholder="<?php esc_attr_e( 'e.g. Min 2.5% v/w (Steam Distillation)', 'spicecraft-core' ); ?>" />
+						<p class="description"><?php esc_html_e( 'Key aromatic potency index required by commercial food processors and extractors.', 'spicecraft-core' ); ?></p>
+					</div>
+				</div>
+
+				<div class="sc-form-row">
+					<div class="sc-col">
+						<label for="sc_moisture_content"><strong><?php esc_html_e( 'Moisture Content (% w/w)', 'spicecraft-core' ); ?></strong></label>
+						<input type="text" name="_sc_moisture_content" id="sc_moisture_content" value="<?php echo esc_attr( $moisture_content ); ?>" class="widefat" placeholder="<?php esc_attr_e( 'e.g. Max 10.0% w/w', 'spicecraft-core' ); ?>" />
+						<p class="description"><?php esc_html_e( 'Guaranteed laboratory moisture threshold for extended export container shelf-life.', 'spicecraft-core' ); ?></p>
+					</div>
+					<div class="sc-col">
+						<label for="sc_moq"><strong><?php esc_html_e( 'Minimum Order Quantity (MOQ)', 'spicecraft-core' ); ?></strong></label>
+						<input type="text" name="_sc_moq" id="sc_moq" value="<?php echo esc_attr( $moq ); ?>" class="widefat" placeholder="<?php esc_attr_e( 'e.g. 500 kg Export / 100 kg Domestic Institutional', 'spicecraft-core' ); ?>" />
+						<p class="description"><?php esc_html_e( 'Standard procurement minimum for commercial trade enquiries.', 'spicecraft-core' ); ?></p>
+					</div>
+				</div>
+
+				<div class="sc-form-row">
+					<div class="sc-col-full">
+						<label for="sc_bulk_packaging"><strong><?php esc_html_e( 'Bulk Packaging Formats & Export Barrier Standards', 'spicecraft-core' ); ?></strong></label>
+						<textarea name="_sc_bulk_packaging" id="sc_bulk_packaging" rows="3" class="widefat" placeholder="<?php esc_attr_e( 'e.g. 25 kg Multi-wall Kraft paper sacks with food-grade co-extruded polyethylene liner; or 50 kg HDPE woven sacks with nitrogen flush.', 'spicecraft-core' ); ?>"><?php echo esc_textarea( $bulk_packaging ); ?></textarea>
+						<p class="description"><?php esc_html_e( 'Displayed in B2B technical data sheet and wholesale quotation summaries.', 'spicecraft-core' ); ?></p>
+					</div>
+				</div>
+
+				<div class="sc-form-row">
+					<div class="sc-col-full">
+						<label for="sc_storage_protocol"><strong><?php esc_html_e( 'Institutional Storage Protocol & Warehouse Guidelines', 'spicecraft-core' ); ?></strong></label>
+						<textarea name="_sc_storage_protocol" id="sc_storage_protocol" rows="3" class="widefat" placeholder="<?php esc_attr_e( 'e.g. Store in clean, cool, well-ventilated warehouse below 20°C with relative humidity < 60%. Stack on wooden pallets away from walls and pungent goods.', 'spicecraft-core' ); ?>"><?php echo esc_textarea( $storage_protocol ); ?></textarea>
+					</div>
+				</div>
+			</div>
+
 		</div><!-- .sc-metabox-wrapper -->
 		<?php
 	}
@@ -339,6 +394,12 @@ class SpiceCraft_Product_Meta {
 			'_sc_ingredients'          => 'sanitize_textarea_field',
 			'_sc_usage_instructions'   => 'sanitize_textarea_field',
 			'_sc_storage_instructions' => 'sanitize_textarea_field',
+			'_sc_sieve_mesh'           => 'sanitize_text_field',
+			'_sc_volatile_oil'         => 'sanitize_text_field',
+			'_sc_moisture_content'     => 'sanitize_text_field',
+			'_sc_moq'                  => 'sanitize_text_field',
+			'_sc_bulk_packaging'       => 'sanitize_textarea_field',
+			'_sc_storage_protocol'     => 'sanitize_textarea_field',
 		);
 
 		foreach ( $text_fields as $meta_key => $sanitize_fn ) {

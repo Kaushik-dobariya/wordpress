@@ -1,0 +1,378 @@
+/**
+ * SpiceCraft Reusable Component Stylesheet
+ *
+ * Provides styling for the Phase 5.4 component library.
+ * Designed with SpiceCraft B2B premium tokens, responsive from 320px to 1920px+.
+ *
+ * @package SpiceCraft
+ * @since 1.5.0
+ */
+
+/* ==========================================================================
+   1. COMMON COMPONENT SYSTEM
+   ========================================================================== */
+.sc-comp-hero,
+.sc-comp-section-heading,
+.sc-comp-rich-text,
+.sc-comp-image-text,
+.sc-comp-card-grid,
+.sc-comp-product-grid,
+.sc-comp-category-grid,
+.sc-comp-testimonials,
+.sc-comp-cert-strip,
+.sc-comp-faq,
+.sc-comp-cta-banner,
+.sc-comp-contact-strip {
+    position: relative;
+    padding: 3.5rem 0;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .sc-comp-hero,
+    .sc-comp-section-heading,
+    .sc-comp-rich-text,
+    .sc-comp-image-text,
+    .sc-comp-card-grid,
+    .sc-comp-product-grid,
+    .sc-comp-category-grid,
+    .sc-comp-testimonials,
+    .sc-comp-cert-strip,
+    .sc-comp-faq,
+    .sc-comp-cta-banner,
+    .sc-comp-contact-strip {
+        padding: 5rem 0;
+    }
+}
+
+/* ==========================================================================
+   2. HERO COMPONENT
+   ========================================================================== */
+.sc-comp-hero {
+    background-color: var(--sc-color-bg-subtle, #f3ede2);
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+}
+
+.sc-comp-hero--dark {
+    background-color: #1f1d1d;
+    color: #ffffff;
+}
+
+.sc-comp-hero--center .sc-comp-hero__content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.sc-comp-hero--left .sc-comp-hero__content {
+    max-width: 760px;
+}
+
+.sc-comp-hero__title {
+    font-size: clamp(2rem, 4vw + 1rem, 3.25rem);
+    line-height: 1.15;
+    font-weight: 700;
+    margin: 0.75rem 0 1rem;
+    color: inherit;
+    font-family: var(--sc-font-serif, "Cinzel", "Playfair Display", Georgia, serif);
+}
+
+.sc-comp-hero__subtitle {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--sc-color-text-muted, #69625f);
+    margin-bottom: 2rem;
+}
+
+.sc-comp-hero--dark .sc-comp-hero__subtitle {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.sc-comp-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.sc-comp-hero--center .sc-comp-hero__actions {
+    justify-content: center;
+}
+
+/* ==========================================================================
+   3. SECTION HEADING & RICH TEXT
+   ========================================================================== */
+.sc-comp-section-heading {
+    padding: 2.5rem 0 1rem;
+}
+
+.sc-comp-rich-text__body {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--sc-color-text-main, #2b2625);
+    margin: 1.5rem 0 2rem;
+}
+
+/* ==========================================================================
+   4. IMAGE + TEXT COMPONENT
+   ========================================================================== */
+.sc-comp-image-text__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+@media (min-width: 992px) {
+    .sc-comp-image-text__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+    }
+}
+
+.sc-comp-image-text__media {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.sc-comp-image-text__media img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    aspect-ratio: 4 / 3;
+}
+
+.sc-comp-image-text--img-right .sc-comp-image-text__media {
+    order: 2;
+}
+
+.sc-comp-image-text__badge {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    background: rgba(18, 40, 32, 0.9);
+    color: #f7b944;
+    padding: 0.35rem 0.85rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   5. CARD GRID COMPONENT
+   ========================================================================== */
+.sc-card-grid-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+@media (min-width: 640px) {
+    .sc-grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .sc-grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+    .sc-grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 992px) {
+    .sc-grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .sc-grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+.sc-card-grid__item {
+    background: #ffffff;
+    border: 1px solid var(--sc-color-border-subtle, #ede4d8);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sc-card-grid__item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.08);
+}
+
+.sc-card-grid__media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+}
+
+.sc-card-grid__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.sc-card-grid__item:hover .sc-card-grid__media img {
+    transform: scale(1.04);
+}
+
+.sc-card-grid__body {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.sc-card-grid__icon {
+    font-size: 2.25rem;
+    color: var(--sc-color-brand-primary, #c44b1b);
+    margin-bottom: 1rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.sc-card-grid__icon svg {
+    width: 38px;
+    height: 38px;
+}
+
+.sc-card-grid__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+    line-height: 1.35;
+}
+
+.sc-card-grid__title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.sc-card-grid__title a:hover {
+    color: var(--sc-color-brand-primary, #c44b1b);
+}
+
+.sc-card-grid__desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--sc-color-text-muted, #69625f);
+    margin: 0 0 1.25rem;
+    flex-grow: 1;
+}
+
+.sc-card-grid__footer {
+    margin-top: 2.5rem;
+}
+
+/* ==========================================================================
+   6. CONTACT STRIP COMPONENT
+   ========================================================================== */
+.sc-contact-strip__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+@media (min-width: 640px) {
+    .sc-contact-strip__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .sc-contact-strip__grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.sc-contact-strip__card {
+    background: #ffffff;
+    border: 1px solid var(--sc-color-border-subtle, #ede4d8);
+    border-radius: 8px;
+    padding: 1.75rem 1.25rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.sc-contact-strip__icon {
+    width: 52px;
+    height: 52px;
+    background: var(--sc-color-bg-subtle, #f3ede2);
+    color: var(--sc-color-brand-primary, #c44b1b);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.sc-contact-strip__label {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: var(--sc-color-text-main, #2b2625);
+}
+
+.sc-contact-strip__val {
+    font-size: 0.925rem;
+    line-height: 1.5;
+    color: var(--sc-color-text-muted, #69625f);
+    margin: 0;
+}
+
+.sc-contact-strip__val a {
+    color: inherit;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.sc-contact-strip__val a:hover {
+    color: var(--sc-color-brand-primary, #c44b1b);
+}
+
+/* ==========================================================================
+   7. CTA BANNER COMPONENT
+   ========================================================================== */
+.sc-comp-cta-banner {
+    color: #ffffff;
+    background-color: #122820;
+}
+
+.sc-comp-cta-banner--brand {
+    background-color: var(--sc-color-brand-primary, #c44b1b);
+}
+
+.sc-comp-cta-banner--light {
+    background-color: var(--sc-color-bg-subtle, #f3ede2);
+    color: var(--sc-color-text-main, #2b2625);
+}
+
+.sc-comp-cta-banner__card {
+    text-align: center;
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+.sc-comp-cta-banner__title {
+    font-size: clamp(1.85rem, 3.5vw + 1rem, 2.75rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0.75rem 0 1rem;
+    color: inherit;
+    font-family: var(--sc-font-serif, "Cinzel", "Playfair Display", Georgia, serif);
+}
+
+.sc-comp-cta-banner__subtitle {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.sc-comp-cta-banner__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}

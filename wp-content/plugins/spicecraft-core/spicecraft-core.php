@@ -38,6 +38,7 @@ require_once SPICECRAFT_CORE_DIR . 'includes/helpers/careers-helpers.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/helpers/blog-helpers.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/helpers/testimonial-helpers.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/helpers/enquiry-helpers.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/helpers/contact-helpers.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-global-settings.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-homepage-settings.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/settings/class-about-settings.php';
@@ -61,6 +62,9 @@ require_once SPICECRAFT_CORE_DIR . 'includes/blog/class-blog-meta.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/enquiries/class-enquiry-cpt.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/enquiries/class-enquiry-meta.php';
 require_once SPICECRAFT_CORE_DIR . 'includes/enquiries/class-enquiry-engine.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/quotations/class-quotation-engine.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/dashboard/class-dashboard.php';
+require_once SPICECRAFT_CORE_DIR . 'includes/import-export/class-import-export.php';
 
 /**
  * Plugin Bootstrap Class
@@ -201,6 +205,21 @@ class SpiceCraft_Core {
 		// Initialize Enquiry Engine
 		if ( class_exists( 'SpiceCraft_Enquiry_Engine' ) ) {
 			SpiceCraft_Enquiry_Engine::get_instance();
+		}
+
+		// Initialize Quotation Engine
+		if ( class_exists( 'SpiceCraft_Quotation_Engine' ) ) {
+			SpiceCraft_Quotation_Engine::get_instance();
+		}
+
+		// Initialize Advanced Dashboard
+		if ( class_exists( 'SpiceCraft_Dashboard' ) ) {
+			SpiceCraft_Dashboard::get_instance();
+		}
+
+		// Initialize Import / Export Engine
+		if ( class_exists( 'SpiceCraft_Import_Export' ) ) {
+			SpiceCraft_Import_Export::get_instance();
 		}
 	}
 

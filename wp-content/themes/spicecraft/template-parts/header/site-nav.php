@@ -45,22 +45,24 @@ $cta_url      = ! empty( $cta_url ) ? $cta_url : home_url( '/#contact' );
 			?>
 		</div>
 
-		<!-- Desktop Navigation with Dropdown/Submenu support -->
+		<!-- Desktop Navigation with Dropdown/Submenu support & Mega Menu -->
 		<nav id="site-navigation" class="main-navigation" aria-label="<?php esc_attr_e( 'Primary Menu', 'spicecraft' ); ?>">
 			<?php
+			$desktop_walker = class_exists( 'SpiceCraft_Mega_Menu_Walker' ) ? new SpiceCraft_Mega_Menu_Walker() : '';
 			wp_nav_menu(
 				array(
 					'theme_location' => 'primary',
 					'menu_id'        => 'primary-menu',
 					'menu_class'     => 'sc-nav-menu',
 					'container'      => false,
+					'walker'         => $desktop_walker,
 					'fallback_cb'    => function () {
 						$shop_url = class_exists( 'WooCommerce' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 						echo '<ul class="sc-nav-menu">';
 						echo '<li><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Home', 'spicecraft' ) . '</a></li>';
 						echo '<li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About Us', 'spicecraft' ) . '</a></li>';
 						echo '<li><a href="' . esc_url( $shop_url ) . '">' . esc_html__( 'Products', 'spicecraft' ) . '</a></li>';
-						echo '<li><a href="' . esc_url( home_url( '/#contact' ) ) . '" class="sc-open-enquiry-modal">' . esc_html__( 'Contact Us', 'spicecraft' ) . '</a></li>';
+						echo '<li><a href="' . esc_url( home_url( '/contact/' ) ) . '">' . esc_html__( 'Contact Us', 'spicecraft' ) . '</a></li>';
 						echo '</ul>';
 					},
 				)
@@ -115,18 +117,20 @@ $cta_url      = ! empty( $cta_url ) ? $cta_url : home_url( '/#contact' );
 <div id="mobile-navigation" class="sc-mobile-drawer" aria-label="<?php esc_attr_e( 'Mobile Menu', 'spicecraft' ); ?>">
 	<div class="sc-container">
 		<?php
+		$mobile_walker = class_exists( 'SpiceCraft_Mobile_Menu_Walker' ) ? new SpiceCraft_Mobile_Menu_Walker() : '';
 		wp_nav_menu(
 			array(
-				'theme_location' => 'mobile',
+				'theme_location' => 'primary', // fallback to primary if mobile unassigned
 				'menu_class'     => 'sc-mobile-menu',
 				'container'      => false,
+				'walker'         => $mobile_walker,
 				'fallback_cb'    => function () {
 					$shop_url = class_exists( 'WooCommerce' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 					echo '<ul class="sc-mobile-menu">';
 					echo '<li><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Home', 'spicecraft' ) . '</a></li>';
 					echo '<li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About Us', 'spicecraft' ) . '</a></li>';
 					echo '<li><a href="' . esc_url( $shop_url ) . '">' . esc_html__( 'Products', 'spicecraft' ) . '</a></li>';
-					echo '<li><a href="' . esc_url( home_url( '/#contact' ) ) . '" class="sc-open-enquiry-modal">' . esc_html__( 'Contact Us', 'spicecraft' ) . '</a></li>';
+					echo '<li><a href="' . esc_url( home_url( '/contact/' ) ) . '">' . esc_html__( 'Contact Us', 'spicecraft' ) . '</a></li>';
 					echo '</ul>';
 				},
 			)

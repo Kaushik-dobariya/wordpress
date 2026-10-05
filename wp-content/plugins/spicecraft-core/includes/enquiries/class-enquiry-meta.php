@@ -72,6 +72,15 @@ class SpiceCraft_Enquiry_Meta {
 			'side',
 			'high'
 		);
+
+		add_meta_box(
+			'spicecraft_enquiry_quotation_box',
+			__( 'Commercial Quotation & Pricing Engine', 'spicecraft-core' ),
+			array( $this, 'render_quotation_metabox' ),
+			self::POST_TYPE,
+			'normal',
+			'default'
+		);
 	}
 
 	/**
@@ -501,6 +510,169 @@ class SpiceCraft_Enquiry_Meta {
 	}
 
 	/**
+	 * Render the commercial quotation generator meta box.
+	 *
+	 * @param WP_Post $post Current post object.
+	 */
+	public function render_quotation_metabox( $post ) {
+		if ( ! class_exists( 'SpiceCraft_Quotation_Engine' ) ) {
+			return;
+		}
+
+		$post_id = $post->ID;
+		wp_nonce_field( 'spicecraft_save_quotation', '_sc_quotation_nonce' );
+		$quote = SpiceCraft_Quotation_Engine::get_quotation_data( $post_id );
+		$statuses = SpiceCraft_Quotation_Engine::get_statuses();
+
+		$print_url = wp_nonce_url( admin_url( 'admin-post.php?action=spicecraft_print_quotation&enquiry_id=' . $post_id ), 'spicecraft_print_quotation_' . $post_id );
+		$email_url = wp_nonce_url( admin_url( 'admin-post.php?action=spicecraft_email_quotation&enquiry_id=' . $post_id ), 'spicecraft_email_quotation_' . $post_id );
+		?>
+		<div class="sc-quotation-metabox-wrap" style="padding: 5px 0;">
+			<?php if ( isset( $_GET['sc_quote_sent'] ) ) : ?>
+				<div class="notice notice-success inline" style="margin: 0 0 15px 0;"><p><?php esc_html_e( 'Quotation email successfully dispatched to client.', 'spicecraft-core' ); ?></p></div>
+			<?php elseif ( isset( $_GET['sc_quote_error'] ) ) : ?>
+				<div class="notice notice-error inline" style="margin: 0 0 15px 0;"><p><?php esc_html_e( 'Could not dispatch quotation email. Verify customer email address and mail configuration.', 'spicecraft-core' ); ?></p></div>
+			<?php endif; ?>
+
+			<!-- Top Quote Controls -->
+			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; background: #faf7f2; border: 1px solid #e6ded1; padding: 14px; border-radius: 6px; margin-bottom: 18px;">
+				<div>
+					<label style="display:block; font-weight:600; font-size:12px; margin-bottom:4px;"><?php esc_html_e( 'Quotation #:', 'spicecraft-core' ); ?></label>
+					<input type="text" name="_sc_quotation_number" value="<?php echo esc_attr( $quote['number'] ); ?>" class="widefat" style="background:#fff; font-weight:700;">
+				</div>
+				<div>
+					<label style="display:block; font-weight:600; font-size:12px; margin-bottom:4px;"><?php esc_html_e( 'Quote Date:', 'spicecraft-core' ); ?></label>
+					<input type="date" name="_sc_quotation_date" value="<?php echo esc_attr( $quote['date'] ); ?>" class="widefat" style="background:#fff;">
+				</div>
+				<div>
+					<label style="display:block; font-weight:600; font-size:12px; margin-bottom:4px;"><?php esc_html_e( 'Valid Until:', 'spicecraft-core' ); ?></label>
+					<input type="date" name="_sc_quotation_valid_until" value="<?php echo esc_attr( $quote['valid_until'] ); ?>" class="widefat" style="background:#fff;">
+				</div>
+				<div>
+					<label style="display:block; font-weight:600; font-size:12px; margin-bottom:4px;"><?php esc_html_e( 'Currency:', 'spicecraft-core' ); ?></label>
+					<select name="_sc_quotation_currency" class="widefat" style="background:#fff;">
+						<?php foreach ( array( 'USD', 'EUR', 'GBP', 'AED', 'INR' ) as $curr ) : ?>
+							<option value="<?php echo esc_attr( $curr ); ?>" <?php selected( $quote['currency'], $curr ); ?>><?php echo esc_html( $curr ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+				<div>
+					<label style="display:block; font-weight:600; font-size:12px; margin-bottom:4px;"><?php esc_html_e( 'Incoterms / Port:', 'spicecraft-core' ); ?></label>
+					<input type="text" name="_sc_quotation_incoterms" value="<?php echo esc_attr( $quote['incoterms'] ); ?>" placeholder="CIF Felixstowe" class="widefat" style="background:#fff;">
+				</div>
+				<div>
+					<label style="display:block; font-weight:600; font-size:12px; margin-bottom:4px;"><?php esc_html_e( 'Quotation Status:', 'spicecraft-core' ); ?></label>
+					<select name="_sc_quotation_status" class="widefat" style="background:#fff; font-weight:600;">
+						<?php foreach ( $statuses as $st_key => $st ) : ?>
+							<option value="<?php echo esc_attr( $st_key ); ?>" <?php selected( $quote['status'], $st_key ); ?>><?php echo esc_html( $st['label'] ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+			</div>
+
+			<!-- Line Items Table -->
+			<h4 style="margin: 0 0 10px 0; font-size: 14px; color: #6e1a24;"><?php esc_html_e( 'Commercial Line Items & Quantity Specifications', 'spicecraft-core' ); ?></h4>
+			<table class="widefat striped" id="sc-quote-items-table" style="margin-bottom: 15px;">
+				<thead>
+					<tr>
+						<th style="width: 35%;"><?php esc_html_e( 'Product & Specification Grade', 'spicecraft-core' ); ?></th>
+						<th style="width: 25%;"><?php esc_html_e( 'Specification / Mesh / Grade', 'spicecraft-core' ); ?></th>
+						<th style="width: 15%;"><?php esc_html_e( 'Quantity', 'spicecraft-core' ); ?></th>
+						<th style="width: 15%;"><?php esc_html_e( 'Unit Price', 'spicecraft-core' ); ?></th>
+						<th style="width: 10%; text-align: right;"><?php esc_html_e( 'Action', 'spicecraft-core' ); ?></th>
+					</tr>
+				</thead>
+				<tbody id="sc-quote-items-body">
+					<?php foreach ( $quote['items'] as $idx => $item ) : ?>
+						<tr class="sc-quote-row">
+							<td>
+								<input type="text" name="_sc_quote_item_name[]" value="<?php echo esc_attr( $item['product_name'] ); ?>" class="widefat" required>
+							</td>
+							<td>
+								<input type="text" name="_sc_quote_item_grade[]" value="<?php echo esc_attr( $item['grade'] ?? '' ); ?>" class="widefat" placeholder="e.g. Export Standard / 550GL">
+							</td>
+							<td>
+								<input type="text" name="_sc_quote_item_qty[]" value="<?php echo esc_attr( $item['quantity'] ); ?>" class="widefat" placeholder="e.g. 500 kg">
+							</td>
+							<td>
+								<input type="number" step="0.01" name="_sc_quote_item_price[]" value="<?php echo esc_attr( $item['unit_price'] ); ?>" class="widefat">
+							</td>
+							<td style="text-align: right;">
+								<button type="button" class="button button-small sc-remove-quote-row" style="color:#b83d27;">&times;</button>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+
+			<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+				<button type="button" class="button button-secondary" id="sc-add-quote-row"><?php esc_html_e( '+ Add Item Row', 'spicecraft-core' ); ?></button>
+				<div style="width: 320px; background: #faf7f2; border: 1px solid #e6ded1; border-radius: 6px; padding: 12px;">
+					<div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+						<span><?php esc_html_e( 'Subtotal:', 'spicecraft-core' ); ?></span>
+						<strong><?php echo esc_html( number_format( $quote['subtotal'], 2 ) ); ?></strong>
+					</div>
+					<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+						<span><?php esc_html_e( 'Freight / Shipping:', 'spicecraft-core' ); ?></span>
+						<input type="number" step="0.01" name="_sc_quotation_shipping" value="<?php echo esc_attr( $quote['shipping'] ); ?>" style="width:110px; text-align:right;">
+					</div>
+					<div style="display:flex; justify-content:space-between; font-size:15px; border-top:2px solid #6e1a24; padding-top:6px; color:#6e1a24;">
+						<strong><?php esc_html_e( 'Total Amount:', 'spicecraft-core' ); ?></strong>
+						<strong><?php echo esc_html( $quote['currency'] . ' ' . number_format( $quote['total'], 2 ) ); ?></strong>
+					</div>
+				</div>
+			</div>
+
+			<!-- Commercial Notes -->
+			<div style="margin-bottom: 20px;">
+				<label style="display:block; font-weight:600; font-size:12px; margin-bottom:4px;"><?php esc_html_e( 'Commercial Terms & Specifications Notes:', 'spicecraft-core' ); ?></label>
+				<textarea name="_sc_quotation_notes" rows="3" class="widefat"><?php echo esc_textarea( $quote['notes'] ); ?></textarea>
+			</div>
+
+			<!-- Outbound Document & Communication Controls -->
+			<div style="display: flex; gap: 10px; align-items: center; border-top: 1px solid #e2e4e7; padding-top: 15px;">
+				<a href="<?php echo esc_url( $print_url ); ?>" target="_blank" class="button button-secondary button-large">
+					<span class="dashicons dashicons-printer" style="vertical-align:text-bottom;"></span>
+					<?php esc_html_e( 'Print / Download PDF Quotation', 'spicecraft-core' ); ?>
+				</a>
+				<a href="<?php echo esc_url( $email_url ); ?>" class="button button-secondary button-large" onclick="return confirm('<?php echo esc_js( __( 'Dispatch commercial quotation to customer via email?', 'spicecraft-core' ) ); ?>');">
+					<span class="dashicons dashicons-email-alt" style="vertical-align:text-bottom;"></span>
+					<?php esc_html_e( 'Email Quotation to Client', 'spicecraft-core' ); ?>
+				</a>
+			</div>
+		</div>
+
+		<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			var tbody = document.getElementById('sc-quote-items-body');
+			var addBtn = document.getElementById('sc-add-quote-row');
+			if (!tbody || !addBtn) return;
+
+			addBtn.addEventListener('click', function() {
+				var tr = document.createElement('tr');
+				tr.className = 'sc-quote-row';
+				tr.innerHTML = '<td><input type="text" name="_sc_quote_item_name[]" class="widefat" placeholder="Spice Name" required></td>' +
+					'<td><input type="text" name="_sc_quote_item_grade[]" class="widefat" placeholder="Export Grade / Mesh"></td>' +
+					'<td><input type="text" name="_sc_quote_item_qty[]" class="widefat" placeholder="e.g. 500 kg"></td>' +
+					'<td><input type="number" step="0.01" name="_sc_quote_item_price[]" value="0.00" class="widefat"></td>' +
+					'<td style="text-align: right;"><button type="button" class="button button-small sc-remove-quote-row" style="color:#b83d27;">&times;</button></td>';
+				tbody.appendChild(tr);
+			});
+
+			tbody.addEventListener('click', function(e) {
+				if (e.target && e.target.classList.contains('sc-remove-quote-row')) {
+					var rows = tbody.querySelectorAll('.sc-quote-row');
+					if (rows.length > 1) {
+						e.target.closest('tr').remove();
+					}
+				}
+			});
+		});
+		</script>
+		<?php
+	}
+
+	/**
 	 * Save enquiry status and internal notes.
 	 *
 	 * @param int     $post_id Post ID.
@@ -635,6 +807,11 @@ class SpiceCraft_Enquiry_Meta {
 					);
 				}
 			}
+		}
+
+		// 7. Save Commercial Quotation Data
+		if ( class_exists( 'SpiceCraft_Quotation_Engine' ) ) {
+			SpiceCraft_Quotation_Engine::save_quotation_data( $post_id );
 		}
 
 		// Save updated activity log

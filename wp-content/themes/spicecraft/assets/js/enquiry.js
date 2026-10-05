@@ -2,7 +2,8 @@
  * SpiceCraft Lead & Product Enquiry Controller
  *
  * Handles modal display, product pre-selection, accessible keyboard focus trapping,
- * client-side validation, duplicate submission prevention, and AJAX submission.
+ * client-side validation, duplicate submission prevention, and AJAX submission for
+ * both modal dialog and inline (e.g. Contact Us page) enquiry forms.
  *
  * @package SpiceCraft
  * @since 1.0.0
@@ -12,16 +13,12 @@
 	'use strict';
 
 	document.addEventListener('DOMContentLoaded', function () {
-		var modal = document.getElementById('sc-enquiry-modal');
-		if (!modal) {
-			return;
-		}
-
-		var modalCloseBtn = document.getElementById('sc-enquiry-modal-close');
-		var modalOverlay = modal.querySelector('.sc-enquiry-modal__overlay');
-		var modalTitle = document.getElementById('sc-enquiry-modal-title');
-		var modalDesc = document.getElementById('sc-enquiry-modal-desc');
-		var form = document.getElementById('sc-modal-enquiry-form');
+		var modal          = document.getElementById('sc-enquiry-modal');
+		var modalCloseBtn  = modal ? document.getElementById('sc-enquiry-modal-close') : null;
+		var modalOverlay   = modal ? modal.querySelector('.sc-enquiry-modal__overlay') : null;
+		var modalTitle     = modal ? document.getElementById('sc-enquiry-modal-title') : null;
+		var modalDesc      = modal ? document.getElementById('sc-enquiry-modal-desc') : null;
+		var modalForm      = modal ? document.getElementById('sc-modal-enquiry-form') : null;
 		var lastFocusedElement = null;
 
 		var config = window.spicecraftEnquiryConfig || {
@@ -45,20 +42,23 @@
 		 * @param {HTMLElement} triggerEl Element that triggered the modal
 		 */
 		function openModal(productData, triggerEl) {
+			if (!modal) {
+				return;
+			}
 			lastFocusedElement = triggerEl || document.activeElement;
 
 			// Populate or clear product context
-			if (form) {
-				var productIdInput = form.querySelector('.sc-enquiry-product-id');
-				var pageUrlInput = form.querySelector('.sc-enquiry-page-url');
-				var leadSourceInput = form.querySelector('.sc-enquiry-lead-source');
-				var banner = document.getElementById(form.id + '_product_banner');
-				var nameDisplay = banner ? banner.querySelector('.sc-enquiry-display-name') : null;
-				var skuDisplay = banner ? banner.querySelector('.sc-enquiry-display-sku') : null;
-				var packDisplay = banner ? banner.querySelector('.sc-enquiry-display-pack') : null;
-				var packInput = form.querySelector('.sc-enquiry-pack-select, .sc-enquiry-pack-input, input[name="pack_size"], select[name="pack_size"]');
-				var typeSelect = form.querySelector('select[name="enquiry_type"]');
-				var feedback = document.getElementById(form.id + '_feedback');
+			if (modalForm) {
+				var productIdInput = modalForm.querySelector('.sc-enquiry-product-id');
+				var pageUrlInput   = modalForm.querySelector('.sc-enquiry-page-url');
+				var leadSourceInput = modalForm.querySelector('.sc-enquiry-lead-source');
+				var banner         = document.getElementById(modalForm.id + '_product_banner');
+				var nameDisplay    = banner ? banner.querySelector('.sc-enquiry-display-name') : null;
+				var skuDisplay     = banner ? banner.querySelector('.sc-enquiry-display-sku') : null;
+				var packDisplay    = banner ? banner.querySelector('.sc-enquiry-display-pack') : null;
+				var packInput      = modalForm.querySelector('.sc-enquiry-pack-select, .sc-enquiry-pack-input, input[name="pack_size"], select[name="pack_size"]');
+				var typeSelect     = modalForm.querySelector('select[name="enquiry_type"]');
+				var feedback       = document.getElementById(modalForm.id + '_feedback');
 
 				// Reset previous feedback & form state
 				if (feedback) {
@@ -68,8 +68,8 @@
 				}
 
 				// Restore form fields visibility if previous submission hid them
-				var fieldsWrap = form.querySelector('.sc-enquiry-fields');
-				var footerWrap = form.querySelector('.sc-enquiry-footer');
+				var fieldsWrap = modalForm.querySelector('.sc-enquiry-fields');
+				var footerWrap = modalForm.querySelector('.sc-enquiry-footer');
 				if (fieldsWrap) {
 					fieldsWrap.style.display = '';
 				}
@@ -147,7 +147,6 @@
 
 			// Show modal
 			modal.style.display = 'flex';
-			// Force reflow for CSS transition
 			void modal.offsetWidth;
 			modal.classList.add('is-open');
 			modal.setAttribute('aria-hidden', 'false');
@@ -166,6 +165,9 @@
 		 * Close the Enquiry Modal
 		 */
 		function closeModal() {
+			if (!modal) {
+				return;
+			}
 			modal.classList.remove('is-open');
 			modal.setAttribute('aria-hidden', 'true');
 			document.body.style.overflow = '';
@@ -198,10 +200,10 @@
 
 				openModal(null, trigger);
 
-				if (form) {
-					var leadSourceInput = form.querySelector('.sc-enquiry-lead-source');
-					var typeSelect = form.querySelector('select[name="enquiry_type"]');
-					var messageTextarea = form.querySelector('textarea[name="message"]');
+				if (modalForm) {
+					var leadSourceInput = modalForm.querySelector('.sc-enquiry-lead-source');
+					var typeSelect      = modalForm.querySelector('select[name="enquiry_type"]');
+					var messageTextarea = modalForm.querySelector('textarea[name="message"]');
 
 					if (leadSourceInput) {
 						leadSourceInput.value = 'Favourites Shortlist';
@@ -245,92 +247,122 @@
 			openModal(productData, trigger);
 		});
 
-		// Close button click
 		if (modalCloseBtn) {
 			modalCloseBtn.addEventListener('click', closeModal);
 		}
 
-		// Overlay click
 		if (modalOverlay) {
 			modalOverlay.addEventListener('click', closeModal);
 		}
 
-		// Escape key listener & Focus Trap
-		document.addEventListener('keydown', function (e) {
-			if (!modal.classList.contains('is-open')) {
-				return;
-			}
-
-			if (e.key === 'Escape' || e.keyCode === 27) {
-				closeModal();
-				return;
-			}
-
-			// Keyboard Tab focus trap inside modal dialog
-			if (e.key === 'Tab' || e.keyCode === 9) {
-				var focusables = modal.querySelectorAll(
-					'button:not([disabled]), input:not([type="hidden"]):not([disabled]):not([tabindex="-1"]), select:not([disabled]), textarea:not([disabled]), a[href]'
-				);
-				if (!focusables.length) {
+		// Escape key listener & Focus Trap for Modal
+		if (modal) {
+			document.addEventListener('keydown', function (e) {
+				if (!modal.classList.contains('is-open')) {
 					return;
 				}
 
-				var first = focusables[0];
-				var last = focusables[focusables.length - 1];
+				if (e.key === 'Escape' || e.keyCode === 27) {
+					closeModal();
+					return;
+				}
 
-				if (e.shiftKey) {
-					if (document.activeElement === first) {
-						last.focus();
-						e.preventDefault();
+				if (e.key === 'Tab' || e.keyCode === 9) {
+					var focusables = modal.querySelectorAll(
+						'button:not([disabled]), input:not([type="hidden"]):not([disabled]):not([tabindex="-1"]), select:not([disabled]), textarea:not([disabled]), a[href]'
+					);
+					if (!focusables.length) {
+						return;
 					}
-				} else {
-					if (document.activeElement === last) {
-						first.focus();
-						e.preventDefault();
+
+					var first = focusables[0];
+					var last  = focusables[focusables.length - 1];
+
+					if (e.shiftKey) {
+						if (document.activeElement === first) {
+							last.focus();
+							e.preventDefault();
+						}
+					} else {
+						if (document.activeElement === last) {
+							first.focus();
+							e.preventDefault();
+						}
 					}
 				}
-			}
-		});
+			});
 
-		// Clear product banner (switch to general)
-		modal.addEventListener('click', function (e) {
-			var clearBtn = e.target.closest('.sc-enquiry-clear-product');
-			if (!clearBtn) {
+			modal.addEventListener('click', function (e) {
+				var clearBtn = e.target.closest('.sc-enquiry-clear-product');
+				if (!clearBtn) {
+					return;
+				}
+				e.preventDefault();
+
+				if (modalForm) {
+					var productIdInput = modalForm.querySelector('.sc-enquiry-product-id');
+					var banner         = document.getElementById(modalForm.id + '_product_banner');
+					var typeSelect     = modalForm.querySelector('select[name="enquiry_type"]');
+
+					if (productIdInput) {
+						productIdInput.value = '';
+					}
+					if (banner) {
+						banner.classList.remove('is-active');
+						banner.classList.add('is-hidden');
+					}
+					if (typeSelect) {
+						typeSelect.value = 'general';
+					}
+					if (modalTitle) {
+						modalTitle.textContent = 'Trade & Business Enquiry';
+					}
+				}
+			});
+		}
+
+		/**
+		 * Initialize any Enquiry Form (Modal or Inline Page Form)
+		 *
+		 * @param {HTMLFormElement} form Form element to bind
+		 */
+		function initEnquiryForm(form) {
+			if (!form || form.getAttribute('data-enquiry-initialized')) {
 				return;
 			}
-			e.preventDefault();
+			form.setAttribute('data-enquiry-initialized', 'true');
 
-			if (form) {
-				var productIdInput = form.querySelector('.sc-enquiry-product-id');
-				var banner = document.getElementById(form.id + '_product_banner');
-				var typeSelect = form.querySelector('select[name="enquiry_type"]');
+			// Product dropdown selection handling
+			var prodSelect = form.querySelector('.sc-enquiry-product-select');
+			if (prodSelect) {
+				prodSelect.addEventListener('change', function () {
+					var selectedOpt = prodSelect.options[prodSelect.selectedIndex];
+					var pid         = selectedOpt ? selectedOpt.value : '';
+					var pidInput    = form.querySelector('.sc-enquiry-product-id');
+					var pageUrlInput = form.querySelector('.sc-enquiry-page-url');
+					var typeSelect  = form.querySelector('select[name="enquiry_type"]');
 
-				if (productIdInput) {
-					productIdInput.value = '';
-				}
-				if (banner) {
-					banner.classList.remove('is-active');
-					banner.classList.add('is-hidden');
-				}
-				if (typeSelect) {
-					typeSelect.value = 'general';
-				}
-				if (modalTitle) {
-					modalTitle.textContent = 'Trade & Business Enquiry';
-				}
+					if (pidInput) {
+						pidInput.value = pid;
+					}
+					if (pageUrlInput && selectedOpt && selectedOpt.getAttribute('data-url')) {
+						pageUrlInput.value = selectedOpt.getAttribute('data-url');
+					}
+					if (pid && typeSelect && typeSelect.value === 'general') {
+						typeSelect.value = 'product';
+					}
+				});
 			}
-		});
 
-		// Form Submission Handler
-		if (form) {
+			// Form submission handler
 			form.addEventListener('submit', function (e) {
 				e.preventDefault();
 
-				var feedback = document.getElementById(form.id + '_feedback');
-				var submitBtn = form.querySelector('.sc-enquiry-submit-btn');
-				var nameInput = form.querySelector('input[name="full_name"]');
-				var emailInput = form.querySelector('input[name="email"]');
-				var phoneInput = form.querySelector('input[name="phone"]');
+				var feedback     = document.getElementById(form.id + '_feedback');
+				var submitBtn    = form.querySelector('.sc-enquiry-submit-btn');
+				var nameInput    = form.querySelector('input[name="full_name"]');
+				var emailInput   = form.querySelector('input[name="email"]');
+				var phoneInput   = form.querySelector('input[name="phone"]');
 				var countryInput = form.querySelector('input[name="country"]');
 				var messageInput = form.querySelector('textarea[name="message"]');
 				var consentInput = form.querySelector('input[name="consent"]');
@@ -347,7 +379,7 @@
 					if (nameInput) nameInput.classList.add('has-error');
 				}
 
-				var emailVal = emailInput ? emailInput.value.trim() : '';
+				var emailVal   = emailInput ? emailInput.value.trim() : '';
 				var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 				if (!emailVal) {
 					errors.push('Business Email is required.');
@@ -416,7 +448,7 @@
 							// Success: Hide fields & show confirmation message
 							var fieldsWrap = form.querySelector('.sc-enquiry-fields');
 							var footerWrap = form.querySelector('.sc-enquiry-footer');
-							var banner = document.getElementById(form.id + '_product_banner');
+							var banner     = document.getElementById(form.id + '_product_banner');
 
 							if (fieldsWrap) {
 								fieldsWrap.style.display = 'none';
@@ -431,6 +463,9 @@
 							if (feedback) {
 								feedback.style.display = 'block';
 								feedback.className = 'sc-enquiry-feedback sc-enquiry-feedback--success';
+								var isFormInModal = form.closest('#sc-enquiry-modal') !== null;
+								var doneBtnHtml   = isFormInModal ? '<button type="button" class="sc-enquiry-feedback__close-btn" id="sc-enquiry-done-btn">Done</button>' : '';
+
 								feedback.innerHTML =
 									'<div class="sc-enquiry-feedback__icon" aria-hidden="true">' +
 										'<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
@@ -440,16 +475,16 @@
 									'</div>' +
 									'<h4 class="sc-enquiry-feedback__title">' + (config.i18n.successHeading || 'Thank you for your enquiry!') + '</h4>' +
 									'<p class="sc-enquiry-feedback__message">' + (data.data && data.data.message ? data.data.message : config.i18n.successMessage) + '</p>' +
-									'<button type="button" class="sc-enquiry-feedback__close-btn" id="sc-enquiry-done-btn">Done</button>';
+									doneBtnHtml;
 
-								var doneBtn = document.getElementById('sc-enquiry-done-btn');
+								var doneBtn = feedback.querySelector('#sc-enquiry-done-btn');
 								if (doneBtn) {
 									doneBtn.addEventListener('click', closeModal);
 									doneBtn.focus();
 								}
+								feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 							}
 
-							// Reset form so next submission is clean
 							form.reset();
 						} else {
 							// Server error response
@@ -480,5 +515,8 @@
 					});
 			});
 		}
+
+		// Initialize all enquiry forms on page (modal + inline forms)
+		document.querySelectorAll('.sc-enquiry-form').forEach(initEnquiryForm);
 	});
 })();

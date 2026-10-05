@@ -206,6 +206,34 @@ $enquiry_types = function_exists( 'spicecraft_get_enquiry_types' )
 			</div>
 		</div>
 
+		<?php if ( empty( $product_id ) && ! empty( $args['allow_product_select'] ) && function_exists( 'wc_get_products' ) ) : ?>
+			<?php
+			$available_prods = wc_get_products(
+				array(
+					'status'  => 'publish',
+					'limit'   => 100,
+					'orderby' => 'title',
+					'order'   => 'ASC',
+				)
+			);
+			if ( ! empty( $available_prods ) ) :
+				?>
+				<div class="sc-enquiry-field sc-enquiry-product-select-field" style="margin-bottom: 16px;">
+					<label for="<?php echo esc_attr( $form_id ); ?>_select_product" class="sc-enquiry-label">
+						<?php esc_html_e( 'Specific Product of Interest', 'spicecraft' ); ?> <span class="sc-optional">(<?php esc_html_e( 'Optional', 'spicecraft' ); ?>)</span>
+					</label>
+					<select id="<?php echo esc_attr( $form_id ); ?>_select_product" name="product_select_dropdown" class="sc-enquiry-select sc-enquiry-product-select">
+						<option value=""><?php esc_html_e( '— Select a Spice Product (or General Sourcing Enquiry) —', 'spicecraft' ); ?></option>
+						<?php foreach ( $available_prods as $p_item ) : ?>
+							<option value="<?php echo esc_attr( $p_item->get_id() ); ?>" data-sku="<?php echo esc_attr( $p_item->get_sku() ); ?>" data-name="<?php echo esc_attr( $p_item->get_name() ); ?>" data-url="<?php echo esc_url( get_permalink( $p_item->get_id() ) ); ?>">
+								<?php echo esc_html( $p_item->get_name() ); ?><?php echo $p_item->get_sku() ? ' (SKU: ' . esc_html( $p_item->get_sku() ) . ')' : ''; ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+			<?php endif; ?>
+		<?php endif; ?>
+
 		<!-- Row 4: Customer Type & Enquiry Classification -->
 		<div class="sc-enquiry-row sc-enquiry-row--2col">
 			<div class="sc-enquiry-field">

@@ -494,3 +494,27 @@ if ( ! function_exists( 'spicecraft_get_media_image' ) ) :
 	}
 endif;
 
+if ( ! function_exists( 'spicecraft_render_component' ) ) :
+	/**
+	 * Render a reusable SpiceCraft component from template-parts/components/
+	 *
+	 * @param string $component_slug Component filename without .php extension.
+	 * @param array  $args           Parameters passed to component template.
+	 * @param bool   $echo           Whether to output or return string.
+	 * @return string|void
+	 */
+	function spicecraft_render_component( $component_slug, $args = array(), $echo = true ) {
+		$slug = sanitize_file_name( $component_slug );
+		if ( ! $echo ) {
+			ob_start();
+		}
+
+		get_template_part( 'template-parts/components/' . $slug, null, $args );
+
+		if ( ! $echo ) {
+			return ob_get_clean();
+		}
+	}
+endif;
+
+

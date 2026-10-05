@@ -61,6 +61,9 @@ class SpiceCraft_Enquiry_CPT {
 
 		// CSV Export Action
 		add_action( 'admin_post_spicecraft_export_enquiries_csv', array( $this, 'handle_csv_export' ) );
+
+		// Admin list table empty state & helper notices
+		add_action( 'all_admin_notices', array( $this, 'render_table_header_notice' ) );
 	}
 
 	/**
@@ -602,4 +605,33 @@ class SpiceCraft_Enquiry_CPT {
 		fclose( $output );
 		exit;
 	}
+
+	/**
+	 * Render empty state and workflow guidance on the enquiry list table.
+	 */
+	public function render_table_header_notice() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'edit-' . self::POST_TYPE !== $screen->id ) {
+			return;
+		}
+
+		$counts = wp_count_posts( self::POST_TYPE );
+		$total  = isset( $counts->publish ) ? (int) $counts->publish : 0;
+
+		if ( 0 === $total ) {
+			?>
+			<div class="notice notice-info inline" style="margin: 20px 0; padding: 16px 20px; background: #fff; border-left: 4px solid #6e1a24; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+				<h3 style="margin: 0 0 8px 0; color: #6e1a24;"><?php esc_html_e( 'No Commercial Enquiries or Leads Recorded Yet', 'spicecraft-core' ); ?></h3>
+				<p style="margin: 0 0 12px 0; font-size: 13px; color: #50575e; line-height: 1.5;">
+					<?php esc_html_e( 'Institutional buyer leads and export requests submitted via your single product pages, catalogue modal, or Contact Us page will be securely routed here in real-time.', 'spicecraft-core' ); ?>
+				</p>
+				<div style="display: flex; gap: 10px;">
+					<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" target="_blank" class="button button-secondary"><?php esc_html_e( 'Test Contact Page Form', 'spicecraft-core' ); ?> &rarr;</a>
+					<a href="<?php echo esc_url( home_url( '/shop/' ) ); ?>" target="_blank" class="button button-secondary"><?php esc_html_e( 'Test Product Catalog Form', 'spicecraft-core' ); ?> &rarr;</a>
+				</div>
+			</div>
+			<?php
+		}
+	}
 }
+
